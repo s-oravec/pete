@@ -1,6 +1,6 @@
 # Pete
 
-Pete is simple, yet powerful testing PL/sQL engine, for testing PL/SQL code.
+Pete - simple, yet powerful PL/SQL testing suite.
 
 ## Idea
 
