@@ -1,0 +1,25 @@
+create table UT_TEST_CASE
+(
+  id             NUMBER not null,
+  test_script_id NUMBER,
+  code           VARCHAR2(50) not null,
+  name           VARCHAR2(100) not null,
+  description    VARCHAR2(4000)
+)
+;
+comment on column UT_TEST_CASE.id
+  is 'Primarni klic zaznamu';
+comment on column UT_TEST_CASE.code
+  is 'Kod daneho test case';
+comment on column UT_TEST_CASE.name
+  is 'Nazev test case';
+comment on column UT_TEST_CASE.description
+  is 'Popis daneho test case';
+alter table UT_TEST_CASE
+  add constraint UT_TEST_CASE_PK primary key (ID);
+alter table UT_TEST_CASE
+  add constraint UT_TEST_CASE_UK1 unique (CODE, TEST_SCRIPT_ID);
+alter table UT_TEST_CASE
+  add constraint UT_TEST_CASE_TEST_SCRIPT_FK foreign key (TEST_SCRIPT_ID)
+  references UT_TEST_SCRIPT (ID);
+

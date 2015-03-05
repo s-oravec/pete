@@ -1,0 +1,40 @@
+create table UT_PLSQL_BLOCK
+(
+  id              NUMBER not null,
+  test_script_id  NUMBER,
+  code            VARCHAR2(30) not null,
+  name            VARCHAR2(255) not null,
+  description     VARCHAR2(255),
+  type            VARCHAR2(10),
+  owner           VARCHAR2(32),
+  package         VARCHAR2(32),
+  method          VARCHAR2(32),
+  anonymous_block CLOB
+)
+;
+comment on column UT_PLSQL_BLOCK.id
+  is 'Id pro provazovani mezi tabulkami';
+comment on column UT_PLSQL_BLOCK.code
+  is 'Kod oznaceni bloku';
+comment on column UT_PLSQL_BLOCK.name
+  is 'Nazev bloku';
+comment on column UT_PLSQL_BLOCK.description
+  is 'Popis bloku';
+comment on column UT_PLSQL_BLOCK.type
+  is 'Typ bloku';
+comment on column UT_PLSQL_BLOCK.owner
+  is 'Vlastnik ulozene methody';
+comment on column UT_PLSQL_BLOCK.package
+  is 'Nazev PLSQL baliku';
+comment on column UT_PLSQL_BLOCK.method
+  is 'Nazev methody';
+comment on column UT_PLSQL_BLOCK.anonymous_block
+  is 'declarace anonymniho bloku';
+alter table UT_PLSQL_BLOCK
+  add constraint UT_PLSQL_BLOCK_PK primary key (ID);
+alter table UT_PLSQL_BLOCK
+  add constraint UT_PLSQL_BLOCK_UK1 unique (CODE, TEST_SCRIPT_ID);
+alter table UT_PLSQL_BLOCK
+  add constraint UT_PLSQL_BLOCK_TEST_SCRIPT_FK foreign key (TEST_SCRIPT_ID)
+  references UT_TEST_SCRIPT (ID);
+

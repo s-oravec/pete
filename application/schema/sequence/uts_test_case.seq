@@ -1,0 +1,7 @@
+create sequence UTS_TEST_CASE
+minvalue 1
+maxvalue 9999999999999999999999
+start with 61
+increment by 1
+cache 20;
+

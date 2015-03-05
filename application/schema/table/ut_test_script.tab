@@ -1,0 +1,21 @@
+create table UT_TEST_SCRIPT
+(
+  id          NUMBER not null,
+  code        VARCHAR2(50) not null,
+  name        VARCHAR2(100) not null,
+  description VARCHAR2(100)
+)
+;
+comment on column UT_TEST_SCRIPT.id
+  is 'Primarni klic zaznamu';
+comment on column UT_TEST_SCRIPT.code
+  is 'Kod testovaciho scenare';
+comment on column UT_TEST_SCRIPT.name
+  is 'Jmeno testovaciho scenare';
+comment on column UT_TEST_SCRIPT.description
+  is 'Popis testovaciho scenare';
+alter table UT_TEST_SCRIPT
+  add constraint UT_TEST_SCRIPT_PK primary key (ID);
+alter table UT_TEST_SCRIPT
+  add constraint UT_TEST_SCRIPT_UK1 unique (CODE);
+

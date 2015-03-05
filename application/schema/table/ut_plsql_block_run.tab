@@ -1,0 +1,52 @@
+create table UT_PLSQL_BLOCK_RUN
+(
+  id              NUMBER not null,
+  run_group_id    NUMBER,
+  plsql_block_id  NUMBER,
+  test_case_id    NUMBER,
+  test_script_id  NUMBER,
+  run_order       NUMBER,
+  start_time      TIMESTAMP(6) WITH TIME ZONE,
+  end_time        TIMESTAMP(6) WITH TIME ZONE,
+  expected_result VARCHAR2(10),
+  result          VARCHAR2(10),
+  param_xml       XMLTYPE,
+  output_xml      XMLTYPE
+)
+;
+comment on column UT_PLSQL_BLOCK_RUN.id
+  is 'Primarni klic';
+comment on column UT_PLSQL_BLOCK_RUN.run_group_id
+  is 'ID pro evidenci bloku spustenych v ramci jednoho testovaciho pripadu';
+comment on column UT_PLSQL_BLOCK_RUN.plsql_block_id
+  is 'Cizi klic do tabulky UT_PLSQL_BLOCK, identifikace testovaneho bloku';
+comment on column UT_PLSQL_BLOCK_RUN.test_case_id
+  is 'Cizi klic do tabulky UT_TEST_CASE, identifikace pouziteho test case';
+comment on column UT_PLSQL_BLOCK_RUN.test_script_id
+  is 'Cizi klic do tabulky UT_TEST_SCRIPT, identifikace pouziteho testovaciho scenare';
+comment on column UT_PLSQL_BLOCK_RUN.run_order
+  is 'Slouzi k evidenci poradi spusteni daneho plsql bloku v ramci test case';
+comment on column UT_PLSQL_BLOCK_RUN.start_time
+  is 'Timestamp spusteni bloku';
+comment on column UT_PLSQL_BLOCK_RUN.end_time
+  is 'Timestamp ukonceni bloku';
+comment on column UT_PLSQL_BLOCK_RUN.expected_result
+  is 'Ocekavany result podle scenare';
+comment on column UT_PLSQL_BLOCK_RUN.result
+  is 'Result vykonaneho bloku';
+comment on column UT_PLSQL_BLOCK_RUN.param_xml
+  is 'Parametry pro spusteni bloku';
+comment on column UT_PLSQL_BLOCK_RUN.output_xml
+  is 'Vysledek po ukonceni bloku';
+alter table UT_PLSQL_BLOCK_RUN
+  add constraint UT_PLSQL_BLOCK_RUN_PK primary key (ID);
+alter table UT_PLSQL_BLOCK_RUN
+  add constraint UT_PLSQL_BLOCK_RUN_BLK_FK foreign key (PLSQL_BLOCK_ID)
+  references UT_PLSQL_BLOCK (ID);
+alter table UT_PLSQL_BLOCK_RUN
+  add constraint UT_PLSQL_BLOCK_RUN_CAS_FK foreign key (TEST_CASE_ID)
+  references UT_TEST_CASE (ID);
+alter table UT_PLSQL_BLOCK_RUN
+  add constraint UT_PLSQL_BLOCK_RUN_SCR_FK foreign key (TEST_SCRIPT_ID)
+  references UT_TEST_SCRIPT (ID);
+

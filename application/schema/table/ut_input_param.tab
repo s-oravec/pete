@@ -1,0 +1,30 @@
+create table UT_INPUT_PARAM
+(
+  id             NUMBER not null,
+  test_script_id NUMBER,
+  code           VARCHAR2(50) not null,
+  name           VARCHAR2(100) not null,
+  value          XMLTYPE,
+  description    VARCHAR2(100)
+)
+;
+comment on column UT_INPUT_PARAM.id
+  is 'Primarni klic zaznamu';
+comment on column UT_INPUT_PARAM.test_script_id
+  is 'Cizi klic do tabulky UT_TEST_SCRIPT, identifikace scenare pro ktery je dany test case vytvoren, NULL hodnota znaci univerzalni blok';
+comment on column UT_INPUT_PARAM.code
+  is 'Kod daneho parametru';
+comment on column UT_INPUT_PARAM.name
+  is 'Nazev daneho parametru';
+comment on column UT_INPUT_PARAM.value
+  is 'XML pro vstupni parametry PLSQL bloku';
+comment on column UT_INPUT_PARAM.description
+  is 'Popis vstupni sady parametru v XML';
+alter table UT_INPUT_PARAM
+  add constraint UT_INPUT_PARAM_PK primary key (ID);
+alter table UT_INPUT_PARAM
+  add constraint UT_INPUT_PARAM_UK1 unique (CODE, TEST_SCRIPT_ID);
+alter table UT_INPUT_PARAM
+  add constraint UT_INPUT_PARAM_TEST_SCRIPT_FK foreign key (TEST_SCRIPT_ID)
+  references UT_TEST_SCRIPT (ID);
+

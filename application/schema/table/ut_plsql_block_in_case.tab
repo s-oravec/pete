@@ -1,0 +1,34 @@
+create table UT_PLSQL_BLOCK_IN_CASE
+(
+  id             NUMBER not null,
+  test_case_id   NUMBER not null,
+  plsql_block_id NUMBER not null,
+  input_param_id NUMBER,
+  block_order    NUMBER,
+  output_param   CHAR(1)
+)
+;
+comment on column UT_PLSQL_BLOCK_IN_CASE.id
+  is 'Primarni klic';
+comment on column UT_PLSQL_BLOCK_IN_CASE.test_case_id
+  is 'Cizi klic do tabulky UT_TEST_CASE, identifikace test case';
+comment on column UT_PLSQL_BLOCK_IN_CASE.plsql_block_id
+  is 'Cizi klic do tabulky UT_PLSQL_BLOCK, identifikace bloku';
+comment on column UT_PLSQL_BLOCK_IN_CASE.input_param_id
+  is 'Cizi klic do tabulky UT_INPUT_PARAM, identifikace parametru';
+comment on column UT_PLSQL_BLOCK_IN_CASE.block_order
+  is 'Poradi provadeni daneho bloku';
+comment on column UT_PLSQL_BLOCK_IN_CASE.output_param
+  is 'Urcuje zda se pro vstupni parametr pouzije vystupni XLM predchoziho bloku, zmeny struktury budou reseny transformacnimi bloky';
+alter table UT_PLSQL_BLOCK_IN_CASE
+  add constraint UT_PLSQL_BLOCK_IN_CASE_PK primary key (ID);
+alter table UT_PLSQL_BLOCK_IN_CASE
+  add constraint UT_PLSQL_BLOCK_IN_CASE_BLK_FK foreign key (PLSQL_BLOCK_ID)
+  references UT_PLSQL_BLOCK (ID);
+alter table UT_PLSQL_BLOCK_IN_CASE
+  add constraint UT_PLSQL_BLOCK_IN_CASE_PAR_FK foreign key (INPUT_PARAM_ID)
+  references UT_INPUT_PARAM (ID);
+alter table UT_PLSQL_BLOCK_IN_CASE
+  add constraint UT_PLSQL_BLOCK_IN_CASE_TCA_FK foreign key (TEST_CASE_ID)
+  references UT_TEST_CASE (ID);
+
