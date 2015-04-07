@@ -1,24 +1,34 @@
 @&&run_dir_begin
 
 prompt
-prompt Creating type T_INPUT_PARAM
-prompt ===========================
+prompt Creating type UTT_SUM_INTERVAL
+prompt ==============================
 prompt
-@@t_input_param.tps
+@@utt_sum_interval.tps
 prompt
-prompt Creating type T_OUTPUT_RESULT
-prompt =============================
+prompt Creating type body UTT_SUM_INTERVAL
+prompt ===================================
 prompt
-@@t_output_result.tps
+@@utt_sum_interval.tpb
 prompt
-prompt Creating type T_SUM_INTERVAL
-prompt ============================
+prompt Creating type UTT_VARCHAR2_DELIMITED_CONCAT
+prompt ===========================================
 prompt
-@@t_sum_interval.tps
+@@utt_varchar2_delimited_concat.tps
 prompt
-prompt Creating type body T_SUM_INTERVAL
+prompt Creating type body UTT_VARCHAR2_DELIMITED_CONCAT
+prompt ================================================
+prompt
+@@utt_varchar2_delimited_concat.tpb
+prompt
+prompt Creating type UTT_VARCHAR2_CONCAT
 prompt =================================
 prompt
-@@t_sum_interval.tpb
+@@utt_varchar2_concat.tps
+prompt
+prompt Creating type body UTT_VARCHAR2_CONCAT
+prompt ======================================
+prompt
+@@utt_varchar2_concat.tpb
 
 @&&run_dir_end

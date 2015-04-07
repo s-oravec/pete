@@ -1,41 +1,44 @@
-CREATE OR REPLACE PACKAGE utp_ts_run IS
-  /* Balik pro spousteni unit testu
+create or replace package utp_ts_run is
+  /* Package for running unit tests
   */
 
-  /* Globalni promena urcujici urceni vystupu debug vypisu
+  /* Subtype for boolean stored as Y/N
   */
-  gc_debug CHAR(1) := 'O'; --('O'-output,...)
+  subtype gtyp_string_boolean is char(1);
+  -- Yes, true
+  gc_true  constant gtyp_string_boolean := 'Y';
+  -- No, false
+  gc_false constant gtyp_string_boolean := 'N';
 
-  /* Procedura pro spusteni test case, identifikace pomoci ID
-
-  %param p_id  Primarni klic do tabulky UT_TEST_CASE, identifikace test case
+  /* Run test case identified by test case id
+  
+  %param p_id Test case identifier - ut_test_case.id
   */
-  PROCEDURE run_testcase(p_id IN ut_test_case.id%TYPE);
+  procedure run_test_case(p_id in ut_test_case.id%type);
 
-  /* Procedura pro spusteni test case, identifikace pomoci CODE
-
-  %param p_code  Unikatni klic do tabulky UT_TEST_CASE, identifikace test case
+  /* Run test case identified by test case code - ut_test_case.code
+  
+  %param p_code Test case code - ut_test_case.code
   */
-  PROCEDURE run_testcase(p_code ut_test_case.code%TYPE);
+  procedure run_test_case(p_code ut_test_case.code%type);
 
-  /* Procedura pro spusteni test scriptu, identifikace pomoci ID
-
-  %param p_id  Primarni klic do tabulky UT_TEST_SCRIPT, identifikace test scriptu
+  /* Run test script identified by test script identifier - ut_test_script.id
+  
+  %param p_id test script identifier - ut_test_script.id
   */
-  PROCEDURE run_testscript(p_id ut_test_script.id%TYPE);
+  procedure run_test_script(p_id ut_test_script.id%type);
 
-  /* Procedura pro spusteni test scriptu, identifikace pomoci CODE
-
-  %param p_code  Unikatni klic do tabulky UT_TEST_SCRIPT, identifikace test scriptu
+  /* Run test script identified by test script code - ut_test_script.code
+  
+  %param p_code  test script code - ut_test_script.code
   */
-  PROCEDURE run_testscript(p_code ut_test_script.code%TYPE);
+  procedure run_test_script(p_code ut_test_script.code%type);
 
-  /* Procedura pro spusteni vsech evidovanych testovacich scenaru
-
-  %param p_catch_exception  parametr typu ('Y','N') 'Y' - urcuje zda li dojde pri vyjimce
-                            u testovaneho scenare k pokracovani ostatnich scenaru
+  /* Run all test scripts
+  
+  %param p_catch_exception  boolean - ('Y','N') 'Y' - continue executing scripts after exception
   */
-  PROCEDURE run_alltestscript(p_catch_exception VARCHAR2);
-END utp_ts_run;
+  procedure run_all_test_scripts(p_catch_exception in gtyp_string_boolean default gc_true);
+
+end utp_ts_run;
 /
-

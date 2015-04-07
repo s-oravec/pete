@@ -9,9 +9,9 @@ create table UT_INPUT_PARAM
 )
 ;
 comment on column UT_INPUT_PARAM.id
-  is 'Primarni klic zaznamu';
+  is 'Surrogate primary key';
 comment on column UT_INPUT_PARAM.test_script_id
-  is 'Cizi klic do tabulky UT_TEST_SCRIPT, identifikace scenare pro ktery je dany test case vytvoren, NULL hodnota znaci univerzalni blok';
+  is 'FK to UT_TEST_SCRIPT, identifikace scenare pro ktery je dany test case vytvoren, NULL hodnota znaci univerzalni blok';
 comment on column UT_INPUT_PARAM.code
   is 'Kod daneho parametru';
 comment on column UT_INPUT_PARAM.name

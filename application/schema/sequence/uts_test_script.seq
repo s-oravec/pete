@@ -1,7 +1,1 @@
-create sequence UTS_TEST_SCRIPT
-minvalue 1
-maxvalue 9999999999999999999999
-start with 61
-increment by 1
-cache 20;
-
+create sequence UTS_TEST_SCRIPT;
