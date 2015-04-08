@@ -12,6 +12,7 @@ grant create procedure to pete_test;
 grant create type to pete_test;
 grant create sequence to pete_test;
 grant create view to pete_test;
+grant create materialized view to pete_test;
 
 connect pete_test/pete_test@local
 

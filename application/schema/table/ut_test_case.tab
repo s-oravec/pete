@@ -7,19 +7,26 @@ create table UT_TEST_CASE
   description    VARCHAR2(4000)
 )
 ;
+comment on table UT_TEST_CASE
+  is 'Test case';
 comment on column UT_TEST_CASE.id
-  is 'Primarni klic zaznamu';
+  is 'Surrogate identifier';
+comment on column UT_TEST_CASE.test_script_id
+  is 'Test script identifier';
 comment on column UT_TEST_CASE.code
-  is 'Kod daneho test case';
+  is 'Test case code';
 comment on column UT_TEST_CASE.name
-  is 'Nazev test case';
+  is 'Test case name';
 comment on column UT_TEST_CASE.description
-  is 'Popis daneho test case';
+  is 'Test case description';
+create index UT_TEST_CASE_FK01 on UT_TEST_CASE (TEST_SCRIPT_ID);
 alter table UT_TEST_CASE
   add constraint UT_TEST_CASE_PK primary key (ID);
 alter table UT_TEST_CASE
-  add constraint UT_TEST_CASE_UK1 unique (CODE, TEST_SCRIPT_ID);
+  add constraint TU_TEST_CASE_UK02 unique (NAME);
 alter table UT_TEST_CASE
-  add constraint UT_TEST_CASE_TEST_SCRIPT_FK foreign key (TEST_SCRIPT_ID)
+  add constraint UT_TEST_CASE_UK01 unique (CODE);
+alter table UT_TEST_CASE
+  add constraint UT_TEST_CASE_FK01 foreign key (TEST_SCRIPT_ID)
   references UT_TEST_SCRIPT (ID);
 

@@ -4,28 +4,38 @@ create table UT_TEST_CASE_IN_SCRIPT
   test_script_id  NUMBER not null,
   test_case_id    NUMBER not null,
   script_order    NUMBER not null,
-  catch_exception CHAR(1),
-  expected_result VARCHAR2(10)
+  catch_exception CHAR(1) default 'N',
+  expected_result VARCHAR2(10) default 'OK'
 )
 ;
+comment on table UT_TEST_CASE_IN_SCRIPT
+  is 'Test case in Test script';
 comment on column UT_TEST_CASE_IN_SCRIPT.id
-  is 'Primarni klic zaznamu';
+  is 'Test case in Test script surrogate identifier';
 comment on column UT_TEST_CASE_IN_SCRIPT.test_script_id
-  is 'Cizi klic do tabulky UT_TEST_SCRIPT, testovaci scenar';
+  is 'Test script identifier';
 comment on column UT_TEST_CASE_IN_SCRIPT.test_case_id
-  is 'Cizi klic do tabulky UT_TEST_CASE, evidence test case';
+  is 'Test case identifier';
 comment on column UT_TEST_CASE_IN_SCRIPT.script_order
-  is 'Urcuje poradi spusteni jednotlivych test case v ramci testovaciho scenare';
+  is 'Defines order of test cases in test script (''Y'',''N'')';
 comment on column UT_TEST_CASE_IN_SCRIPT.catch_exception
-  is '(''Y'',''N'') Urcuje zdali pri chybe test case ma odchytnout a potlacit vyjimku a pokracovat dal v behu testovaciho scenare';
+  is 'Wether to catch exception raised in test case';
 comment on column UT_TEST_CASE_IN_SCRIPT.expected_result
-  is 'Typ ocekavaneho vysledku scenare (''OK'',''RAISE'')';
+  is 'Expected result (''OK'', ''ERROR'')';
+create index UT_TEST_CASE_IN_SCRIPT_FK01 on UT_TEST_CASE_IN_SCRIPT (TEST_CASE_ID);
+create index UT_TEST_CASE_IN_SCRIPT_FK02 on UT_TEST_CASE_IN_SCRIPT (TEST_SCRIPT_ID);
 alter table UT_TEST_CASE_IN_SCRIPT
   add constraint UT_TEST_CASE_IN_SCRIPT_PK primary key (ID);
 alter table UT_TEST_CASE_IN_SCRIPT
-  add constraint UT_TEST_SCRIPT_CASE_CAS_FK foreign key (TEST_CASE_ID)
+  add constraint UT_TEST_CASE_IN_SCRIPT_FK01 foreign key (TEST_CASE_ID)
   references UT_TEST_CASE (ID);
 alter table UT_TEST_CASE_IN_SCRIPT
-  add constraint UT_TEST_SCRIPT_CASE_SCR_FK foreign key (TEST_SCRIPT_ID)
+  add constraint UT_TEST_CASE_IN_SCRIPT_FK02 foreign key (TEST_SCRIPT_ID)
   references UT_TEST_SCRIPT (ID);
+alter table UT_TEST_CASE_IN_SCRIPT
+  add constraint UT_TEST_CASE_IN_SCRIPT_CHK01
+  check ((CATCH_EXCEPTION in ('Y', 'N')));
+alter table UT_TEST_CASE_IN_SCRIPT
+  add constraint UT_TEST_CASE_IN_SCRIPT_CHK02
+  check ((EXPECTED_RESULT in ('OK', 'ERROR')));
 

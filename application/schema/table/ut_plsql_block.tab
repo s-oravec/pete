@@ -5,36 +5,40 @@ create table UT_PLSQL_BLOCK
   code            VARCHAR2(30) not null,
   name            VARCHAR2(255) not null,
   description     VARCHAR2(255),
-  type            VARCHAR2(10),
   owner           VARCHAR2(32),
   package         VARCHAR2(32),
   method          VARCHAR2(32),
   anonymous_block CLOB
 )
 ;
+comment on table UT_PLSQL_BLOCK
+  is 'PLSQL block';
 comment on column UT_PLSQL_BLOCK.id
-  is 'Id pro provazovani mezi tabulkami';
+  is 'PLSQL block surrogate identifier';
+comment on column UT_PLSQL_BLOCK.test_script_id
+  is 'Test script identifier';
 comment on column UT_PLSQL_BLOCK.code
-  is 'Kod oznaceni bloku';
+  is 'PLSQL block code';
 comment on column UT_PLSQL_BLOCK.name
-  is 'Nazev bloku';
+  is 'PLSQL block name';
 comment on column UT_PLSQL_BLOCK.description
-  is 'Popis bloku';
-comment on column UT_PLSQL_BLOCK.type
-  is 'Typ bloku';
+  is 'PLSQL block description';
 comment on column UT_PLSQL_BLOCK.owner
-  is 'Vlastnik ulozene methody';
+  is 'Owner';
 comment on column UT_PLSQL_BLOCK.package
-  is 'Nazev PLSQL baliku';
+  is 'Package';
 comment on column UT_PLSQL_BLOCK.method
-  is 'Nazev methody';
+  is 'Method';
 comment on column UT_PLSQL_BLOCK.anonymous_block
-  is 'declarace anonymniho bloku';
+  is 'Anonymous PLSQL block declaration';
+create index UT_PLSQL_BLOCK_FK01 on UT_PLSQL_BLOCK (TEST_SCRIPT_ID);
 alter table UT_PLSQL_BLOCK
   add constraint UT_PLSQL_BLOCK_PK primary key (ID);
 alter table UT_PLSQL_BLOCK
-  add constraint UT_PLSQL_BLOCK_UK1 unique (CODE, TEST_SCRIPT_ID);
-alter table UT_PLSQL_BLOCK
-  add constraint UT_PLSQL_BLOCK_TEST_SCRIPT_FK foreign key (TEST_SCRIPT_ID)
+  add constraint UT_PLSQL_BLOCK_FK01 foreign key (TEST_SCRIPT_ID)
   references UT_TEST_SCRIPT (ID);
+alter table UT_PLSQL_BLOCK
+  add constraint UT_PLSQL_BLOCK_CHK01
+  check (((ANONYMOUS_BLOCK is null and OWNER is not null and package is not null and METHOD is not null) or
+(ANONYMOUS_BLOCK is not null and OWNER is null and package is null and METHOD is null)));
 

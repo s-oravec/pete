@@ -53,8 +53,10 @@ create or replace package body utp_ts_run is
        prec.end_time,
        prec.expected_result,
        prec.result,
-       prec.param_xml,
-       prec.output_xml);
+       prec.input_xml,
+       prec.output_xml,
+       prec.error_code,
+       prec.error_message);
     commit;
   exception
     when others then
@@ -115,7 +117,7 @@ create or replace package body utp_ts_run is
     else
       debug('    INPUT : NULL');
     end if;
-    lrec_runlog.param_xml  := l_xml_in;
+    lrec_runlog.input_xml  := l_xml_in;
     lrec_runlog.start_time := localtimestamp;
   
     -- nastaveni identifikatoru behu

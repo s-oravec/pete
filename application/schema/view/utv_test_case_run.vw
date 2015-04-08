@@ -1,39 +1,36 @@
-CREATE OR REPLACE FORCE VIEW UTV_TEST_CASE_RUN AS
-SELECT tmp.code
-      ,tmp.NAME
-      ,tmp.description
-      ,run.run_group_id
-      ,MAX(CASE
-         WHEN tmp.plsql_block_id = run.plsql_block_id
-              AND tmp.block_order = run.run_order THEN
-          run.expected_result
-         ELSE
-          NULL
-       END) expected_result
-      ,MAX(CASE
-         WHEN tmp.plsql_block_id = run.plsql_block_id
-              AND tmp.block_order = run.run_order THEN
-          run.result
-         ELSE
-          NULL
-       END) case_RESULT
-      ,to_char(f_sum_interval(run.end_time - run.start_time)) RUN_TIME
-      ,MIN(run.start_time) AS TEST_CASE_START_TIMESTAMP
-  FROM (SELECT tc.id
-              ,tc.code
-              ,tc.NAME
-              ,tc.description
-              ,rank() over(PARTITION BY tc.id ORDER BY bltc.block_order DESC) my_rank
-              ,bltc.plsql_block_id
-              ,bltc.block_order
-          FROM ut_test_case tc, ut_plsql_block_in_case bltc
-         WHERE tc.id = bltc.test_case_id) tmp
-      ,ut_plsql_block_run run
- WHERE tmp.id = run.test_case_id
-   AND tmp.my_rank = 1
-GROUP BY tmp.code
-      ,tmp.NAME
-      ,tmp.description
-      ,run.run_group_id
-ORDER BY tmp.code, TEST_CASE_START_TIMESTAMP;
+create or replace force view utv_test_case_run as
+select tmp.code,
+       tmp.NAME,
+       tmp.description,
+       run.run_id,
+       max(case
+             when tmp.plsql_block_id = run.plsql_block_id
+                  and tmp.block_order = run.run_order then
+              run.expected_result
+             else
+              null
+           end) expected_result,
+       max(case
+             when tmp.plsql_block_id = run.plsql_block_id
+                  and tmp.block_order = run.run_order then
+              run.result
+             else
+              null
+           end) case_RESULT,
+       to_char(utf_sum_interval(run.end_time - run.start_time)) RUN_TIME,
+       min(run.start_time) as TEST_CASE_START_TIMESTAMP
+  from (select tc.id,
+               tc.code,
+               tc.NAME,
+               tc.description,
+               rank() over(partition by tc.id order by bltc.block_order desc) my_rank,
+               bltc.plsql_block_id,
+               bltc.block_order
+          from ut_test_case tc, ut_plsql_block_in_case bltc
+         where tc.id = bltc.test_case_id) tmp,
+       ut_plsql_block_run run
+ where tmp.id = run.test_case_id
+   and tmp.my_rank = 1
+ group by tmp.code, tmp.NAME, tmp.description, run.run_id
+ order by tmp.code, TEST_CASE_START_TIMESTAMP;
 
