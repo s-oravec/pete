@@ -1,0 +1,15 @@
+-- Create table
+create table PETE_RUN_LOG
+(
+  id             NUMBER not null,
+  result         VARCHAR2(10),
+  asserts_passed NUMBER,
+  asserts_failed NUMBER,
+  test_start     DATE,
+  test_end       DATE
+)
+;
+-- Create/Recreate primary, unique and foreign key constraints 
+alter table PETE_RUN_LOG
+  add constraint PETE_RUN_LOG_PK primary key (ID)
+;

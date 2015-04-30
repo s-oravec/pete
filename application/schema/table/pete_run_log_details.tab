@@ -1,0 +1,17 @@
+-- Create table
+create table PETE_RUN_LOG_DETAILS
+(
+  id             NUMBER not null,
+  run_id         NUMBER,
+  result         VARCHAR2(10),
+  assert_comment VARCHAR2(1000),
+  test_package   VARCHAR2(30),
+  test_procedure VARCHAR2(30),
+  line_number    NUMBER,
+  run_at         TIMESTAMP(6)
+)
+;
+-- Create/Recreate primary, unique and foreign key constraints 
+alter table PETE_RUN_LOG_DETAILS
+  add constraint PETE_RUN_LOG_DETAILS_PK primary key (ID)
+;

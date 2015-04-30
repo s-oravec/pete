@@ -1,0 +1,12 @@
+-- Create table
+create table PETE_CONFIG
+(
+  key         VARCHAR2(255) not null,
+  value       VARCHAR2(4000),
+  description VARCHAR2(4000)
+)
+;
+-- Create/Recreate primary, unique and foreign key constraints 
+alter table PETE_CONFIG
+  add constraint PETE_CONFIG_PK primary key (KEY)
+;

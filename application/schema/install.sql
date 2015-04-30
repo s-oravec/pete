@@ -6,8 +6,6 @@
 @&&run_dir function
 @&&run_dir package
 @&&run_dir view
-@&&run_dir mview
-
 
 prompt Compiling invalid objects
 begin
