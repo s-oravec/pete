@@ -14,31 +14,37 @@ CREATE OR REPLACE PACKAGE petep_configuration_runner IS
     gc_false CONSTANT gtyp_string_boolean := 'N';
 
     --
+    -- runs test suite
+    -- %param a_suite_name_in suite name
+    --
+    PROCEDURE run_suite(a_suite_name_in IN VARCHAR2);
+
+    --
     -- Run test case identified by test case id    
     -- %param p_id Test case identifier - pete_test_case.id
     --
-    PROCEDURE run_test_case(p_id IN pete_test_case.id%TYPE);
+    PROCEDURE run_case(p_id IN pete_test_case.id%TYPE);
 
     --
     -- Run test case identified by test case code - pete_test_case.code
     --
     --%param p_code Test case code - pete_test_case.code
     --
-    PROCEDURE run_test_case(p_code pete_test_case.code%TYPE);
+    PROCEDURE run_case(p_code pete_test_case.code%TYPE);
 
     --
     -- Run test script identified by test script identifier - pete_test_script.id
     --
     --%param p_id test script identifier - pete_test_script.id
     --
-    PROCEDURE run_test_script(p_id pete_test_script.id%TYPE);
+    PROCEDURE run_script(p_id pete_test_script.id%TYPE);
 
     --
     -- Run test script identified by test script code - pete_test_script.code
     --
     --%param p_code test script code - pete_test_script.code
     --
-    PROCEDURE run_test_script(p_code pete_test_script.code%TYPE);
+    PROCEDURE run_script(p_code pete_test_script.code%TYPE);
 
     --
     -- Run all test scripts

@@ -22,6 +22,27 @@ CREATE OR REPLACE PACKAGE BODY petep_logger AS
 
     g_user VARCHAR2(30) := USER; --cache for performance  todo prevzit z runneru
 
+    g_trace BOOLEAN := FALSE;
+
+    --
+    --wrapper for trace log 
+    --
+    PROCEDURE trace(a_trace_message_in VARCHAR2) IS
+    BEGIN
+        IF (g_trace)
+        THEN
+            dbms_output.put_line('TRACE> ' || a_trace_message_in); --enhancement  --konfigurovatelne globalne
+        END IF;
+    END trace;
+
+    --
+    -- trace log settings
+    --
+    PROCEDURE set_trace(a_value_in IN BOOLEAN) IS
+    BEGIN
+        g_trace := a_value_in;
+    END set_trace;
+
     /**
     * converts boolean to string representation 'SUCCESS' or 'FAILURE'
     */

@@ -55,7 +55,7 @@ Program units
 <TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
 <A HREF="#run">run</A>&nbsp;&nbsp;
 </TD><TD CLASS="DESC_TEXT" WIDTH=95%>
-Universal run procedure.
+Runs <A HREF=#test>test</A>
 </TD></TR>
 <TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
 <A HREF="#run_suite">run_suite</A>&nbsp;&nbsp;
@@ -94,6 +94,23 @@ Runs all availaible tests.
 </TD></TR>
 </TABLE>
 <BR>
+<A NAME="Exceptions"></A>
+<TABLE CLASS="SUB_TABLE"><TR><TD CLASS="SUB_TITLE">
+Exceptions
+</TD></TR></TABLE>
+<TABLE CLASS="SUB_TABLE">
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#ge_ambiguous_input">ge_ambiguous_input</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+Thrown if the input can't be clearly interpreted
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#ge_conflicting_input">ge_conflicting_input</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+Thrown if more conflicting parameters are set
+</TD></TR>
+</TABLE>
+<BR>
 <HR>
 <A NAME="run"></A>
 <P CLASS="TYPE_TITLE">
@@ -104,21 +121,18 @@ PROCEDURE run
 (
     a_suite_name_in      IN VARCHAR2 DEFAULT NULL,
     a_package_name_in    IN VARCHAR2 DEFAULT NULL,
-    a_method_namein      IN VARCHAR2 DEFAULT NULL,
+    a_method_name_in     IN VARCHAR2 DEFAULT NULL,
     a_script_code_in     IN VARCHAR2 DEFAULT NULL,
-    a_procedure_in       IN VARCHAR2 DEFAULT NULL,
+    a_procedure_name_in  IN VARCHAR2 DEFAULT NULL,
     a_case_code_in       IN VARCHAR2 DEFAULT NULL,
     a_style_conventional IN BOOLEAN DEFAULT NULL
 )
 
 </PRE>
 <P CLASS="DESC_TEXT">
-Universal run procedure. Can be used to run any unit of work of either concept. Other public run procedures runs this one. It accepts only configuration parameters (a_suite_in, a_script_in,a_case_in) or conventional parameters (a_suite_in, a_package_in, a_method_in) not a combination from both sets todo &quot;spolecny&quot; suite mi pripada confusing - dokazem to jmenne oddelit? nebo naopak totalne sjednotit?<br>
-&nbsp;<br>
-&nbsp;<br>
-&nbsp;<br>
-%throws ambiguous_input If the input can't be clearly interpreted<br>
-%throws conflicting_input If configuration parameters(script<br>
+Runs <A HREF=#test>test</A>
+Universal run procedure. Can be used to run any unit of work of either testing style.<br>
+Other public run procedures call this one. It accepts only - configuration parameters (a_suite_name_in, a_script_code_in, a_case_code_in) or - conventional parameters (a_suite_name_in, a_package_name_in, a_method_name_in) not a combination from both sets testing style can be explicitly set by a_style_conventional_in parameter<br>
 
 <BR>
 </P>
@@ -131,7 +145,7 @@ Parameters
 </TD><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
 a_suite_name_in&nbsp;&nbsp;
 </TD><TD CLASS="DESC_TEXT" WIDTH=95%>
-Runs a suite of tests of a given name. If there are suites of both concepts then throws an Ambiguos_input exception (can be explicitly set by @link a_style_in parameter) todo atlink je dobre?<br>
+Runs a suite of tests of a given name. If there are suites of both testing styles then throws an <A HREF=#ge_ambiguous_input>ge_ambiguous_input</A> exception<br>
 
 </TD></TR>
 <TR><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
@@ -171,6 +185,49 @@ If true<br>
 </TD></TR>
 </TABLE>
 <BR>
+<A NAME="Throws exceptions"></A>
+<TABLE CLASS="LIST_TABLE"><TR><TD CLASS="LIST_TITLE">
+Throws exceptions
+</TD></TR></TABLE>
+<TABLE CLASS="LIST_TABLE">
+<TR><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+<A HREF=#ge_ambiguous_input>ge_ambiguous_input</A>
+
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+<A HREF=#ge_conflicting_input>ge_conflicting_input</A>
+
+</TD></TR>
+</TABLE>
+<BR>
+<HR>
+<A NAME="ge_ambiguous_input"></A>
+<P CLASS="TYPE_TITLE">
+ge_ambiguous_input
+</P>
+<PRE CLASS="DECL_TEXT">
+ge_ambiguous_input EXCEPTION;
+</PRE>
+<P CLASS="DESC_TEXT">
+Thrown if the input can't be clearly interpreted<br>
+
+<BR>
+</P>
+<HR>
+<A NAME="ge_conflicting_input"></A>
+<P CLASS="TYPE_TITLE">
+ge_conflicting_input
+</P>
+<PRE CLASS="DECL_TEXT">
+ge_conflicting_input EXCEPTION;
+</PRE>
+<P CLASS="DESC_TEXT">
+Thrown if more conflicting parameters are set<br>
+
+<BR>
+</P>
 <HR>
 <A NAME="run_suite"></A>
 <P CLASS="TYPE_TITLE">
@@ -179,7 +236,7 @@ run_suite
 <PRE CLASS="DECL_TEXT">
 PROCEDURE run_suite
 (
-    a_suite_in           IN VARCHAR2,
+    a_suite_name_in      IN VARCHAR2,
     a_style_conventional IN BOOLEAN DEFAULT NULL
 )
 
@@ -196,7 +253,7 @@ Parameters
 <TABLE CLASS="LIST_TABLE">
 <TR><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
 </TD><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
-a_suite_in&nbsp;&nbsp;
+a_suite_name_in&nbsp;&nbsp;
 </TD><TD CLASS="DESC_TEXT" WIDTH=95%>
 
 </TD></TR>
@@ -204,6 +261,18 @@ a_suite_in&nbsp;&nbsp;
 </TD><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
 a_style_conventional&nbsp;&nbsp;
 </TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+
+</TD></TR>
+</TABLE>
+<BR>
+<A NAME="Throws exceptions"></A>
+<TABLE CLASS="LIST_TABLE"><TR><TD CLASS="LIST_TITLE">
+Throws exceptions
+</TD></TR></TABLE>
+<TABLE CLASS="LIST_TABLE">
+<TR><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+<A HREF=#ge_ambiguous_input>ge_ambiguous_input</A> If the input can't be clearly interpreted<br>
 
 </TD></TR>
 </TABLE>
@@ -328,10 +397,10 @@ test
 <PRE CLASS="DECL_TEXT">
 PROCEDURE test
 (
-    a_package_in      IN VARCHAR2,
-    a_method_mask_in  IN VARCHAR2 DEFAULT NULL,
-    a_same_package_in IN BOOLEAN DEFAULT FALSE,
-    a_prefix_in       IN VARCHAR2 DEFAULT NULL
+    a_package_name_in     IN VARCHAR2,
+    a_method_name_like_in IN VARCHAR2 DEFAULT NULL,
+    a_is_test_package_in  IN BOOLEAN DEFAULT TRUE,
+    a_prefix_in           IN VARCHAR2 DEFAULT NULL
 )
 
 </PRE>
@@ -354,13 +423,13 @@ a_package_in&nbsp;&nbsp;
 </TD></TR>
 <TR><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
 </TD><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
-a_method_mask_in&nbsp;&nbsp;
+a_method_name_like_in&nbsp;&nbsp;
 </TD><TD CLASS="DESC_TEXT" WIDTH=95%>
 
 </TD></TR>
 <TR><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
 </TD><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
-a_same_package_in&nbsp;&nbsp;
+a_is_test_package_in&nbsp;&nbsp;
 </TD><TD CLASS="DESC_TEXT" WIDTH=95%>
 
 </TD></TR>

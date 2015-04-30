@@ -75,5 +75,15 @@ CREATE OR REPLACE PACKAGE petep_logger AS
     -- 
     PROCEDURE init;
 
+    --
+    --wrapper for trace log 
+    --
+    PROCEDURE trace(a_trace_message_in VARCHAR2);
+
+    --
+    -- trace log settings
+    --
+    PROCEDURE set_trace(a_value_in IN BOOLEAN);
+
 END;
 /
