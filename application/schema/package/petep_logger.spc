@@ -1,12 +1,14 @@
 CREATE OR REPLACE PACKAGE petep_logger AS
 
-    /**
-    * Pete logging package
-    */
+    --
+    -- Pete logging package
+    -- - used by convention and configuration runners
+    --- use log_method method in implementation of test packages for Convention style test packages
+    --
 
     -- log context subtype 
     SUBTYPE typ_log_context IS VARCHAR2(255);
-
+    -- context constants
     gc_LOG_CONTEXT_SUITE   CONSTANT typ_log_context := 'SUITE';
     gc_LOG_CONTEXT_SCRIPT  CONSTANT typ_log_context := 'SCRIPT';
     gc_LOG_CONTEXT_CASE    CONSTANT typ_log_context := 'CASE';
@@ -22,7 +24,7 @@ CREATE OR REPLACE PACKAGE petep_logger AS
     */
     -- execution result subtype
     SUBTYPE typ_execution_result IS VARCHAR2(255);
-
+    -- execution result constants
     gc_SUCCESS CONSTANT typ_execution_result := 'SUCCESS';
     gc_FAILURE CONSTANT typ_execution_result := 'FAILURE';
 
@@ -41,6 +43,8 @@ CREATE OR REPLACE PACKAGE petep_logger AS
         a_description_in IN petep_logger.typ_description
     );
 
+    --
+    -- Logs methods info - use in Convention style test packages
     PROCEDURE log_method
     (
         a_description_in IN petep_logger.typ_description,
@@ -54,8 +58,6 @@ CREATE OR REPLACE PACKAGE petep_logger AS
     -- %param a_result_in logged result
     -- %param a_description_in 
     --
-
-    --
     PROCEDURE log_runner
     (
         a_description_in IN petep_logger.typ_description,
@@ -63,14 +65,15 @@ CREATE OR REPLACE PACKAGE petep_logger AS
         a_context_in     IN petep_logger.typ_log_context DEFAULT gc_LOG_CONTEXT_METHOD
     );
 
-    /*
-      Prints a result to stdout - step 0 from reporting package
-    */
+    -- 
+    -- Prints a result to stdout - step 0 from reporting package
+    --
     PROCEDURE print_result;
 
-    /**
-    * inits a test run
-    */
+    --
+    -- inits a logger
+    -- 
     PROCEDURE init;
+
 END;
 /

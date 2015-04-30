@@ -121,33 +121,32 @@ CREATE OR REPLACE PACKAGE BODY petep_convention_runner AS
                                     a_description_in => 'Running tests in ' ||
                                                         a_package_name_in);
     END;
-    
 
     /**
     * Tests one package
-    * %param a_package_in package name
+    * %param a_package_name_in package name to be tested
     * %param a_test_package_in if true, then methods of a_package_name_in would be run
     *                          if false, then methods of UT_ || a_package_name_in would be run
     * %param a_method_like_in filter for methods being run - if null, all methods would be run
     */
     PROCEDURE test
     (
-        a_package_in      IN VARCHAR2,
-        a_test_package_in BOOLEAN DEFAULT FALSE,
+        a_package_name_in IN VARCHAR2,
+        a_test_package_in IN BOOLEAN DEFAULT FALSE,
         a_method_like_in  IN VARCHAR2 DEFAULT NULL
     ) IS
         l_package_with_tests VARCHAR2(30);
         l_sql                VARCHAR2(500);
     BEGIN
-        trace('PROCEDURE TEST a_package_in:' || a_package_in);
+        trace('PROCEDURE TEST a_package_in:' || a_package_name_in);
         --
         init;
         --
         IF (a_test_package_in)
         THEN
-            l_package_with_tests := a_package_in;
+            l_package_with_tests := a_package_name_in;
         ELSE
-            l_package_with_tests := 'UT_' || upper(a_package_in); -- TODO: enhancement - configurable prefix
+            l_package_with_tests := 'UT_' || upper(a_package_name_in); -- TODO: enhancement - configurable prefix
         END IF;
         --
         log_package_description(a_package_name_in => l_package_with_tests);

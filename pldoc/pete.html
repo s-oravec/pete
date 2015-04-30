@@ -1,0 +1,392 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+ <HEAD>
+ <LINK REL="STYLESHEET" TYPE="text/css" HREF="plsqldoc.css">
+ <TITLE>Package pete</TITLE>
+ <META name="object" content="PACKAGE">
+ <META name="name" content="pete">
+ <META name="description" content="Configuration pete.run(a_suite_in =&gt; 'suite_code');">
+</HEAD>
+<BODY>
+<TABLE WIDTH="100%"><TR>
+<TD><P ALIGN="LEFT"><STRONG><SMALL></SMALL></STRONG></TD>
+<TD><P ALIGN="RIGHT"><STRONG><SMALL><A HREF="index.html">index</A></SMALL></STRONG></TD>
+</TR></TABLE>
+<TABLE CLASS="MAIN_TABLE"><TR><TD CLASS="DESC_TEXT">
+<P CLASS="MAIN_TITLE">Package pete</P>
+Configuration pete.run(a_suite_in =&gt; 'suite_code');<br>
+&nbsp;<br>
+\a suite<br>
+&nbsp;&nbsp;&nbsp; \a script<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \a case in order<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \a block in order<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; execute immediate block<br>
+Convention pete.run(a_suite_in =&gt; 'suite_code'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; a_style_in =&gt; petep_runner.convention);<br>
+&nbsp;<br>
+\a schema<br>
+&nbsp;&nbsp;&nbsp; if \e petep_before_all.run<br>
+&nbsp;&nbsp;&nbsp; \a package unordered<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if \e petep_before_each.run<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if \e package.before_all<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \a method in order (subprogram_id)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if \e package.before_each<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; execute immediate method<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if \e package.after_each<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if \e package.after_all<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if \e petep_after_each.run<br>
+&nbsp;&nbsp;&nbsp; if \e petep_after_all.run<br>
+Activity<br>
+&nbsp;<br>
+<A HREF=#run>run</A> pro jin&#253; nepovinn&#253; parametr by pou&#353;t&#283;l &quot;subset&quot; toho v&#253;&#353;e: a_package_in - jednu package a_script in - jeden skript a_method_in - jednu metodu a_case_in - jeden <A HREF=#test>test</A> case.<br>
+&nbsp;<br>
+Pri vypln&#283;n&#237; a_package_in nebo a_method_in jde o &quot;konvencni&quot; spoust&#283;n&#237; a proto budou rovn&#283;&#382; spu&#353;t&#283;ny v&#353;echny before/after metody/package<br>
+&nbsp;<br>
+a_style_in nepovinny, pouze, pokud dle obsahu parametru ke spousteni nepujde rozhodnout, kter&#253; styl u&#382;ivatel mysl&#237; (budou k dipozici oba)<br>
+
+<BR>
+</TD></TR></TABLE>
+<HR>
+<A NAME="Program units"></A>
+<TABLE CLASS="SUB_TABLE"><TR><TD CLASS="SUB_TITLE">
+Program units
+</TD></TR></TABLE>
+<TABLE CLASS="SUB_TABLE">
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#run">run</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+Universal run procedure.
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#run_suite">run_suite</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+Runs a suite
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#run_test_script">run_test_script</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+Runs a script identified by id
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#run_test_script2">run_test_script</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+Runs a script identified by code
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#run_test_case">run_test_case</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+Runs a <A HREF=#test>test</A> case identified by id
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#run_test_case2">run_test_case</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+Runs a script identified by code
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#test">test</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+Runs tests for a given package.
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#run_all_tests">run_all_tests</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+Runs all availaible tests.
+</TD></TR>
+</TABLE>
+<BR>
+<HR>
+<A NAME="run"></A>
+<P CLASS="TYPE_TITLE">
+run
+</P>
+<PRE CLASS="DECL_TEXT">
+PROCEDURE run
+(
+    a_suite_name_in      IN VARCHAR2 DEFAULT NULL,
+    a_package_name_in    IN VARCHAR2 DEFAULT NULL,
+    a_method_namein      IN VARCHAR2 DEFAULT NULL,
+    a_script_code_in     IN VARCHAR2 DEFAULT NULL,
+    a_procedure_in       IN VARCHAR2 DEFAULT NULL,
+    a_case_code_in       IN VARCHAR2 DEFAULT NULL,
+    a_style_conventional IN BOOLEAN DEFAULT NULL
+)
+
+</PRE>
+<P CLASS="DESC_TEXT">
+Universal run procedure. Can be used to run any unit of work of either concept. Other public run procedures runs this one. It accepts only configuration parameters (a_suite_in, a_script_in,a_case_in) or conventional parameters (a_suite_in, a_package_in, a_method_in) not a combination from both sets todo &quot;spolecny&quot; suite mi pripada confusing - dokazem to jmenne oddelit? nebo naopak totalne sjednotit?<br>
+&nbsp;<br>
+&nbsp;<br>
+&nbsp;<br>
+%throws ambiguous_input If the input can't be clearly interpreted<br>
+%throws conflicting_input If configuration parameters(script<br>
+
+<BR>
+</P>
+<A NAME="Parameters"></A>
+<TABLE CLASS="LIST_TABLE"><TR><TD CLASS="LIST_TITLE">
+Parameters
+</TD></TR></TABLE>
+<TABLE CLASS="LIST_TABLE">
+<TR><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
+</TD><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
+a_suite_name_in&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+Runs a suite of tests of a given name. If there are suites of both concepts then throws an Ambiguos_input exception (can be explicitly set by @link a_style_in parameter) todo atlink je dobre?<br>
+
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
+</TD><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
+a_package_name_in&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+Runs all tests following convention in a given package<br>
+
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
+</TD><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
+a_method_name_mask_in&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+Runs only tests of a given mask in a given package. Must be used with param a_package_in<br>
+
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
+</TD><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
+a_script_code_in&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+Runs a <A HREF=#test>test</A> script of a given code<br>
+
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
+</TD><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
+a_case_code_in&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+Runs a <A HREF=#test>test</A> case of a given code<br>
+
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
+</TD><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
+a_style_conventional&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+If true<br>
+
+</TD></TR>
+</TABLE>
+<BR>
+<HR>
+<A NAME="run_suite"></A>
+<P CLASS="TYPE_TITLE">
+run_suite
+</P>
+<PRE CLASS="DECL_TEXT">
+PROCEDURE run_suite
+(
+    a_suite_in           IN VARCHAR2,
+    a_style_conventional IN BOOLEAN DEFAULT NULL
+)
+
+</PRE>
+<P CLASS="DESC_TEXT">
+Runs a suite<br>
+
+<BR>
+</P>
+<A NAME="Parameters"></A>
+<TABLE CLASS="LIST_TABLE"><TR><TD CLASS="LIST_TITLE">
+Parameters
+</TD></TR></TABLE>
+<TABLE CLASS="LIST_TABLE">
+<TR><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
+</TD><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
+a_suite_in&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
+</TD><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
+a_style_conventional&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+
+</TD></TR>
+</TABLE>
+<BR>
+<HR>
+<A NAME="run_test_script"></A>
+<P CLASS="TYPE_TITLE">
+run_test_script
+</P>
+<PRE CLASS="DECL_TEXT">
+PROCEDURE run_test_script(a_id_in IN NUMBER)
+
+</PRE>
+<P CLASS="DESC_TEXT">
+Runs a script identified by id<br>
+
+<BR>
+</P>
+<A NAME="Parameters"></A>
+<TABLE CLASS="LIST_TABLE"><TR><TD CLASS="LIST_TITLE">
+Parameters
+</TD></TR></TABLE>
+<TABLE CLASS="LIST_TABLE">
+<TR><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
+</TD><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
+a_id_in&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+id of the script to be <A HREF=#run>run</A>
+
+</TD></TR>
+</TABLE>
+<BR>
+<HR>
+<A NAME="run_test_script2"></A>
+<P CLASS="TYPE_TITLE">
+run_test_script
+</P>
+<PRE CLASS="DECL_TEXT">
+PROCEDURE run_test_script(a_script_code_in IN VARCHAR2)
+
+</PRE>
+<P CLASS="DESC_TEXT">
+Runs a script identified by code<br>
+
+<BR>
+</P>
+<A NAME="Parameters"></A>
+<TABLE CLASS="LIST_TABLE"><TR><TD CLASS="LIST_TITLE">
+Parameters
+</TD></TR></TABLE>
+<TABLE CLASS="LIST_TABLE">
+<TR><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
+</TD><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
+a_script_code_in&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+code of the script to be <A HREF=#run>run</A>
+
+</TD></TR>
+</TABLE>
+<BR>
+<HR>
+<A NAME="run_test_case"></A>
+<P CLASS="TYPE_TITLE">
+run_test_case
+</P>
+<PRE CLASS="DECL_TEXT">
+PROCEDURE run_test_case(a_id_in IN NUMBER)
+
+</PRE>
+<P CLASS="DESC_TEXT">
+Runs a <A HREF=#test>test</A> case identified by id<br>
+
+<BR>
+</P>
+<A NAME="Parameters"></A>
+<TABLE CLASS="LIST_TABLE"><TR><TD CLASS="LIST_TITLE">
+Parameters
+</TD></TR></TABLE>
+<TABLE CLASS="LIST_TABLE">
+<TR><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
+</TD><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
+a_id_in&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+id of the script to be <A HREF=#run>run</A>
+
+</TD></TR>
+</TABLE>
+<BR>
+<HR>
+<A NAME="run_test_case2"></A>
+<P CLASS="TYPE_TITLE">
+run_test_case
+</P>
+<PRE CLASS="DECL_TEXT">
+PROCEDURE run_test_case(a_test_case_code_in IN VARCHAR2)
+
+</PRE>
+<P CLASS="DESC_TEXT">
+Runs a script identified by code<br>
+
+<BR>
+</P>
+<A NAME="Parameters"></A>
+<TABLE CLASS="LIST_TABLE"><TR><TD CLASS="LIST_TITLE">
+Parameters
+</TD></TR></TABLE>
+<TABLE CLASS="LIST_TABLE">
+<TR><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
+</TD><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
+a_script_code_in&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+Code of the script to be <A HREF=#run>run</A>
+
+</TD></TR>
+</TABLE>
+<BR>
+<HR>
+<A NAME="test"></A>
+<P CLASS="TYPE_TITLE">
+test
+</P>
+<PRE CLASS="DECL_TEXT">
+PROCEDURE test
+(
+    a_package_in      IN VARCHAR2,
+    a_method_mask_in  IN VARCHAR2 DEFAULT NULL,
+    a_same_package_in IN BOOLEAN DEFAULT FALSE,
+    a_prefix_in       IN VARCHAR2 DEFAULT NULL
+)
+
+</PRE>
+<P CLASS="DESC_TEXT">
+Runs tests for a given package. Such tests are in a test package which can be derived from the given one.<br>
+throws tests not found if there are no tests to be <A HREF=#run>run</A>
+
+<BR>
+</P>
+<A NAME="Parameters"></A>
+<TABLE CLASS="LIST_TABLE"><TR><TD CLASS="LIST_TITLE">
+Parameters
+</TD></TR></TABLE>
+<TABLE CLASS="LIST_TABLE">
+<TR><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
+</TD><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
+a_package_in&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
+</TD><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
+a_method_mask_in&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
+</TD><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
+a_same_package_in&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
+</TD><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
+a_prefix_in&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+
+</TD></TR>
+</TABLE>
+<BR>
+<HR>
+<A NAME="run_all_tests"></A>
+<P CLASS="TYPE_TITLE">
+run_all_tests
+</P>
+<PRE CLASS="DECL_TEXT">
+PROCEDURE run_all_tests
+
+</PRE>
+<P CLASS="DESC_TEXT">
+Runs all availaible tests. That means all configured scripts from table pete_scripts and all <A HREF=#test>test</A> packages conforming convention.<br>
+
+<BR>
+</P>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+</BODY>
+</HTML>

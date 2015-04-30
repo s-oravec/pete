@@ -9,7 +9,7 @@ prompt ==================================
 prompt
 prompt Run test package UT_PETE_FUNCTIONS
 prompt ===============================
-exec pete.test(a_package_in => 'UT_PETE_FUNCTIONS', a_same_package_in => true);
+exec pete.test(a_package_name_in => 'UT_PETE_FUNCTIONS', a_same_package_in => true);
 prompt
 
 @&&run_dir_end
