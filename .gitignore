@@ -1,2 +1,7 @@
 *.DS_Store
 ._.gitignore
+sqlsn/sqlsn_modules/sqlsn-stack/lib/tmp/.stack_path_x.sql
+sqlsn/sqlsn_modules/sqlsn-stack/lib/tmp/.stack_path_xx.sql
+sqlsn/sqlsn_modules/sqlsn-stack/lib/tmp/.stack_path_xxx.sql
+sqlsn/sqlsn_modules/sqlsn-stack/lib/tmp/.stack_path_xxxx.sql
+sqlsn/sqlsn_modules/sqlsn-stack/lib/tmp/.x.sql
