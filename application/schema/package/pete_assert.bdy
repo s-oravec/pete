@@ -156,7 +156,7 @@ CREATE OR REPLACE PACKAGE BODY pete_assert IS
     END fail;
 
     --
-    -- Tests equality of the inpurt parameters. Nulls are considered equal
+    -- Tests equality of the input parameters. Nulls are considered equal
     --------------------------------------------------------------------------------
     PROCEDURE eq
     (
@@ -172,7 +172,7 @@ CREATE OR REPLACE PACKAGE BODY pete_assert IS
     END eq;
 
     --
-    -- Tests equality of the inpurt parameters. Nulls are considered equal
+    -- Tests equality of the input parameters. Nulls are considered equal
     --------------------------------------------------------------------------------
     PROCEDURE eq
     (
@@ -188,7 +188,7 @@ CREATE OR REPLACE PACKAGE BODY pete_assert IS
     END eq;
 
     --
-    -- Tests equality of the inpurt parameters. Nulls are considered equal
+    -- Tests equality of the input parameters. Nulls are considered equal
     --------------------------------------------------------------------------------
     PROCEDURE eq
     (
@@ -203,8 +203,24 @@ CREATE OR REPLACE PACKAGE BODY pete_assert IS
                  a_expected_in || ' expected to be equal to ' || a_actual_in));
     END eq;
 
+    --------------------------------------------------------------------------------
+    PROCEDURE eq
+    (
+        a_expected_in BOOLEAN,
+        a_actual_in   BOOLEAN,
+        a_comment_in  VARCHAR2 DEFAULT NULL
+    ) IS
+    BEGIN
+        this(a_expected_in = a_actual_in OR
+             (a_expected_in IS NULL AND a_actual_in IS NULL),
+             nvl(a_comment_in,
+                 CASE WHEN a_expected_in THEN 'true' ELSE 'false'
+                 END || ' expected to be equal to ' || CASE WHEN a_actual_in THEN
+                 'true' ELSE 'false' END));
+    END;
+
     --
-    -- Tests equality of the inpurt parameters. Nulls are considered equal
+    -- Tests equality of the input parameters. Nulls are considered equal
     --------------------------------------------------------------------------------
     PROCEDURE eq
     (

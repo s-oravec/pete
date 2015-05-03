@@ -38,6 +38,8 @@ CREATE OR REPLACE PACKAGE ut_pete_assert AS
 
     PROCEDURE eq_date_succeeds(d VARCHAR2 := 'eq should succeed for equal dates');
 
+    PROCEDURE eq_boolean_succeeds(d VARCHAR2 := 'eq should succeed for equal booleans');
+
     PROCEDURE eq_same_xmltype_succeeds(d VARCHAR2 := 'eq should succeed for two equal xmls with same order of elements');
 
     PROCEDURE eq_diff_order_xmltype_throws(d VARCHAR2 := 'eq should throw for two equal xmls with different order of elements');
@@ -225,6 +227,16 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_assert AS
         pete_logger.log_method_description(d);
         --test
         pete_assert.eq(l_d, l_d);
+        --assert
+    END;
+
+    PROCEDURE eq_boolean_succeeds(d VARCHAR2) IS
+    BEGIN
+        --log
+        pete_logger.log_method_description(d);
+        --test
+        pete_assert.eq(TRUE, TRUE);
+        pete_assert.eq(FALSE, FALSE);
         --assert
     END;
 
