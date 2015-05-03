@@ -32,7 +32,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_config_runner AS
     g_pete_plsql_block_in_case_id pete_plsql_block_in_case.id%TYPE;
     g_input_param_id              pete_input_param.id%TYPE;
     g_output_param_id             pete_output_param.id%TYPE;
-    
+
     g_result pete_core.typ_is_success;
 
     PROCEDURE before_each IS
@@ -134,7 +134,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_config_runner AS
     END;
 
     PROCEDURE input_parameter_succeeds(d VARCHAR2) IS
-        l_xml    xmltype := xmltype.createxml('<message>Hello world!</message>');
+        l_xml xmltype := xmltype.createxml('<message>Hello world!</message>');
     BEGIN
         --log
         pete_logger.log_method_description(d);
@@ -149,7 +149,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_config_runner AS
     END;
 
     PROCEDURE expected_out_param_succeeds(d VARCHAR2) IS
-        l_xml    xmltype := xmltype.createxml('<message>Hello world!</message>');
+        l_xml xmltype := xmltype.createxml('<message>Hello world!</message>');
     BEGIN
         --log
         pete_logger.log_method_description(d);
@@ -166,8 +166,8 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_config_runner AS
     END;
 
     PROCEDURE unexpected_out_param_fails(d VARCHAR2) IS
-        l_xml1   xmltype := xmltype.createxml('<message>Hello world!</message>');
-        l_xml2   xmltype := xmltype.createxml('<message>Hello mooon!</message>');
+        l_xml1 xmltype := xmltype.createxml('<message>Hello world!</message>');
+        l_xml2 xmltype := xmltype.createxml('<message>Hello mooon!</message>');
     BEGIN
         --log
         pete_logger.log_method_description(d);

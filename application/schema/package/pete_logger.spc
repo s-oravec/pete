@@ -41,6 +41,8 @@ CREATE OR REPLACE PACKAGE pete_logger AS
     (
         a_run_log_id_in    IN pete_run_log.id%TYPE,
         a_result_in        IN pete_run_log.result%TYPE,
+        a_xml_in_in        IN pete_run_log.xml_in%TYPE,
+        a_xml_out_in       IN pete_run_log.xml_out%TYPE,
         a_error_code_in    IN pete_run_log.error_code%TYPE,
         a_error_message_in IN pete_run_log.error_message%TYPE
     );

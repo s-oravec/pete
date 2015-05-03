@@ -90,6 +90,8 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
     (
         a_run_log_id_in    IN pete_run_log.id%TYPE,
         a_result_in        IN pete_run_log.result%TYPE,
+        a_xml_in_in        IN pete_run_log.xml_in%TYPE,
+        a_xml_out_in       IN pete_run_log.xml_out%TYPE,
         a_error_code_in    IN pete_run_log.error_code%TYPE,
         a_error_message_in IN pete_run_log.error_message%TYPE
     ) IS
@@ -99,6 +101,8 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
         UPDATE pete_run_log p
            SET p.result        = a_result_in,
                p.test_end      = systimestamp,
+               p.xml_in        = a_xml_in_in,
+               p.xml_out       = a_xml_out_in,
                p.error_code    = a_error_code_in,
                p.error_message = a_error_message_in
          WHERE id = a_run_log_id_in;

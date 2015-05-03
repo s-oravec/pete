@@ -91,7 +91,9 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
                                a_comment_in  => 'Expected PLSQL block result');
             END IF;
             --
-            pete_core.end_test(a_run_log_id_in => l_run_log_id);
+            pete_core.end_test(a_run_log_id_in => l_run_log_id,
+                               a_xml_in_in     => a_block_instance_in_case_in.input,
+                               a_xml_out_in    => l_xml_out);
             l_result := TRUE;
             --
         EXCEPTION
@@ -99,6 +101,8 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
                 l_result := FALSE;
                 pete_core.end_test(a_run_log_id_in    => l_run_log_id,
                                    a_is_succes_in     => l_result,
+                                   a_xml_in_in        => a_block_instance_in_case_in.input,
+                                   a_xml_out_in       => l_xml_out,
                                    a_error_code_in    => SQLCODE,
                                    a_error_message_in => dbms_utility.format_error_backtrace);
         END;
