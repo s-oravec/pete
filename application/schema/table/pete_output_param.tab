@@ -1,14 +1,14 @@
 create table PETE_OUTPUT_PARAM
 (
-  id             NUMBER not null,
-  test_script_id NUMBER,
+  id             INTEGER not null,
+  test_script_id INTEGER,
   name           VARCHAR2(255) not null,
   value          XMLTYPE,
   description    VARCHAR2(255)
 )
 ;
 comment on table PETE_OUTPUT_PARAM
-  is 'PLSQL block output parameters';
+  is 'PLSQL block expected output parameters';
   
 comment on column PETE_OUTPUT_PARAM.id
   is 'Output parameter surrogate key';
@@ -30,4 +30,3 @@ alter table PETE_OUTPUT_PARAM
 alter table PETE_OUTPUT_PARAM
   add constraint PETE_OUTPUT_PARAM_FK01 foreign key (TEST_SCRIPT_ID)
   references PETE_TEST_SCRIPT (ID);
-

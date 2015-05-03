@@ -1,7 +1,7 @@
 create table PETE_PLSQL_BLOCK
 (
-  id              NUMBER not null,
-  test_script_id  NUMBER,
+  id              INTEGER not null,
+  test_script_id  INTEGER,
   name            VARCHAR2(255) not null,
   description     VARCHAR2(255),
   owner           VARCHAR2(32),
