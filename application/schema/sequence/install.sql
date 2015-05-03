@@ -1,11 +1,6 @@
 @&&run_dir_begin
 
 prompt
-prompt Creating sequence PETES_BLOCK_RUN_RUN_ID
-prompt ======================================
-prompt
-@@petes_block_run_run_id.seq
-prompt
 prompt Creating sequence PETES_INPUT_PARAM
 prompt =================================
 prompt
@@ -21,11 +16,6 @@ prompt =========================================
 prompt
 @@petes_plsql_block_in_case.seq
 prompt
-prompt Creating sequence PETES_PLSQL_BLOCK_RUN
-prompt =====================================
-prompt
-@@petes_plsql_block_run.seq
-prompt
 prompt Creating sequence PETES_TEST_CASE
 prompt ===============================
 prompt
@@ -40,10 +30,15 @@ prompt Creating sequence PETES_TEST_SCRIPT
 prompt =================================
 prompt
 @@petes_test_script.seq
-
-prompt todo
+prompt
+prompt Creating sequence PETES_RUN_LOG
+prompt =================================
+prompt
 @@petes_run_log.seq
-@@petes_run_log_details.seq
-
+prompt
+prompt Creating sequence PETES_RUN_LOG_DETAIL
+prompt =================================
+prompt
+@@petes_run_log_detail.seq
 
 @&&run_dir_end

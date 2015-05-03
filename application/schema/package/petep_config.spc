@@ -1,4 +1,4 @@
-CREATE OR REPLACE PACKAGE petep_config AS
+CREATE OR REPLACE PACKAGE pete_config AS
 
     --
     -- Pete config API package

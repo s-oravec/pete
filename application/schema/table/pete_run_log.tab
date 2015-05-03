@@ -1,15 +1,21 @@
 -- Create table
 create table PETE_RUN_LOG
 (
-  id             NUMBER not null,
-  result         VARCHAR2(10),
-  asserts_passed NUMBER,
-  asserts_failed NUMBER,
-  test_start     DATE,
-  test_end       DATE
-)
-;
+  id                 INTEGER,
+  parent_id          INTEGER,
+  plsql_block_id     INTEGER,
+  test_case_id       INTEGER,
+  test_script_id     INTEGER,  
+  object_type        VARCHAR2(30),
+  object_name        VARCHAR2(92),
+  result             VARCHAR2(10),
+  description        VARCHAR2(4000),
+  test_begin         TIMESTAMP(6),
+  test_end           TIMESTAMP(6),
+  error_code         integer,
+  error_message      varchar2(4000)
+);
 -- Create/Recreate primary, unique and foreign key constraints 
 alter table PETE_RUN_LOG
-  add constraint PETE_RUN_LOG_PK primary key (ID)
+  add constraint PETE_RUN_LOG_PK primary key (run_log_id)
 ;

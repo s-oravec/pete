@@ -1,1 +1,1 @@
-create sequence petes_run_log;
+create sequence PETES_RUN_LOG;

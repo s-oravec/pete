@@ -2,7 +2,6 @@ create table PETE_PLSQL_BLOCK
 (
   id              NUMBER not null,
   test_script_id  NUMBER,
-  code            VARCHAR2(30) not null,
   name            VARCHAR2(255) not null,
   description     VARCHAR2(255),
   owner           VARCHAR2(32),
@@ -11,14 +10,14 @@ create table PETE_PLSQL_BLOCK
   anonymous_block CLOB
 )
 ;
+
 comment on table PETE_PLSQL_BLOCK
   is 'PLSQL block';
+  
 comment on column PETE_PLSQL_BLOCK.id
   is 'PLSQL block surrogate identifier';
 comment on column PETE_PLSQL_BLOCK.test_script_id
   is 'Test script identifier';
-comment on column PETE_PLSQL_BLOCK.code
-  is 'PLSQL block code';
 comment on column PETE_PLSQL_BLOCK.name
   is 'PLSQL block name';
 comment on column PETE_PLSQL_BLOCK.description
@@ -31,12 +30,15 @@ comment on column PETE_PLSQL_BLOCK.method
   is 'Method';
 comment on column PETE_PLSQL_BLOCK.anonymous_block
   is 'Anonymous PLSQL block declaration';
+  
 create index PETE_PLSQL_BLOCK_FK01 on PETE_PLSQL_BLOCK (TEST_SCRIPT_ID);
+
 alter table PETE_PLSQL_BLOCK
   add constraint PETE_PLSQL_BLOCK_PK primary key (ID);
 alter table PETE_PLSQL_BLOCK
   add constraint PETE_PLSQL_BLOCK_FK01 foreign key (TEST_SCRIPT_ID)
   references PETE_TEST_SCRIPT (ID);
+  
 alter table PETE_PLSQL_BLOCK
   add constraint PETE_PLSQL_BLOCK_CHK01
   check (((ANONYMOUS_BLOCK is null and OWNER is not null and package is not null and METHOD is not null) or

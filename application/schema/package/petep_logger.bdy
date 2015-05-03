@@ -1,28 +1,122 @@
-CREATE OR REPLACE PACKAGE BODY petep_logger AS
+CREATE OR REPLACE PACKAGE BODY pete_logger AS
 
-    gc_INDENT_ASSERT  CONSTANT INTEGER := 6;
-    gc_INDENT_METHOD  CONSTANT INTEGER := 4;
-    gc_INDENT_CASE    CONSTANT INTEGER := 4;
-    gc_INDENT_BLOCK   CONSTANT INTEGER := 4;
-    gc_INDENT_SCRIPT  CONSTANT INTEGER := 2;
-    gc_INDENT_PACAKGE CONSTANT INTEGER := 2;
-    gc_INDENT_SCHEMA  CONSTANT INTEGER := 0;
-    gc_INDENT_SUITE   CONSTANT INTEGER := 0;
-    gc_INDENT_DEFAULT CONSTANT INTEGER := 4;
+    gc_LOG_TO_DBMS_OUTPUT CONSTANT BOOLEAN := TRUE;
 
-    g_test_result    BOOLEAN;
-    g_asserts_passed NUMBER := 0;
-    g_asserts_failed NUMBER := 0;
+    g_log_to_dbms_output BOOLEAN;
+    g_trace              BOOLEAN := FALSE;
 
-    g_test_start DATE;
-    g_run_id     NUMBER;
+    --used to update log_run record as method description is available after 
+    --log record for method is already created
+    g_run_log_id INTEGER;
 
-    g_test_package VARCHAR2(30); --"currently executed" test package
-    g_test_method  VARCHAR2(30); --"currently executed" test method
+    --------------------------------------------------------------------------------
+    FUNCTION get_package_description(a_package_name_in IN user_procedures.object_name%TYPE)
+        RETURN VARCHAR2 IS
+        l_call_template CONSTANT VARCHAR2(255) --
+        := 'begin :1 := #PackageName#.description; end;';
+        l_result VARCHAR(255);
+    BEGIN
+        EXECUTE IMMEDIATE REPLACE(l_call_template,
+                                  '#PackageName#',
+                                  a_package_name_in)
+            USING OUT l_result;
+        RETURN l_result;
+    EXCEPTION
+        WHEN OTHERS THEN
+            RETURN NULL;
+    END get_package_description;
 
-    g_user VARCHAR2(30) := USER; --cache for performance  todo prevzit z runneru
+    --------------------------------------------------------------------------------  
+    FUNCTION get_suite_description(a_suite_name_in IN VARCHAR2) RETURN VARCHAR2 IS
+    BEGIN
+        RETURN 'Suite ' || a_suite_name_in;
+    END get_suite_description;
 
-    g_trace BOOLEAN := FALSE;
+    --
+    -- package initialization
+    --
+    --------------------------------------------------------------------------------
+    PROCEDURE init(a_log_to_dbms_output_in IN BOOLEAN DEFAULT TRUE) IS
+    BEGIN
+        g_log_to_dbms_output := nvl(a_log_to_dbms_output_in,
+                                    gc_LOG_TO_DBMS_OUTPUT);
+    END init;
+
+    --------------------------------------------------------------------------------
+    PROCEDURE log_start
+    (
+        a_run_log_id_in        IN pete_run_log.id%TYPE,
+        a_parent_run_log_id_in IN pete_run_log.parent_id%TYPE,
+        a_description_in       IN pete_run_log.description%TYPE,
+        a_object_type_in       IN pete_run_log.object_type%TYPE,
+        a_object_name_in       IN pete_run_log.object_name%TYPE
+    ) IS
+        lrec_pete_run_log pete_run_log%ROWTYPE;
+        PRAGMA AUTONOMOUS_TRANSACTION;
+    BEGIN
+        --
+        g_run_log_id := a_run_log_id_in;
+        --
+        lrec_pete_run_log.id          := a_run_log_id_in;
+        lrec_pete_run_log.parent_id   := a_parent_run_log_id_in;
+        lrec_pete_run_log.object_type := a_object_type_in;
+        lrec_pete_run_log.object_name := a_object_name_in;
+        lrec_pete_run_log.test_begin  := systimestamp;
+        --
+        CASE a_object_type_in
+            WHEN pete_core.g_OBJECT_TYPE_PACKAGE THEN
+                lrec_pete_run_log.description := get_package_description(a_package_name_in => a_object_name_in) ||
+                                                 a_description_in;
+            WHEN pete_core.g_OBJECT_TYPE_SUITE THEN
+                lrec_pete_run_log.description := get_suite_description(a_suite_name_in => a_object_name_in) ||
+                                                 a_description_in;
+            ELSE
+                lrec_pete_run_log.description := a_description_in;
+        END CASE;
+        --
+        lrec_pete_run_log.description := nvl(lrec_pete_run_log.description,
+                                             'Testing ' ||
+                                             lower(a_object_type_in) || ' ' ||
+                                             upper(a_object_name_in));
+        --
+        INSERT INTO pete_run_log VALUES lrec_pete_run_log;
+        --
+        COMMIT;
+        --
+    END;
+
+    --------------------------------------------------------------------------------
+    PROCEDURE log_end
+    (
+        a_run_log_id_in    IN pete_run_log.id%TYPE,
+        a_result_in        IN pete_run_log.result%TYPE,
+        a_error_code_in    IN pete_run_log.error_code%TYPE,
+        a_error_message_in IN pete_run_log.error_message%TYPE
+    ) IS
+        PRAGMA AUTONOMOUS_TRANSACTION;
+    BEGIN
+        --
+        UPDATE pete_run_log p
+           SET p.result        = a_result_in,
+               p.test_end      = systimestamp,
+               p.error_code    = a_error_code_in,
+               p.error_message = a_error_message_in
+         WHERE id = a_run_log_id_in;
+        --
+        COMMIT;
+    END;
+
+    --------------------------------------------------------------------------------     
+    PROCEDURE log_method_description(a_description_in IN pete_core.typ_description) IS
+    BEGIN
+        --
+        UPDATE pete_run_log
+           SET description = a_description_in
+         WHERE id = g_run_log_id; --set to package session veriable on start of method execution
+        --
+        COMMIT;
+        --
+    END;
 
     --
     --wrapper for trace log 
@@ -43,277 +137,7 @@ CREATE OR REPLACE PACKAGE BODY petep_logger AS
         g_trace := a_value_in;
     END set_trace;
 
-    /**
-    * converts boolean to string representation 'SUCCESS' or 'FAILURE'
-    */
-    FUNCTION bool2res(a_value_in BOOLEAN) RETURN VARCHAR2 IS
-        l_result VARCHAR2(10);
-    BEGIN
-        IF (a_value_in)
-        THEN
-            l_result := gc_SUCCESS;
-        
-        ELSE
-            l_result := gc_FAILURE;
-        END IF;
-        RETURN l_result;
-    END;
-
-    /*
-     Logs info about a run result
-    */
-    PROCEDURE log_result IS
-        l_result VARCHAR2(30);
-        PRAGMA AUTONOMOUS_TRANSACTION;
-    BEGIN
-        l_result := bool2res(g_test_result);
-        --create table pete_test_run_log (id number, result varchar2(10), asserts_passed number, asserts_failed number, test_start date, test_end date);
-        INSERT INTO pete_run_log
-            (id, RESULT, asserts_passed, asserts_failed, test_start, test_end)
-        VALUES
-            (g_run_id,
-             l_result,
-             g_asserts_passed,
-             g_asserts_failed,
-             g_test_start,
-             SYSDATE);
-        COMMIT;
-    END;
-
-    /**
-    * vytiskne celkovy vysledek v zavislosti na globalni stavove promenne
-     todo - do petep_report nebo tak neco
-    */
-    PROCEDURE print_result IS
-        l_result VARCHAR2(10);
-    BEGIN
-        dbms_output.put_line('==============================');
-        l_result := bool2res(g_test_result);
-    
-        dbms_output.put_line(l_result);
-        dbms_output.put_line(g_asserts_passed || ' asserts passed and ' ||
-                             g_asserts_failed || ' asserts failed');
-        log_result;
-    END;
-
-    --todo ucesat, dokumentovat
-    PROCEDURE get_assert_caller_info
-    (
-        a_package_name_out OUT VARCHAR2,
-        a_line_number_out  OUT NUMBER
-    ) IS
-        l_stack VARCHAR2(1000);
-        l_part  VARCHAR2(30);
-        l_od    NUMBER;
-        l_od2   NUMBER;
-        l_do    NUMBER;
-        ASSERT_PACKAGE CONSTANT VARCHAR2(30) := 'PETEP_ASSERT';
-    BEGIN
-        --        dbms_output.put_line(dbms_utility.format_call_stack);
-        l_stack := dbms_utility.format_call_stack;
-    
-        a_package_name_out := ASSERT_PACKAGE;
-        l_od               := 0;
-        WHILE (a_package_name_out = ASSERT_PACKAGE)
-        LOOP
-            l_od               := instr(l_stack,
-                                        'package body ' || g_user || '.' ||
-                                        ASSERT_PACKAGE,
-                                        l_od + 1);
-            l_od2              := regexp_instr(l_stack,
-                                               'package body ' || g_user || '.' --||a_package_name_in
-                                              ,
-                                               position => l_od + 5);
-            l_do               := regexp_Instr(l_stack,
-                                               'package body ' || g_user ||
-                                               '.[a-zA-Z0-9_]*',
-                                               l_od2,
-                                               1,
-                                               1);
-            l_od2              := l_od2 +
-                                  length('package body ' || g_user || '.');
-            a_package_name_out := substr(l_stack, l_od2, l_do - l_od2);
-        END LOOP;
-        /* bug
-        l_part := substr(l_stack,
-                         regexp_instr(l_stack,
-                                      '[0-9]+ *package body ' || g_user || '.' --||a_package_name_in
-                                     ,
-                                      position => l_od),
-                         4);
-        */
-        --TODO: fix this
-        l_part := regexp_substr(substr(l_stack,
-                                       regexp_instr(l_stack,
-                                                    '[0-9]+ *package body ' ||
-                                                    g_user || '.' --||a_package_name_in
-                                                   ,
-                                                    position => l_od),
-                                       4),
-                                '[0-9]+');
-        --todo zjistovat package? ze ktere je volan assert
-    
-        a_line_number_out := to_number(TRIM(l_part));
-    END get_assert_caller_info;
-
-    /**
-    * formats output of one assert
-    */
-    FUNCTION format_output
-    (
-        a_result_in      VARCHAR2,
-        a_comment_in     IN VARCHAR2,
-        a_package_in     IN VARCHAR2,
-        a_method_in      IN VARCHAR2,
-        a_line_number_in IN NUMBER
-    ) RETURN VARCHAR2 IS
-        l_result VARCHAR2(400);
-    BEGIN
-        l_result := rpad('.', gc_indent_assert, ' ') || a_result_in || ' - ' ||
-                    a_comment_in || ' (' || a_package_in || ':' ||
-                    a_line_number_in || ', proc-' || a_method_in || ');';
-        RETURN l_result;
-    END;
-
-    /**
-    * logs detailed info about an assert and its result
-    */
-    PROCEDURE log_detail
-    (
-        a_result_in      VARCHAR2,
-        a_comment_in     VARCHAR2,
-        a_line_number_in NUMBER
-    ) IS
-        PRAGMA AUTONOMOUS_TRANSACTION;
-    BEGIN
-        INSERT INTO pete_run_log_details
-            (id,
-             run_id,
-             RESULT,
-             assert_comment,
-             test_package,
-             test_procedure,
-             line_number,
-             run_at)
-        VALUES
-            (petes_run_log_details.nextval,
-             g_run_id,
-             a_result_in,
-             a_comment_in,
-             g_test_package,
-             g_test_method,
-             a_line_number_in,
-             systimestamp);
-    
-        COMMIT;
-    END;
-
-    --
-    -- Logs assert package thingies
-    --
-    -- %param a_result_in assert result
-    -- %param a_description_in assert description
-    --
-    PROCEDURE log_assert
-    (
-        a_result_in      IN petep_logger.typ_execution_result,
-        a_description_in IN petep_logger.typ_description
-    ) IS
-        l_line_number pete_run_log_details.line_number%TYPE := 3.14;
-    BEGIN
-        get_assert_caller_info(a_package_name_out => g_test_package,
-                               a_line_number_out  => l_line_number);
-        --
-        IF (a_result_in = gc_SUCCESS)
-        THEN
-            IF (NOT petep_config.get_show_failures_only)
-            THEN
-                dbms_output.put_line(format_output(a_result_in,
-                                                   a_description_In,
-                                                   g_test_package,
-                                                   g_test_method,
-                                                   l_line_number));
-            END IF;
-            g_asserts_passed := g_asserts_passed + 1;
-        ELSE
-            g_test_result    := FALSE;
-            g_asserts_failed := g_asserts_failed + 1;
-            dbms_output.put_line(format_output(a_result_in,
-                                               a_description_In,
-                                               g_test_package,
-                                               g_test_method,
-                                               l_line_number));
-        END IF;
-        log_detail(a_result_in      => a_result_in,
-                   a_comment_in     => a_description_in,
-                   a_line_number_in => l_line_number);
-    END;
-
-    --------------------------------------------------------------------------------
-    FUNCTION get_indent(a_context_in IN petep_logger.typ_log_context)
-        RETURN PLS_INTEGER IS
-    BEGIN
-        --TODO: rewrite
-        CASE a_context_in
-            WHEN petep_logger.gc_LOG_CONTEXT_ASSERT THEN
-                RETURN gc_INDENT_ASSERT;
-            WHEN petep_logger.gc_LOG_CONTEXT_BLOCK THEN
-                RETURN gc_INDENT_BLOCK;
-            WHEN petep_logger.gc_LOG_CONTEXT_CASE THEN
-                RETURN gc_INDENT_CASE;
-            WHEN petep_logger.gc_LOG_CONTEXT_METHOD THEN
-                RETURN gc_INDENT_METHOD;
-            WHEN petep_logger.gc_LOG_CONTEXT_PACKAGE THEN
-                RETURN gc_INDENT_PACAKGE;
-            WHEN petep_logger.gc_LOG_CONTEXT_SCRIPT THEN
-                RETURN gc_INDENT_SCRIPT;
-            WHEN petep_logger.gc_LOG_CONTEXT_SCHEMA THEN
-                RETURN gc_INDENT_SCHEMA;
-            WHEN petep_logger.gc_LOG_CONTEXT_SUITE THEN
-                RETURN gc_INDENT_SUITE;
-            ELSE
-                RETURN gc_INDENT_DEFAULT;
-        END CASE;
-    END get_indent;
-
-    --------------------------------------------------------------------------------     
-    PROCEDURE log_method
-    (
-        a_description_in IN petep_logger.typ_description,
-        a_result_in      IN petep_logger.typ_execution_result DEFAULT gc_SUCCESS
-    ) IS
-    BEGIN
-        log_runner(a_description_in => a_description_in,
-                   a_context_in     => petep_logger.gc_LOG_CONTEXT_METHOD,
-                   a_result_in      => a_result_in);
-    END;
-
-    --
-    -- Logs runner thingies
-    --
-    -- %param a_context_in suite / script / CASE / BLOCK | SCHEMA / PACKAGE / method
-    -- %param a_result_in logged result
-    -- %param a_description_in
-    --------------------------------------------------------------------------------
-    PROCEDURE log_runner
-    (
-        a_description_in IN petep_logger.typ_description,
-        a_result_in      IN petep_logger.typ_execution_result DEFAULT gc_SUCCESS,
-        a_context_in     IN petep_logger.typ_log_context DEFAULT gc_LOG_CONTEXT_METHOD
-    ) IS
-    BEGIN
-        dbms_output.put_line(rpad('.', get_indent(a_context_in), ' ') ||
-                             a_description_in);
-    END;
-
-    PROCEDURE init IS
-    BEGIN
-        g_asserts_passed := 0;
-        g_asserts_failed := 0;
-    
-        g_test_start := SYSDATE;
-        g_run_id     := petes_run_log.nextval;
-    END;
-
+BEGIN
+    init(a_log_to_dbms_output_in => TRUE);
 END;
 /

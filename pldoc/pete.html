@@ -22,23 +22,22 @@ Configuration pete.run(a_suite_in =&gt; 'suite_code');<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \a block in order<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; execute immediate block<br>
 Convention pete.run(a_suite_in =&gt; 'suite_code'<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; a_style_in =&gt; petep_runner.convention);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; a_style_in =&gt; pete_runner.convention);<br>
 &nbsp;<br>
 \a schema<br>
-&nbsp;&nbsp;&nbsp; if \e petep_before_all.run<br>
+&nbsp;&nbsp;&nbsp; if \e pete_before_all.run<br>
 &nbsp;&nbsp;&nbsp; \a package unordered<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if \e petep_before_each.run<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if \e pete_before_each.run<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if \e package.before_all<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \a method in order (subprogram_id)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if \e package.before_each<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; execute immediate method<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if \e package.after_each<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if \e package.after_all<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if \e petep_after_each.run<br>
-&nbsp;&nbsp;&nbsp; if \e petep_after_all.run<br>
-Activity<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if \e pete_after_each.run<br>
+&nbsp;&nbsp;&nbsp; if \e pete_after_all.run<br>
 &nbsp;<br>
-<A HREF=#run>run</A> pro jin&#253; nepovinn&#253; parametr by pou&#353;t&#283;l &quot;subset&quot; toho v&#253;&#353;e: a_package_in - jednu package a_script in - jeden skript a_method_in - jednu metodu a_case_in - jeden <A HREF=#test>test</A> case.<br>
+<A HREF=#run>run</A> pro jin&#253; nepovinn&#253; parametr by pou&#353;t&#283;l &quot;subset&quot; toho v&#253;&#353;e: a_package_in - jednu package a_script in - jeden skript a_method_in - jednu metodu a_case_in - jeden <A HREF="petep_convention_runner.html#test">test</A> case.<br>
 &nbsp;<br>
 Pri vypln&#283;n&#237; a_package_in nebo a_method_in jde o &quot;konvencni&quot; spoust&#283;n&#237; a proto budou rovn&#283;&#382; spu&#353;t&#283;ny v&#353;echny before/after metody/package<br>
 &nbsp;<br>
@@ -55,10 +54,10 @@ Program units
 <TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
 <A HREF="#run">run</A>&nbsp;&nbsp;
 </TD><TD CLASS="DESC_TEXT" WIDTH=95%>
-Runs <A HREF=#test>test</A>
+Runs <A HREF="petep_convention_runner.html#test">test</A>
 </TD></TR>
 <TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
-<A HREF="#run_suite">run_suite</A>&nbsp;&nbsp;
+<A HREF="#run_test_suite">run_test_suite</A>&nbsp;&nbsp;
 </TD><TD CLASS="DESC_TEXT" WIDTH=95%>
 Runs a suite
 </TD></TR>
@@ -75,7 +74,7 @@ Runs a script identified by code
 <TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
 <A HREF="#run_test_case">run_test_case</A>&nbsp;&nbsp;
 </TD><TD CLASS="DESC_TEXT" WIDTH=95%>
-Runs a <A HREF=#test>test</A> case identified by id
+Runs a <A HREF="petep_convention_runner.html#test">test</A> case identified by id
 </TD></TR>
 <TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
 <A HREF="#run_test_case2">run_test_case</A>&nbsp;&nbsp;
@@ -83,7 +82,7 @@ Runs a <A HREF=#test>test</A> case identified by id
 Runs a script identified by code
 </TD></TR>
 <TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
-<A HREF="#test">test</A>&nbsp;&nbsp;
+<A HREF="#run_test_package">run_test_package</A>&nbsp;&nbsp;
 </TD><TD CLASS="DESC_TEXT" WIDTH=95%>
 Runs tests for a given package.
 </TD></TR>
@@ -91,6 +90,11 @@ Runs tests for a given package.
 <A HREF="#run_all_tests">run_all_tests</A>&nbsp;&nbsp;
 </TD><TD CLASS="DESC_TEXT" WIDTH=95%>
 Runs all availaible tests.
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#init">init</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+core
 </TD></TR>
 </TABLE>
 <BR>
@@ -111,6 +115,23 @@ Thrown if more conflicting parameters are set
 </TD></TR>
 </TABLE>
 <BR>
+<A NAME="Constants"></A>
+<TABLE CLASS="SUB_TABLE"><TR><TD CLASS="SUB_TITLE">
+Constants
+</TD></TR></TABLE>
+<TABLE CLASS="SUB_TABLE">
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#gc_AMBIGUOUS_INPUT">gc_AMBIGUOUS_INPUT</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#gc_CONFLICTING_INPUT">gc_CONFLICTING_INPUT</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+
+</TD></TR>
+</TABLE>
+<BR>
 <HR>
 <A NAME="run"></A>
 <P CLASS="TYPE_TITLE">
@@ -119,18 +140,17 @@ run
 <PRE CLASS="DECL_TEXT">
 PROCEDURE run
 (
-    a_suite_name_in      IN VARCHAR2 DEFAULT NULL,
-    a_package_name_in    IN VARCHAR2 DEFAULT NULL,
-    a_method_name_in     IN VARCHAR2 DEFAULT NULL,
-    a_script_code_in     IN VARCHAR2 DEFAULT NULL,
-    a_procedure_name_in  IN VARCHAR2 DEFAULT NULL,
-    a_case_code_in       IN VARCHAR2 DEFAULT NULL,
-    a_style_conventional IN BOOLEAN DEFAULT NULL
+    a_suite_name_in         IN VARCHAR2 DEFAULT NULL,
+    a_package_name_in       IN VARCHAR2 DEFAULT NULL,
+    a_method_name_in        IN VARCHAR2 DEFAULT NULL,
+    a_script_code_in        IN VARCHAR2 DEFAULT NULL,
+    a_case_code_in          IN VARCHAR2 DEFAULT NULL,
+    a_style_conventional_in IN BOOLEAN DEFAULT NULL
 )
 
 </PRE>
 <P CLASS="DESC_TEXT">
-Runs <A HREF=#test>test</A>
+Runs <A HREF="petep_convention_runner.html#test">test</A>
 Universal run procedure. Can be used to run any unit of work of either testing style.<br>
 Other public run procedures call this one. It accepts only - configuration parameters (a_suite_name_in, a_script_code_in, a_case_code_in) or - conventional parameters (a_suite_name_in, a_package_name_in, a_method_name_in) not a combination from both sets testing style can be explicitly set by a_style_conventional_in parameter<br>
 
@@ -166,14 +186,14 @@ Runs only tests of a given mask in a given package. Must be used with param a_pa
 </TD><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
 a_script_code_in&nbsp;&nbsp;
 </TD><TD CLASS="DESC_TEXT" WIDTH=95%>
-Runs a <A HREF=#test>test</A> script of a given code<br>
+Runs a <A HREF="petep_convention_runner.html#test">test</A> script of a given code<br>
 
 </TD></TR>
 <TR><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
 </TD><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
 a_case_code_in&nbsp;&nbsp;
 </TD><TD CLASS="DESC_TEXT" WIDTH=95%>
-Runs a <A HREF=#test>test</A> case of a given code<br>
+Runs a <A HREF="petep_convention_runner.html#test">test</A> case of a given code<br>
 
 </TD></TR>
 <TR><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
@@ -216,6 +236,14 @@ Thrown if the input can't be clearly interpreted<br>
 <BR>
 </P>
 <HR>
+<A NAME="gc_AMBIGUOUS_INPUT"></A>
+<P CLASS="TYPE_TITLE">
+gc_AMBIGUOUS_INPUT
+</P>
+<PRE CLASS="DECL_TEXT">
+gc_AMBIGUOUS_INPUT CONSTANT PLS_INTEGER := -20001;
+</PRE>
+<HR>
 <A NAME="ge_conflicting_input"></A>
 <P CLASS="TYPE_TITLE">
 ge_conflicting_input
@@ -229,15 +257,23 @@ Thrown if more conflicting parameters are set<br>
 <BR>
 </P>
 <HR>
-<A NAME="run_suite"></A>
+<A NAME="gc_CONFLICTING_INPUT"></A>
 <P CLASS="TYPE_TITLE">
-run_suite
+gc_CONFLICTING_INPUT
 </P>
 <PRE CLASS="DECL_TEXT">
-PROCEDURE run_suite
+gc_CONFLICTING_INPUT CONSTANT PLS_INTEGER := -20001;
+</PRE>
+<HR>
+<A NAME="run_test_suite"></A>
+<P CLASS="TYPE_TITLE">
+run_test_suite
+</P>
+<PRE CLASS="DECL_TEXT">
+PROCEDURE run_test_suite
 (
-    a_suite_name_in      IN VARCHAR2,
-    a_style_conventional IN BOOLEAN DEFAULT NULL
+    a_suite_name_in         IN VARCHAR2 DEFAULT NULL,
+    a_style_conventional_in IN BOOLEAN DEFAULT NULL
 )
 
 </PRE>
@@ -283,7 +319,7 @@ Throws exceptions
 run_test_script
 </P>
 <PRE CLASS="DECL_TEXT">
-PROCEDURE run_test_script(a_id_in IN NUMBER)
+PROCEDURE <A HREF="petep_configuration_runner.html#run_test_script">run_test_script</A>(a_id_in IN NUMBER)
 
 </PRE>
 <P CLASS="DESC_TEXT">
@@ -311,7 +347,7 @@ id of the script to be <A HREF=#run>run</A>
 run_test_script
 </P>
 <PRE CLASS="DECL_TEXT">
-PROCEDURE run_test_script(a_script_code_in IN VARCHAR2)
+PROCEDURE <A HREF="petep_configuration_runner.html#run_test_script">run_test_script</A>(a_script_code_in IN VARCHAR2)
 
 </PRE>
 <P CLASS="DESC_TEXT">
@@ -339,11 +375,11 @@ code of the script to be <A HREF=#run>run</A>
 run_test_case
 </P>
 <PRE CLASS="DECL_TEXT">
-PROCEDURE run_test_case(a_id_in IN NUMBER)
+PROCEDURE <A HREF="petep_configuration_runner.html#run_test_case">run_test_case</A>(a_id_in IN NUMBER)
 
 </PRE>
 <P CLASS="DESC_TEXT">
-Runs a <A HREF=#test>test</A> case identified by id<br>
+Runs a <A HREF="petep_convention_runner.html#test">test</A> case identified by id<br>
 
 <BR>
 </P>
@@ -367,7 +403,7 @@ id of the script to be <A HREF=#run>run</A>
 run_test_case
 </P>
 <PRE CLASS="DECL_TEXT">
-PROCEDURE run_test_case(a_test_case_code_in IN VARCHAR2)
+PROCEDURE <A HREF="petep_configuration_runner.html#run_test_case">run_test_case</A>(a_case_code_in IN VARCHAR2)
 
 </PRE>
 <P CLASS="DESC_TEXT">
@@ -390,22 +426,20 @@ Code of the script to be <A HREF=#run>run</A>
 </TABLE>
 <BR>
 <HR>
-<A NAME="test"></A>
+<A NAME="run_test_package"></A>
 <P CLASS="TYPE_TITLE">
-test
+run_test_package
 </P>
 <PRE CLASS="DECL_TEXT">
-PROCEDURE test
+PROCEDURE run_test_package
 (
     a_package_name_in     IN VARCHAR2,
-    a_method_name_like_in IN VARCHAR2 DEFAULT NULL,
-    a_is_test_package_in  IN BOOLEAN DEFAULT TRUE,
-    a_prefix_in           IN VARCHAR2 DEFAULT NULL
+    a_method_name_like_in IN VARCHAR2 DEFAULT NULL
 )
 
 </PRE>
 <P CLASS="DESC_TEXT">
-Runs tests for a given package. Such tests are in a test package which can be derived from the given one.<br>
+Runs tests for a given package. Such tests are in a <A HREF="petep_convention_runner.html#test">test</A> package which can be derived from the given one.<br>
 throws tests not found if there are no tests to be <A HREF=#run>run</A>
 
 <BR>
@@ -451,7 +485,25 @@ PROCEDURE run_all_tests
 
 </PRE>
 <P CLASS="DESC_TEXT">
-Runs all availaible tests. That means all configured scripts from table pete_scripts and all <A HREF=#test>test</A> packages conforming convention.<br>
+Runs all availaible tests. That means all configured scripts from table pete_scripts and all <A HREF="petep_convention_runner.html#test">test</A> packages conforming convention.<br>
+
+<BR>
+</P>
+<HR>
+<A NAME="init"></A>
+<P CLASS="TYPE_TITLE">
+init
+</P>
+<PRE CLASS="DECL_TEXT">
+PROCEDURE <A HREF="petep_logger.html#init">init</A>
+(
+    a_log_to_dbms_output_in IN BOOLEAN DEFAULT TRUE,
+    a_log_to_table_in       IN BOOLEAN DEFAULT TRUE
+)
+
+</PRE>
+<P CLASS="DESC_TEXT">
+core<br>
 
 <BR>
 </P>

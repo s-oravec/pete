@@ -2,9 +2,9 @@
 <HTML>
  <HEAD>
  <LINK REL="STYLESHEET" TYPE="text/css" HREF="plsqldoc.css">
- <TITLE>Package petep_configuration_runner</TITLE>
+ <TITLE>Package pete_configuration_runner</TITLE>
  <META name="object" content="PACKAGE">
- <META name="name" content="petep_configuration_runner">
+ <META name="name" content="pete_configuration_runner">
  <META name="description" content="Package for running unit tests defined by configuration">
 </HEAD>
 <BODY>
@@ -13,7 +13,7 @@
 <TD><P ALIGN="RIGHT"><STRONG><SMALL><A HREF="index.html">index</A></SMALL></STRONG></TD>
 </TR></TABLE>
 <TABLE CLASS="MAIN_TABLE"><TR><TD CLASS="DESC_TEXT">
-<P CLASS="MAIN_TITLE">Package petep_configuration_runner</P>
+<P CLASS="MAIN_TITLE">Package pete_configuration_runner</P>
 Package for running unit tests defined by configuration<br>
 
 <BR>
@@ -25,29 +25,34 @@ Program units
 </TD></TR></TABLE>
 <TABLE CLASS="SUB_TABLE">
 <TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
-<A HREF="#run_test_case">run_test_case</A>&nbsp;&nbsp;
+<A HREF="#run_suite">run_suite</A>&nbsp;&nbsp;
 </TD><TD CLASS="DESC_TEXT" WIDTH=95%>
-<A HREF="pete.html#run">Run</A> <A HREF="pete.html#test">test</A> case identified by <A HREF="pete.html#test">test</A> case id
+runs <A HREF="petep_convention_runner.html#test">test</A> suite
 </TD></TR>
 <TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
-<A HREF="#run_test_case2">run_test_case</A>&nbsp;&nbsp;
+<A HREF="#run_case">run_case</A>&nbsp;&nbsp;
 </TD><TD CLASS="DESC_TEXT" WIDTH=95%>
-<A HREF="pete.html#run">Run</A> <A HREF="pete.html#test">test</A> case identified by <A HREF="pete.html#test">test</A> case code - pete_test_case.code
+<A HREF="pete.html#run">Run</A> <A HREF="petep_convention_runner.html#test">test</A> case identified by <A HREF="petep_convention_runner.html#test">test</A> case id
 </TD></TR>
 <TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
-<A HREF="#run_test_script">run_test_script</A>&nbsp;&nbsp;
+<A HREF="#run_case2">run_case</A>&nbsp;&nbsp;
 </TD><TD CLASS="DESC_TEXT" WIDTH=95%>
-<A HREF="pete.html#run">Run</A> <A HREF="pete.html#test">test</A> script identified by <A HREF="pete.html#test">test</A> script identifier - pete_test_script.id
+<A HREF="pete.html#run">Run</A> <A HREF="petep_convention_runner.html#test">test</A> case identified by <A HREF="petep_convention_runner.html#test">test</A> case code - pete_test_case.code
 </TD></TR>
 <TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
-<A HREF="#run_test_script2">run_test_script</A>&nbsp;&nbsp;
+<A HREF="#run_script">run_script</A>&nbsp;&nbsp;
 </TD><TD CLASS="DESC_TEXT" WIDTH=95%>
-<A HREF="pete.html#run">Run</A> <A HREF="pete.html#test">test</A> script identified by <A HREF="pete.html#test">test</A> script code - pete_test_script.code
+<A HREF="pete.html#run">Run</A> <A HREF="petep_convention_runner.html#test">test</A> script identified by <A HREF="petep_convention_runner.html#test">test</A> script identifier - pete_test_script.id
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#run_script2">run_script</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+<A HREF="pete.html#run">Run</A> <A HREF="petep_convention_runner.html#test">test</A> script identified by <A HREF="petep_convention_runner.html#test">test</A> script code - pete_test_script.code
 </TD></TR>
 <TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
 <A HREF="#run_all_test_scripts">run_all_test_scripts</A>&nbsp;&nbsp;
 </TD><TD CLASS="DESC_TEXT" WIDTH=95%>
-<A HREF="pete.html#run">Run</A> all <A HREF="pete.html#test">test</A> scripts
+<A HREF="pete.html#run">Run</A> all <A HREF="petep_convention_runner.html#test">test</A> scripts
 </TD></TR>
 </TABLE>
 <BR>
@@ -86,7 +91,7 @@ No, false
 gtyp_string_boolean
 </P>
 <PRE CLASS="DECL_TEXT">
-SUBTYPE gtyp_string_boolean IS CHAR(1);
+SUBTYPE <A HREF="petep_configuration_runner.html#gtyp_string_boolean">gtyp_string_boolean</A> IS CHAR(1);
 </PRE>
 <P CLASS="DESC_TEXT">
 Subtype for boolean stored as Y/N<br>
@@ -99,7 +104,7 @@ Subtype for boolean stored as Y/N<br>
 gc_true
 </P>
 <PRE CLASS="DECL_TEXT">
-gc_true CONSTANT <A HREF=#gtyp_string_boolean>gtyp_string_boolean</A> := 'Y';
+<A HREF="petep_configuration_runner.html#gc_true">gc_true</A> CONSTANT <A HREF=#gtyp_string_boolean>gtyp_string_boolean</A> := 'Y';
 </PRE>
 <P CLASS="DESC_TEXT">
 Yes, true<br>
@@ -112,7 +117,7 @@ Yes, true<br>
 gc_false
 </P>
 <PRE CLASS="DECL_TEXT">
-gc_false CONSTANT <A HREF=#gtyp_string_boolean>gtyp_string_boolean</A> := 'N';
+<A HREF="petep_configuration_runner.html#gc_false">gc_false</A> CONSTANT <A HREF=#gtyp_string_boolean>gtyp_string_boolean</A> := 'N';
 </PRE>
 <P CLASS="DESC_TEXT">
 No, false<br>
@@ -120,16 +125,44 @@ No, false<br>
 <BR>
 </P>
 <HR>
-<A NAME="run_test_case"></A>
+<A NAME="run_suite"></A>
 <P CLASS="TYPE_TITLE">
-run_test_case
+run_suite
 </P>
 <PRE CLASS="DECL_TEXT">
-PROCEDURE <A HREF="pete.html#run_test_case">run_test_case</A>(p_id IN pete_test_case.id%TYPE)
+PROCEDURE <A HREF="pete_convention_runner.html#run_suite">run_suite</A>(a_suite_name_in IN VARCHAR2)
 
 </PRE>
 <P CLASS="DESC_TEXT">
-<A HREF="pete.html#run">Run</A> <A HREF="pete.html#test">test</A> case identified by <A HREF="pete.html#test">test</A> case id<br>
+runs <A HREF="petep_convention_runner.html#test">test</A> suite<br>
+
+<BR>
+</P>
+<A NAME="Parameters"></A>
+<TABLE CLASS="LIST_TABLE"><TR><TD CLASS="LIST_TITLE">
+Parameters
+</TD></TR></TABLE>
+<TABLE CLASS="LIST_TABLE">
+<TR><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
+</TD><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
+a_suite_name_in&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+suite name<br>
+
+</TD></TR>
+</TABLE>
+<BR>
+<HR>
+<A NAME="run_case"></A>
+<P CLASS="TYPE_TITLE">
+run_case
+</P>
+<PRE CLASS="DECL_TEXT">
+PROCEDURE run_case(p_id IN pete_test_case.id%TYPE)
+
+</PRE>
+<P CLASS="DESC_TEXT">
+<A HREF="pete.html#run">Run</A> <A HREF="petep_convention_runner.html#test">test</A> case identified by <A HREF="petep_convention_runner.html#test">test</A> case id<br>
 
 <BR>
 </P>
@@ -142,22 +175,22 @@ Parameters
 </TD><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
 p_id&nbsp;&nbsp;
 </TD><TD CLASS="DESC_TEXT" WIDTH=95%>
-<A HREF="pete.html#test">Test</A> case identifier - pete_test_case.id<br>
+<A HREF="petep_convention_runner.html#test">Test</A> case identifier - pete_test_case.id<br>
 
 </TD></TR>
 </TABLE>
 <BR>
 <HR>
-<A NAME="run_test_case2"></A>
+<A NAME="run_case2"></A>
 <P CLASS="TYPE_TITLE">
-run_test_case
+run_case
 </P>
 <PRE CLASS="DECL_TEXT">
-PROCEDURE <A HREF="pete.html#run_test_case">run_test_case</A>(p_code pete_test_case.code%TYPE)
+PROCEDURE run_case(p_code pete_test_case.code%TYPE)
 
 </PRE>
 <P CLASS="DESC_TEXT">
-<A HREF="pete.html#run">Run</A> <A HREF="pete.html#test">test</A> case identified by <A HREF="pete.html#test">test</A> case code - pete_test_case.code<br>
+<A HREF="pete.html#run">Run</A> <A HREF="petep_convention_runner.html#test">test</A> case identified by <A HREF="petep_convention_runner.html#test">test</A> case code - pete_test_case.code<br>
 
 <BR>
 </P>
@@ -170,22 +203,22 @@ Parameters
 </TD><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
 p_code&nbsp;&nbsp;
 </TD><TD CLASS="DESC_TEXT" WIDTH=95%>
-<A HREF="pete.html#test">Test</A> case code - pete_test_case.code<br>
+<A HREF="petep_convention_runner.html#test">Test</A> case code - pete_test_case.code<br>
 
 </TD></TR>
 </TABLE>
 <BR>
 <HR>
-<A NAME="run_test_script"></A>
+<A NAME="run_script"></A>
 <P CLASS="TYPE_TITLE">
-run_test_script
+run_script
 </P>
 <PRE CLASS="DECL_TEXT">
-PROCEDURE <A HREF="pete.html#run_test_script">run_test_script</A>(p_id pete_test_script.id%TYPE)
+PROCEDURE run_script(p_id pete_test_script.id%TYPE)
 
 </PRE>
 <P CLASS="DESC_TEXT">
-<A HREF="pete.html#run">Run</A> <A HREF="pete.html#test">test</A> script identified by <A HREF="pete.html#test">test</A> script identifier - pete_test_script.id<br>
+<A HREF="pete.html#run">Run</A> <A HREF="petep_convention_runner.html#test">test</A> script identified by <A HREF="petep_convention_runner.html#test">test</A> script identifier - pete_test_script.id<br>
 
 <BR>
 </P>
@@ -198,22 +231,22 @@ Parameters
 </TD><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
 p_id&nbsp;&nbsp;
 </TD><TD CLASS="DESC_TEXT" WIDTH=95%>
-<A HREF="pete.html#test">test</A> script identifier - pete_test_script.id<br>
+<A HREF="petep_convention_runner.html#test">test</A> script identifier - pete_test_script.id<br>
 
 </TD></TR>
 </TABLE>
 <BR>
 <HR>
-<A NAME="run_test_script2"></A>
+<A NAME="run_script2"></A>
 <P CLASS="TYPE_TITLE">
-run_test_script
+run_script
 </P>
 <PRE CLASS="DECL_TEXT">
-PROCEDURE <A HREF="pete.html#run_test_script">run_test_script</A>(p_code pete_test_script.code%TYPE)
+PROCEDURE run_script(p_code pete_test_script.code%TYPE)
 
 </PRE>
 <P CLASS="DESC_TEXT">
-<A HREF="pete.html#run">Run</A> <A HREF="pete.html#test">test</A> script identified by <A HREF="pete.html#test">test</A> script code - pete_test_script.code<br>
+<A HREF="pete.html#run">Run</A> <A HREF="petep_convention_runner.html#test">test</A> script identified by <A HREF="petep_convention_runner.html#test">test</A> script code - pete_test_script.code<br>
 
 <BR>
 </P>
@@ -226,7 +259,7 @@ Parameters
 </TD><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
 p_code&nbsp;&nbsp;
 </TD><TD CLASS="DESC_TEXT" WIDTH=95%>
-<A HREF="pete.html#test">test</A> script code - pete_test_script.code<br>
+<A HREF="petep_convention_runner.html#test">test</A> script code - pete_test_script.code<br>
 
 </TD></TR>
 </TABLE>
@@ -237,11 +270,11 @@ p_code&nbsp;&nbsp;
 run_all_test_scripts
 </P>
 <PRE CLASS="DECL_TEXT">
-PROCEDURE run_all_test_scripts(p_catch_exception IN <A HREF=#gtyp_string_boolean>gtyp_string_boolean</A> DEFAULT <A HREF=#gc_true>gc_true</A>)
+PROCEDURE <A HREF="petep_configuration_runner.html#run_all_test_scripts">run_all_test_scripts</A>(p_catch_exception IN <A HREF=#gtyp_string_boolean>gtyp_string_boolean</A> DEFAULT <A HREF=#gc_true>gc_true</A>)
 
 </PRE>
 <P CLASS="DESC_TEXT">
-<A HREF="pete.html#run">Run</A> all <A HREF="pete.html#test">test</A> scripts<br>
+<A HREF="pete.html#run">Run</A> all <A HREF="petep_convention_runner.html#test">test</A> scripts<br>
 
 <BR>
 </P>

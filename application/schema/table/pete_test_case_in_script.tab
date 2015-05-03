@@ -1,13 +1,12 @@
 create table PETE_TEST_CASE_IN_SCRIPT
 (
-  id              NUMBER not null,
-  test_script_id  NUMBER not null,
-  test_case_id    NUMBER not null,
-  script_order    NUMBER not null,
-  catch_exception CHAR(1) default 'N',
-  expected_result VARCHAR2(10) default 'OK'
+  id              INTEGER not null,
+  test_script_id  INTEGER not null,
+  test_case_id    INTEGER not null,
+  script_order    INTEGER not null
 )
 ;
+
 comment on table PETE_TEST_CASE_IN_SCRIPT
   is 'Test case in Test script';
 comment on column PETE_TEST_CASE_IN_SCRIPT.id
@@ -17,13 +16,12 @@ comment on column PETE_TEST_CASE_IN_SCRIPT.test_script_id
 comment on column PETE_TEST_CASE_IN_SCRIPT.test_case_id
   is 'Test case identifier';
 comment on column PETE_TEST_CASE_IN_SCRIPT.script_order
-  is 'Defines order of test cases in test script (''Y'',''N'')';
-comment on column PETE_TEST_CASE_IN_SCRIPT.catch_exception
-  is 'Wether to catch exception raised in test case';
-comment on column PETE_TEST_CASE_IN_SCRIPT.expected_result
-  is 'Expected result (''OK'', ''ERROR'')';
+  is 'Defines order of test cases in test script';
+  
 create index PETE_TEST_CASE_IN_SCRIPT_FK01 on PETE_TEST_CASE_IN_SCRIPT (TEST_CASE_ID);
 create index PETE_TEST_CASE_IN_SCRIPT_FK02 on PETE_TEST_CASE_IN_SCRIPT (TEST_SCRIPT_ID);
+
+
 alter table PETE_TEST_CASE_IN_SCRIPT
   add constraint PETE_TEST_CASE_IN_SCRIPT_PK primary key (ID);
 alter table PETE_TEST_CASE_IN_SCRIPT
@@ -32,10 +30,5 @@ alter table PETE_TEST_CASE_IN_SCRIPT
 alter table PETE_TEST_CASE_IN_SCRIPT
   add constraint PETE_TEST_CASE_IN_SCRIPT_FK02 foreign key (TEST_SCRIPT_ID)
   references PETE_TEST_SCRIPT (ID);
-alter table PETE_TEST_CASE_IN_SCRIPT
-  add constraint PETE_TEST_CASE_IN_SCRIPT_CHK01
-  check ((CATCH_EXCEPTION in ('Y', 'N')));
-alter table PETE_TEST_CASE_IN_SCRIPT
-  add constraint PETE_TEST_CASE_IN_SCRIPT_CHK02
-  check ((EXPECTED_RESULT in ('OK', 'ERROR')));
+  
 

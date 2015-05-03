@@ -4,12 +4,12 @@ create table PETE_PLSQL_BLOCK_IN_CASE
   test_case_id   NUMBER not null,
   plsql_block_id NUMBER not null,
   input_param_id NUMBER,
-  block_order    NUMBER,
-  output_param   CHAR(1) default 'N'
+  block_order    NUMBER
 )
 ;
 comment on table PETE_PLSQL_BLOCK_IN_CASE
   is 'PLSQL block in Test case';
+  
 comment on column PETE_PLSQL_BLOCK_IN_CASE.id
   is 'PLSQL block surrogate identifier';
 comment on column PETE_PLSQL_BLOCK_IN_CASE.test_case_id
@@ -20,11 +20,11 @@ comment on column PETE_PLSQL_BLOCK_IN_CASE.input_param_id
   is 'Input parameters identifier';
 comment on column PETE_PLSQL_BLOCK_IN_CASE.block_order
   is 'Block order in Test case';
-comment on column PETE_PLSQL_BLOCK_IN_CASE.output_param
-  is 'Flag. Use output of preceding block as input for the block (''Y'',''N'')';
+  
 create index PETE_PLSQL_BLOCK_IN_CASE_FK01 on PETE_PLSQL_BLOCK_IN_CASE (PLSQL_BLOCK_ID);
 create index PETE_PLSQL_BLOCK_IN_CASE_FK02 on PETE_PLSQL_BLOCK_IN_CASE (INPUT_PARAM_ID);
 create index PETE_PLSQL_BLOCK_IN_CASE_FK03 on PETE_PLSQL_BLOCK_IN_CASE (TEST_CASE_ID);
+
 alter table PETE_PLSQL_BLOCK_IN_CASE
   add constraint PETE_PLSQL_BLOCK_IN_CASE_PK primary key (ID);
 alter table PETE_PLSQL_BLOCK_IN_CASE

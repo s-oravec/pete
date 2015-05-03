@@ -1,0 +1,323 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+ <HEAD>
+ <LINK REL="STYLESHEET" TYPE="text/css" HREF="plsqldoc.css">
+ <TITLE>Package pete_core</TITLE>
+ <META name="object" content="PACKAGE">
+ <META name="name" content="pete_core">
+ <META name="description" content="">
+</HEAD>
+<BODY>
+<TABLE WIDTH="100%"><TR>
+<TD><P ALIGN="LEFT"><STRONG><SMALL></SMALL></STRONG></TD>
+<TD><P ALIGN="RIGHT"><STRONG><SMALL><A HREF="index.html">index</A></SMALL></STRONG></TD>
+</TR></TABLE>
+<TABLE CLASS="MAIN_TABLE"><TR><TD CLASS="DESC_TEXT">
+<P CLASS="MAIN_TITLE">Package pete_core</P>
+
+<BR>
+</TD></TR></TABLE>
+<HR>
+<A NAME="Program units"></A>
+<TABLE CLASS="SUB_TABLE"><TR><TD CLASS="SUB_TITLE">
+Program units
+</TD></TR></TABLE>
+<TABLE CLASS="SUB_TABLE">
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#begin_test">begin_test</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#end_test">end_test</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+
+</TD></TR>
+</TABLE>
+<BR>
+<A NAME="Types"></A>
+<TABLE CLASS="SUB_TABLE"><TR><TD CLASS="SUB_TITLE">
+Types
+</TD></TR></TABLE>
+<TABLE CLASS="SUB_TABLE">
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#typ_object_type">typ_object_type</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+testing context subtype
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#typ_execution_result">typ_execution_result</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+execution result subtype
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#typ_is_success">typ_is_success</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#typ_object_name">typ_object_name</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+object name
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#typ_description">typ_description</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+description subtype
+</TD></TR>
+</TABLE>
+<BR>
+<A NAME="Constants"></A>
+<TABLE CLASS="SUB_TABLE"><TR><TD CLASS="SUB_TITLE">
+Constants
+</TD></TR></TABLE>
+<TABLE CLASS="SUB_TABLE">
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#g_OBJECT_TYPE_PETE">g_OBJECT_TYPE_PETE</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+testing context constants
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#g_OBJECT_TYPE_SUITE">g_OBJECT_TYPE_SUITE</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#g_OBJECT_TYPE_SCRIPT">g_OBJECT_TYPE_SCRIPT</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#g_OBJECT_TYPE_CASE">g_OBJECT_TYPE_CASE</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#g_OBJECT_TYPE_BLOCK">g_OBJECT_TYPE_BLOCK</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#g_OBJECT_TYPE_SCHEMA">g_OBJECT_TYPE_SCHEMA</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#g_OBJECT_TYPE_PACKAGE">g_OBJECT_TYPE_PACKAGE</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#g_OBJECT_TYPE_METHOD">g_OBJECT_TYPE_METHOD</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#g_OBJECT_TYPE_ASSERT">g_OBJECT_TYPE_ASSERT</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#g_SUCCESS">g_SUCCESS</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+execution result constants
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#g_FAILURE">g_FAILURE</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+
+</TD></TR>
+</TABLE>
+<BR>
+<HR>
+<A NAME="typ_object_type"></A>
+<P CLASS="TYPE_TITLE">
+typ_object_type
+</P>
+<PRE CLASS="DECL_TEXT">
+SUBTYPE typ_object_type IS pete_run_log.object_type%TYPE;
+</PRE>
+<P CLASS="DESC_TEXT">
+testing context subtype<br>
+
+<BR>
+</P>
+<HR>
+<A NAME="g_OBJECT_TYPE_PETE"></A>
+<P CLASS="TYPE_TITLE">
+g_OBJECT_TYPE_PETE
+</P>
+<PRE CLASS="DECL_TEXT">
+g_OBJECT_TYPE_PETE    CONSTANT <A HREF=#typ_object_type>typ_object_type</A> := 'PETE';
+</PRE>
+<P CLASS="DESC_TEXT">
+testing context constants<br>
+
+<BR>
+</P>
+<HR>
+<A NAME="g_OBJECT_TYPE_SUITE"></A>
+<P CLASS="TYPE_TITLE">
+g_OBJECT_TYPE_SUITE
+</P>
+<PRE CLASS="DECL_TEXT">
+g_OBJECT_TYPE_SUITE   CONSTANT <A HREF=#typ_object_type>typ_object_type</A> := 'SUITE';
+</PRE>
+<HR>
+<A NAME="g_OBJECT_TYPE_SCRIPT"></A>
+<P CLASS="TYPE_TITLE">
+g_OBJECT_TYPE_SCRIPT
+</P>
+<PRE CLASS="DECL_TEXT">
+g_OBJECT_TYPE_SCRIPT  CONSTANT <A HREF=#typ_object_type>typ_object_type</A> := 'SCRIPT';
+</PRE>
+<HR>
+<A NAME="g_OBJECT_TYPE_CASE"></A>
+<P CLASS="TYPE_TITLE">
+g_OBJECT_TYPE_CASE
+</P>
+<PRE CLASS="DECL_TEXT">
+g_OBJECT_TYPE_CASE    CONSTANT <A HREF=#typ_object_type>typ_object_type</A> := 'CASE';
+</PRE>
+<HR>
+<A NAME="g_OBJECT_TYPE_BLOCK"></A>
+<P CLASS="TYPE_TITLE">
+g_OBJECT_TYPE_BLOCK
+</P>
+<PRE CLASS="DECL_TEXT">
+g_OBJECT_TYPE_BLOCK   CONSTANT <A HREF=#typ_object_type>typ_object_type</A> := 'BLOCK';
+</PRE>
+<HR>
+<A NAME="g_OBJECT_TYPE_SCHEMA"></A>
+<P CLASS="TYPE_TITLE">
+g_OBJECT_TYPE_SCHEMA
+</P>
+<PRE CLASS="DECL_TEXT">
+g_OBJECT_TYPE_SCHEMA  CONSTANT <A HREF=#typ_object_type>typ_object_type</A> := 'SCHEMA';
+</PRE>
+<HR>
+<A NAME="g_OBJECT_TYPE_PACKAGE"></A>
+<P CLASS="TYPE_TITLE">
+g_OBJECT_TYPE_PACKAGE
+</P>
+<PRE CLASS="DECL_TEXT">
+g_OBJECT_TYPE_PACKAGE CONSTANT <A HREF=#typ_object_type>typ_object_type</A> := 'PACKAGE';
+</PRE>
+<HR>
+<A NAME="g_OBJECT_TYPE_METHOD"></A>
+<P CLASS="TYPE_TITLE">
+g_OBJECT_TYPE_METHOD
+</P>
+<PRE CLASS="DECL_TEXT">
+g_OBJECT_TYPE_METHOD  CONSTANT <A HREF=#typ_object_type>typ_object_type</A> := 'METHOD';
+</PRE>
+<HR>
+<A NAME="g_OBJECT_TYPE_ASSERT"></A>
+<P CLASS="TYPE_TITLE">
+g_OBJECT_TYPE_ASSERT
+</P>
+<PRE CLASS="DECL_TEXT">
+g_OBJECT_TYPE_ASSERT  CONSTANT <A HREF=#typ_object_type>typ_object_type</A> := 'ASSERT';
+</PRE>
+<HR>
+<A NAME="typ_execution_result"></A>
+<P CLASS="TYPE_TITLE">
+typ_execution_result
+</P>
+<PRE CLASS="DECL_TEXT">
+SUBTYPE <A HREF="petep_logger.html#typ_execution_result">typ_execution_result</A> IS pete_run_log.result%TYPE;
+</PRE>
+<P CLASS="DESC_TEXT">
+execution result subtype<br>
+
+<BR>
+</P>
+<HR>
+<A NAME="g_SUCCESS"></A>
+<P CLASS="TYPE_TITLE">
+g_SUCCESS
+</P>
+<PRE CLASS="DECL_TEXT">
+g_SUCCESS CONSTANT <A HREF=#typ_execution_result>typ_execution_result</A> := 'SUCCESS';
+</PRE>
+<P CLASS="DESC_TEXT">
+execution result constants<br>
+
+<BR>
+</P>
+<HR>
+<A NAME="g_FAILURE"></A>
+<P CLASS="TYPE_TITLE">
+g_FAILURE
+</P>
+<PRE CLASS="DECL_TEXT">
+g_FAILURE CONSTANT <A HREF=#typ_execution_result>typ_execution_result</A> := 'FAILURE';
+</PRE>
+<HR>
+<A NAME="typ_is_success"></A>
+<P CLASS="TYPE_TITLE">
+typ_is_success
+</P>
+<PRE CLASS="DECL_TEXT">
+SUBTYPE typ_is_success IS BOOLEAN;
+</PRE>
+<HR>
+<A NAME="typ_object_name"></A>
+<P CLASS="TYPE_TITLE">
+typ_object_name
+</P>
+<PRE CLASS="DECL_TEXT">
+SUBTYPE typ_object_name IS pete_run_log.object_name%TYPE;
+</PRE>
+<P CLASS="DESC_TEXT">
+object name<br>
+
+<BR>
+</P>
+<HR>
+<A NAME="typ_description"></A>
+<P CLASS="TYPE_TITLE">
+typ_description
+</P>
+<PRE CLASS="DECL_TEXT">
+SUBTYPE <A HREF="petep_logger.html#typ_description">typ_description</A> IS VARCHAR2(4000);
+</PRE>
+<P CLASS="DESC_TEXT">
+description subtype<br>
+
+<BR>
+</P>
+<HR>
+<A NAME="begin_test"></A>
+<P CLASS="TYPE_TITLE">
+begin_test
+</P>
+<PRE CLASS="DECL_TEXT">
+FUNCTION begin_test
+(
+    a_object_name_in IN <A HREF=#typ_object_name>typ_object_name</A>,
+    a_object_type_in IN <A HREF=#typ_object_type>typ_object_type</A>,
+    a_description_in IN <A HREF=#typ_description>typ_description</A> DEFAULT NULL
+) RETURN pete_run_log.run_log_id%TYPE
+
+</PRE>
+<HR>
+<A NAME="end_test"></A>
+<P CLASS="TYPE_TITLE">
+end_test
+</P>
+<PRE CLASS="DECL_TEXT">
+PROCEDURE end_test
+(
+    a_run_log_id_in    IN pete_run_log.run_log_id%TYPE,
+    a_object_type_in   IN <A HREF=#typ_object_type>typ_object_type</A>,
+    a_is_succes_in     IN <A HREF=#typ_is_success>typ_is_success</A> DEFAULT TRUE,
+    a_error_code_in    IN pete_run_log.error_code%TYPE DEFAULT NULL,
+    a_error_message_in IN pete_run_log.error_message%TYPE DEFAULT NULL
+)
+
+</PRE>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+</BODY>
+</HTML>

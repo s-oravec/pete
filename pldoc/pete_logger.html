@@ -1,0 +1,196 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+ <HEAD>
+ <LINK REL="STYLESHEET" TYPE="text/css" HREF="plsqldoc.css">
+ <TITLE>Package pete_logger</TITLE>
+ <META name="object" content="PACKAGE">
+ <META name="name" content="pete_logger">
+ <META name="description" content="Pete logging package">
+</HEAD>
+<BODY>
+<TABLE WIDTH="100%"><TR>
+<TD><P ALIGN="LEFT"><STRONG><SMALL></SMALL></STRONG></TD>
+<TD><P ALIGN="RIGHT"><STRONG><SMALL><A HREF="index.html">index</A></SMALL></STRONG></TD>
+</TR></TABLE>
+<TABLE CLASS="MAIN_TABLE"><TR><TD CLASS="DESC_TEXT">
+<P CLASS="MAIN_TITLE">Package pete_logger</P>
+<A HREF="pete.html">Pete</A> logging package<br>
+&nbsp;&nbsp; - used by convention and configuration runners<br>
+--- use <A HREF="petep_logger.html#log_method">log_method</A> method in implementation of <A HREF="petep_convention_runner.html#test">test</A> packages for Convention style <A HREF="petep_convention_runner.html#test">test</A> packages<br>
+
+<BR>
+</TD></TR></TABLE>
+<HR>
+<A NAME="Program units"></A>
+<TABLE CLASS="SUB_TABLE"><TR><TD CLASS="SUB_TITLE">
+Program units
+</TD></TR></TABLE>
+<TABLE CLASS="SUB_TABLE">
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#log_start">log_start</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+-<A></A>- Logs methods info - use in Convention style <A HREF="petep_convention_runner.html#test">test</A> packages<BR>
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#log_end">log_end</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#init">init</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+inits a logger
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#trace">trace</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+tracing methods
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#set_trace">set_trace</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+<A HREF=#trace>trace</A> log settings
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#log_method_description">log_method_description</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+update method description - defined on method
+</TD></TR>
+</TABLE>
+<BR>
+<HR>
+<A NAME="log_start"></A>
+<P CLASS="TYPE_TITLE">
+log_start
+</P>
+<PRE CLASS="DECL_TEXT">
+PROCEDURE log_start
+(
+    a_run_log_id_in        IN pete_run_log.run_log_id%TYPE,
+    a_parent_run_log_id_in IN pete_run_log.parent_run_log_id%TYPE,
+    a_description_in       IN pete_run_log.description%TYPE,
+    a_object_type_in       IN pete_run_log.object_type%TYPE,
+    a_object_name_in       IN pete_run_log.object_name%TYPE
+)
+
+</PRE>
+<P CLASS="DESC_TEXT">
+-<A></A>- Logs methods info - use in Convention style <A HREF="petep_convention_runner.html#test">test</A> packages<BR>
+PROCEDURE <A HREF="petep_logger.html#log_method">log_method</A>
+(<br>
+&nbsp;&nbsp;&nbsp; a_description_in IN <A HREF="pete_core.html#typ_description">pete_core.typ_description</A>,<br>
+&nbsp;&nbsp;&nbsp; a_result_in&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IN <A HREF="pete_core.html#typ_execution_result">pete_core.typ_execution_result</A> DEFAULT pete_core.gc_SUCCESS<br>
+);<br>
+&nbsp;<br>
+&nbsp;<br>
+-<A></A>- Logs runner thingies<BR>
+&nbsp;<br>
+-<A></A>- %param a_context_in suite / script / case / block | schema / package / method<BR>
+-<A></A>- %param a_result_in logged result<BR>
+-<A></A>- %param a_description_in <BR>
+&nbsp;<br>
+PROCEDURE <A HREF="petep_logger.html#log_runner">log_runner</A>
+(<br>
+&nbsp;&nbsp;&nbsp; a_description_in IN <A HREF="pete_core.html#typ_description">pete_core.typ_description</A>,<br>
+&nbsp;&nbsp;&nbsp; a_result_in&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IN <A HREF="pete_core.html#typ_execution_result">pete_core.typ_execution_result</A> DEFAULT pete_core.gc_SUCCESS,<br>
+&nbsp;&nbsp;&nbsp; a_context_in&nbsp;&nbsp;&nbsp;&nbsp; IN <A HREF="pete_core.html#typ_object_type">pete_core.typ_object_type</A> DEFAULT pete_core.gc_CONTEXT_METHOD<br>
+);<br>
+
+<BR>
+</P>
+<HR>
+<A NAME="log_end"></A>
+<P CLASS="TYPE_TITLE">
+log_end
+</P>
+<PRE CLASS="DECL_TEXT">
+PROCEDURE log_end
+(
+    a_run_log_id_in    IN pete_run_log.run_log_id%TYPE,
+    a_object_type_in   IN <A HREF="pete_core.html#typ_object_type">pete_core.typ_object_type</A>,
+    a_result_in        IN pete_run_log.result%TYPE,
+    a_error_code_in    IN pete_run_log.error_code%TYPE,
+    a_error_message_in IN pete_run_log.error_message%TYPE
+)
+
+</PRE>
+<HR>
+<A NAME="init"></A>
+<P CLASS="TYPE_TITLE">
+init
+</P>
+<PRE CLASS="DECL_TEXT">
+PROCEDURE <A HREF="petep_logger.html#init">init</A>
+(
+    a_log_to_dbms_output_in IN BOOLEAN DEFAULT TRUE,
+    a_log_to_table_in       IN BOOLEAN DEFAULT TRUE
+)
+
+</PRE>
+<P CLASS="DESC_TEXT">
+inits a logger<br>
+
+<BR>
+</P>
+<HR>
+<A NAME="trace"></A>
+<P CLASS="TYPE_TITLE">
+trace
+</P>
+<PRE CLASS="DECL_TEXT">
+PROCEDURE <A HREF="petep_logger.html#trace">trace</A>(a_trace_message_in VARCHAR2)
+
+</PRE>
+<P CLASS="DESC_TEXT">
+tracing methods<br>
+&nbsp;<br>
+wrapper for <A HREF="petep_logger.html#trace">trace</A> log<br>
+
+<BR>
+</P>
+<HR>
+<A NAME="set_trace"></A>
+<P CLASS="TYPE_TITLE">
+set_trace
+</P>
+<PRE CLASS="DECL_TEXT">
+PROCEDURE <A HREF="petep_logger.html#set_trace">set_trace</A>(a_value_in IN BOOLEAN)
+
+</PRE>
+<P CLASS="DESC_TEXT">
+<A HREF=#trace>trace</A> log settings<br>
+
+<BR>
+</P>
+<HR>
+<A NAME="log_method_description"></A>
+<P CLASS="TYPE_TITLE">
+log_method_description
+</P>
+<PRE CLASS="DECL_TEXT">
+PROCEDURE log_method_description(a_description_in IN <A HREF="pete_core.html#typ_description">pete_core.typ_description</A>)
+
+</PRE>
+<P CLASS="DESC_TEXT">
+update method description - defined on method<br>
+
+<BR>
+</P>
+<A NAME="Parameters"></A>
+<TABLE CLASS="LIST_TABLE"><TR><TD CLASS="LIST_TITLE">
+Parameters
+</TD></TR></TABLE>
+<TABLE CLASS="LIST_TABLE">
+<TR><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
+</TD><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
+a_description_in&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+method description<br>
+
+</TD></TR>
+</TABLE>
+<BR>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+</BODY>
+</HTML>

@@ -29,7 +29,7 @@ prompt
 prompt Creating table PETE_PLSQL_BLOCK_RUN
 prompt =================================
 prompt
-@@pete_plsql_block_run.tab
+rem @@pete_plsql_block_run.tab
 prompt
 prompt Creating table PETE_TEST_CASE_IN_SCRIPT
 prompt =====================================
@@ -41,15 +41,15 @@ prompt =====================================
 prompt
 @@pete_config.tab
 prompt
-prompt Creating table PETE_RUN_LOG
+prompt Creating table PETE_LOG
 prompt =====================================
 prompt
 @@pete_run_log.tab
 prompt
-prompt Creating table PETE_RUN_LOG_DETAILS
+prompt Creating table PETE_LOG_DETAIL
 prompt =====================================
 prompt
-@@pete_run_log_details.tab
+@@pete_run_log_detail.tab
 prompt
 prompt Creating table PETE_OUTPUT_PARAM
 prompt =====================================

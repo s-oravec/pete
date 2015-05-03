@@ -1,48 +1,12 @@
-CREATE OR REPLACE PACKAGE BODY petep_convention_runner AS
-
-    -- overall test result
-    g_test_result BOOLEAN;
-
-    --    g_test_id NUMBER; -- test run identifier
-    g_test_start DATE;
-
-    --number of passed asserts
-    g_asserts_passed NUMBER;
-    --number of failed asserts
-    g_asserts_failed NUMBER;
-
-    --g_run_id NUMBER;
-
-    --"currently executed" test package
-    g_test_package VARCHAR2(30);
-    --"currently executed" test method
-    g_test_method VARCHAR2(30);
-
-    g_user VARCHAR2(30) := USER; -- cache for performance
+CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
 
     --
     --wrapper for dynamic SQL
     --
     PROCEDURE execute_sql(a_sql_in IN VARCHAR2) IS
     BEGIN
-        petep_logger.trace(a_trace_message_in => 'EXEC IMM:' || a_sql_in);
+        pete_logger.trace(a_trace_message_in => 'EXEC IMM:' || a_sql_in);
         EXECUTE IMMEDIATE a_sql_in;
-    END;
-
-    --
-    --initilization of globals
-    --
-    PROCEDURE init IS
-    BEGIN
-        g_test_result := TRUE;
-        -- read enhancements  from config
-        g_test_start := SYSDATE;
-    
-        g_asserts_failed := 0;
-        g_asserts_passed := 0;
-    
-        --g_run_id := pete_run_log_seq.nextval;
-        petep_logger.init;
     END;
 
     --------------------------------------------------------------------------------
@@ -63,109 +27,169 @@ CREATE OR REPLACE PACKAGE BODY petep_convention_runner AS
     END package_has_method;
 
     --------------------------------------------------------------------------------
-    PROCEDURE execute_hook_method
+    FUNCTION run_hook_method
     (
-        a_package_name_in     IN user_procedures.object_name%TYPE,
-        a_hook_method_name_in IN user_procedures.procedure_name%TYPE
-    ) IS
+        a_package_name_in      IN user_procedures.object_name%TYPE,
+        a_hook_method_name_in  IN user_procedures.procedure_name%TYPE,
+        a_parent_run_log_id_in IN pete_run_log.parent_id%TYPE
+    ) RETURN pete_core.typ_is_success IS
     BEGIN
         IF package_has_method(a_package_name_in => a_package_name_in,
                               a_method_name_in  => a_hook_method_name_in)
         THEN
-            execute_sql(a_sql_in => 'begin ' || chr(10) || --
-                                    a_package_name_in || '.' ||
-                                    a_hook_method_name_in || ';' || chr(10) || --
-                                    'end;');
+            RETURN run_method(a_package_name_in      => a_package_name_in,
+                              a_method_name_in       => a_hook_method_name_in,
+                              a_description_in       => a_hook_method_name_in,
+                              a_parent_run_log_id_in => a_parent_run_log_id_in);
+        ELSE
+            RETURN TRUE;
         END IF;
-        --TODO: REVIEW: else trace?
     END;
 
-    --------------------------------------------------------------------------------
-    PROCEDURE log_package_description(a_package_name_in IN user_procedures.object_name%TYPE) IS
-        l_call_template CONSTANT VARCHAR2(32767) --
-        := 'BEGIN' || chr(10) || --
-           '  petep_logger.log_runner(a_context_in     => petep_logger.gc_LOG_CONTEXT_PACKAGE,' ||
-           chr(10) || --
-           '                          a_description_in => #PackageName#.description);' ||
-           chr(10) || --
-           'END;';
+    -- Refactored procedure run_method 
+    FUNCTION run_method
+    (
+        a_package_name_in      IN pete_core.typ_object_name,
+        a_method_name_in       IN pete_core.typ_object_name,
+        a_description_in       IN pete_core.typ_description DEFAULT NULL,
+        a_parent_run_log_id_in IN pete_run_log.parent_id%TYPE DEFAULT NULL
+    ) RETURN pete_core.typ_is_success IS
+        l_sql        VARCHAR2(500);
+        l_run_log_id INTEGER;
+        l_result     pete_core.typ_is_success := TRUE;
     BEGIN
-        EXECUTE IMMEDIATE REPLACE(l_call_template,
-                                  '#PackageName#',
-                                  a_package_name_in);
+        l_run_log_id := pete_core.begin_test(a_object_name_in       => a_package_name_in || '.' ||
+                                                                       a_method_name_in,
+                                             a_object_type_in       => pete_core.g_OBJECT_TYPE_METHOD,
+                                             a_description_in       => a_description_in,
+                                             a_parent_run_log_id_in => a_parent_run_log_id_in);
+        --
+        l_sql := 'begin ' || a_package_name_in || '.' || a_method_name_in ||
+                 ';end;';
+        execute_sql(a_sql_in => l_sql);
+        --
+        pete_core.end_test(a_run_log_id_in => l_run_log_id);
+        --
+        RETURN l_result;
+        --
     EXCEPTION
         WHEN OTHERS THEN
-            petep_logger.log_runner(a_context_in     => petep_logger.gc_LOG_CONTEXT_PACKAGE,
-                                    a_description_in => 'Running tests in ' ||
-                                                        a_package_name_in);
-    END;
+            pete_core.end_test(a_run_log_id_in    => l_run_log_id,
+                               a_is_succes_in     => FALSE,
+                               a_error_code_in    => SQLCODE,
+                               a_error_message_in => dbms_utility.format_error_stack ||
+                                                     dbms_utility.format_error_backtrace);
+            --
+            l_result := FALSE;
+            RETURN l_result;
+            --
+    END run_method;
 
-    /**
-    * Tests one package
-    * %param a_package_name_in package name to be tested
-    * %param a_test_package_in if true, then methods of a_package_name_in would be run
-    *                          if false, then methods of UT_ || a_package_name_in would be run
-    * %param a_method_like_in filter for methods being run - if null, all methods would be run
-    */
-    PROCEDURE run_package
+    --
+    -- Tests one package
+    -- %param a_package_name_in package name to be tested
+    -- %param a_test_package_in if true, then methods of a_package_name_in would be run
+    --                          if false, then methods of UT_ || a_package_name_in would be run
+    -- %param a_method_like_in filter for methods being run - if null, all methods would be run
+    --
+    --------------------------------------------------------------------------------
+    FUNCTION run_package
     (
-        a_package_name_in     IN VARCHAR2,
-        a_method_name_like_in IN VARCHAR2 DEFAULT NULL
-    ) IS
-        l_sql VARCHAR2(500);
+        a_package_name_in      IN pete_core.typ_object_name,
+        a_method_name_like_in  IN pete_core.typ_object_name DEFAULT NULL,
+        a_description_in       IN pete_core.typ_description DEFAULT NULL,
+        a_parent_run_log_id_in IN pete_run_log.parent_id%TYPE DEFAULT NULL
+    ) RETURN pete_core.typ_is_success IS
+        l_result     BOOLEAN := TRUE;
+        l_run_log_id INTEGER;
     BEGIN
-        petep_logger.trace(a_trace_message_in => 'PROCEDURE TEST a_package_in:' ||
-                                                 a_package_name_in);
         --
-        init;
-        --
-        log_package_description(a_package_name_in => a_package_name_in);
-        --
-        execute_hook_method(a_package_name_in     => a_package_name_in,
-                            a_hook_method_name_in => 'BEFORE_ALL');
-        --
-        <<tested_methods_loop>>
-        FOR r_method IN (SELECT procedure_name
-                           FROM user_procedures up
-                          WHERE object_name = a_package_name_in
-                            AND procedure_name NOT IN
-                                ('BEFORE_ALL',
-                                 'BEFORE_EACH',
-                                 'AFTER_ALL',
-                                 'AFTER_EACH')
-                            AND (a_method_name_like_in IS NULL OR
-                                procedure_name LIKE a_method_name_like_in)
-                          ORDER BY up.subprogram_id)
-        
-        LOOP
-            execute_hook_method(a_package_name_in     => a_package_name_in,
-                                a_hook_method_name_in => 'BEFORE_EACH');
+        l_run_log_id := pete_core.begin_test(a_object_name_in       => a_package_name_in,
+                                             a_object_type_in       => pete_core.g_OBJECT_TYPE_PACKAGE,
+                                             a_description_in       => a_description_in,
+                                             a_parent_run_log_id_in => a_parent_run_log_id_in);
+        <<test>>
+        BEGIN
             --
-            l_sql := 'begin ' || a_package_name_in || '.' ||
-                     r_method.procedure_name || ';end;';
+            l_result := run_hook_method(a_package_name_in      => a_package_name_in,
+                                        a_hook_method_name_in  => 'BEFORE_ALL',
+                                        a_parent_run_log_id_in => l_run_log_id) AND
+                        l_result;
             --
-            g_test_package := a_package_name_in;
-            g_test_method  := r_method.procedure_name;
+            <<tested_methods_loop>>
+            FOR r_method IN (SELECT procedure_name
+                               FROM user_procedures up
+                              WHERE object_name = a_package_name_in
+                                AND procedure_name NOT IN
+                                    ('BEFORE_ALL',
+                                     'BEFORE_EACH',
+                                     'AFTER_ALL',
+                                     'AFTER_EACH')
+                                AND (a_method_name_like_in IS NULL OR
+                                    procedure_name LIKE a_method_name_like_in)
+                              ORDER BY up.subprogram_id)
+            
+            LOOP
+                l_result := run_hook_method(a_package_name_in      => a_package_name_in,
+                                            a_hook_method_name_in  => 'BEFORE_EACH',
+                                            a_parent_run_log_id_in => l_run_log_id) AND
+                            l_result;
+                --
+                l_result := run_method(a_package_name_in      => a_package_name_in,
+                                       a_method_name_in       => r_method.procedure_name,
+                                       a_parent_run_log_id_in => l_run_log_id) AND
+                            l_result;
+                --
+                l_result := run_hook_method(a_package_name_in      => a_package_name_in,
+                                            a_hook_method_name_in  => 'AFTER_EACH',
+                                            a_parent_run_log_id_in => l_run_log_id) AND
+                            l_result;
+            END LOOP tested_methods_loop;
             --
-            execute_sql(a_sql_in => l_sql);
-            --
-            execute_hook_method(a_package_name_in     => a_package_name_in,
-                                a_hook_method_name_in => 'AFTER_EACH');
-        
-        END LOOP tested_methods_loop;
+            l_result := run_hook_method(a_package_name_in      => a_package_name_in,
+                                        a_hook_method_name_in  => 'AFTER_ALL',
+                                        a_parent_run_log_id_in => l_run_log_id) AND
+                        l_result;
+        EXCEPTION
+            WHEN OTHERS THEN
+                --TODO log error
+                l_result := FALSE;
+        END test;
+    
+        pete_core.end_test(a_run_log_id_in => l_run_log_id,
+                           a_is_succes_in  => l_result);
         --
-        execute_hook_method(a_package_name_in     => a_package_name_in,
-                            a_hook_method_name_in => 'AFTER_ALL');
+        RETURN l_result;
         --
-        petep_logger.print_result;
     END run_package;
 
+    --
+    -- Tests suite
+    -- %param a_suite_name_in test suite name = USER
+    -- runs all UT% packages defined in users schema
+    -- TODO: configurable prefix
+    --
     --------------------------------------------------------------------------------    
-    PROCEDURE run_suite(a_suite_name_in IN VARCHAR2) IS
+    FUNCTION run_suite
+    (
+        a_suite_name_in        IN pete_core.typ_object_name DEFAULT USER,
+        a_description_in       IN pete_core.typ_description DEFAULT NULL,
+        a_parent_run_log_id_in IN pete_run_log.parent_id%TYPE DEFAULT NULL
+    ) RETURN pete_core.typ_is_success IS
+        l_result     pete_core.typ_is_success := TRUE;
+        l_run_log_id INTEGER;
     BEGIN
         --
-        execute_hook_method(a_package_name_in     => 'PETEP_BEFORE_ALL',
-                            a_hook_method_name_in => 'RUN');
+        l_run_log_id := pete_core.begin_test(a_object_name_in       => a_suite_name_in,
+                                             a_object_type_in       => pete_core.g_OBJECT_TYPE_SUITE,
+                                             a_description_in       => a_description_in,
+                                             a_parent_run_log_id_in => a_parent_run_log_id_in);
+        --
+        l_result := run_hook_method(a_package_name_in      => a_suite_name_in ||
+                                                              '.pete_BEFORE_ALL',
+                                    a_hook_method_name_in  => 'RUN',
+                                    a_parent_run_log_id_in => l_run_log_id) AND
+                    l_result;
         --
         <<test_packages_loop>>
         FOR lrec_test_package IN (SELECT DISTINCT object_name
@@ -174,30 +198,36 @@ CREATE OR REPLACE PACKAGE BODY petep_convention_runner AS
                                      AND object_name LIKE 'UT\_%' ESCAPE '\')
         LOOP
             --
-            execute_hook_method(a_package_name_in     => 'PETEP_BEFORE_EACH',
-                                a_hook_method_name_in => 'RUN');
+            l_result := run_hook_method(a_package_name_in      => a_suite_name_in ||
+                                                                  '.pete_BEFORE_EACH',
+                                        a_hook_method_name_in  => 'RUN',
+                                        a_parent_run_log_id_in => l_run_log_id) AND
+                        l_result;
             --
-            run_package(a_package_name_in => lrec_test_package.object_name);
+            l_result := run_package(a_package_name_in      => lrec_test_package.object_name,
+                                    a_parent_run_log_id_in => l_run_log_id) AND
+                        l_result;
             --
-            execute_hook_method(a_package_name_in     => 'PETEP_AFTER_EACH',
-                                a_hook_method_name_in => 'RUN');
+            l_result := run_hook_method(a_package_name_in      => a_suite_name_in ||
+                                                                  '.pete_AFTER_EACH',
+                                        a_hook_method_name_in  => 'RUN',
+                                        a_parent_run_log_id_in => l_run_log_id) AND
+                        l_result;
             --
         END LOOP test_packages;
         --
-        execute_hook_method(a_package_name_in     => 'PETEP_AFTER_ALL',
-                            a_hook_method_name_in => 'RUN');
+        l_result := run_hook_method(a_package_name_in      => a_suite_name_in ||
+                                                              '.pete_AFTER_ALL',
+                                    a_hook_method_name_in  => 'RUN',
+                                    a_parent_run_log_id_in => l_run_log_id) AND
+                    l_result;
+        --
+        pete_core.end_test(a_run_log_id_in => l_run_log_id,
+                           a_is_succes_in  => l_result);
+        --
+        RETURN l_result;
         --
     END;
 
-    /**
-    * API used to set execution result - for pete framework testing
-    */
-    PROCEDURE set_test_result(a_value_in BOOLEAN) IS
-    BEGIN
-        g_test_result := a_value_in;
-    END;
-
-BEGIN
-    init;
 END;
 /

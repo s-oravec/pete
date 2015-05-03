@@ -1,4 +1,4 @@
-CREATE OR REPLACE PACKAGE petep_assert AS
+CREATE OR REPLACE PACKAGE pete_assert AS
 
     --
     -- Pete assert package
@@ -57,7 +57,7 @@ CREATE OR REPLACE PACKAGE petep_assert AS
     -- This assert procedure always succeeds. It's usefull to log, that something has
     -- happened if it is difficult to test it's value
     --
-    PROCEDURE pass(a_comment_in IN VARCHAR2);
+    PROCEDURE pass(a_comment_in IN VARCHAR2 DEFAULT NULL);
 
     --
     -- This assert procedure always fails. It's usefull in a branch of code where the
@@ -105,5 +105,5 @@ CREATE OR REPLACE PACKAGE petep_assert AS
         a_comment_in  VARCHAR2 DEFAULT NULL
     );
 
-END petep_assert;
+END pete_assert;
 /

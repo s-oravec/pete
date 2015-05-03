@@ -2,27 +2,27 @@ create table PETE_OUTPUT_PARAM
 (
   id             NUMBER not null,
   test_script_id NUMBER,
-  code           VARCHAR2(50) not null,
-  name           VARCHAR2(100) not null,
+  name           VARCHAR2(255) not null,
   value          XMLTYPE,
-  description    VARCHAR2(100)
+  description    VARCHAR2(255)
 )
 ;
 comment on table PETE_OUTPUT_PARAM
   is 'PLSQL block output parameters';
+  
 comment on column PETE_OUTPUT_PARAM.id
   is 'Output parameter surrogate key';
 comment on column PETE_OUTPUT_PARAM.test_script_id
   is 'Test script identifier [deprecated?]';
-comment on column PETE_OUTPUT_PARAM.code
-  is 'Output parameter code';
 comment on column PETE_OUTPUT_PARAM.name
   is 'Output parameter name';
 comment on column PETE_OUTPUT_PARAM.value
   is 'XML for output parameter of PLSQL block';
 comment on column PETE_OUTPUT_PARAM.description
   is 'Output parameter description';
+
 create index PETE_OUTPUT_PARAM_FK01 on PETE_OUTPUT_PARAM (TEST_SCRIPT_ID);
+
 alter table PETE_OUTPUT_PARAM
   add constraint PETE_OUTPUT_PARAM_PK primary key (ID);
 alter table PETE_OUTPUT_PARAM
