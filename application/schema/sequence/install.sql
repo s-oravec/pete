@@ -6,6 +6,11 @@ prompt =================================
 prompt
 @@petes_input_param.seq
 prompt
+prompt Creating sequence PETES_OUTPUT_PARAM
+prompt =================================
+prompt
+@@petes_output_param.seq
+prompt
 prompt Creating sequence PETES_PLSQL_BLOCK
 prompt =================================
 prompt

@@ -11,13 +11,16 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
                blk.package,
                blk.method,
                blk.anonymous_block,
-               inpar.value         input
-          FROM pete_plsql_block_in_case tc_i, --TODO: add column description
+               inpar.value         input,
+               outpar.value        expected_output
+          FROM pete_plsql_block_in_case tc_i,
                pete_plsql_block         blk,
                pete_input_param         inpar,
+               pete_output_param        outpar,
                pete_test_case           tc
          WHERE tc_i.plsql_block_id = blk.id
            AND tc_i.input_param_id = inpar.id(+)
+           AND tc_i.output_param_id = outpar.id(+)
            AND tc_i.test_case_id = p_test_case_id
            AND tc.id = tc_i.test_case_id
          ORDER BY tc_i.block_order;
@@ -80,6 +83,13 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
             --
             EXECUTE IMMEDIATE l_plsql_block
                 USING IN a_block_instance_in_case_in.input, OUT l_xml_out;
+            --
+            IF a_block_instance_in_case_in.expected_output IS NOT NULL
+            THEN
+                pete_assert.eq(a_expected_in => a_block_instance_in_case_in.expected_output,
+                               a_actual_in   => l_xml_out,
+                               a_comment_in  => 'Expected PLSQL block result');
+            END IF;
             --
             pete_core.end_test(a_run_log_id_in => l_run_log_id);
             l_result := TRUE;
