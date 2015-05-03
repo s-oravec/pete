@@ -1,5 +1,7 @@
 CREATE OR REPLACE PACKAGE BODY pete_core AS
 
+    g_last_run_log_id pete_run_log.id%TYPE;
+
     --------------------------------------------------------------------------------
     FUNCTION begin_test
     (
@@ -8,17 +10,25 @@ CREATE OR REPLACE PACKAGE BODY pete_core AS
         a_parent_run_log_id_in IN pete_run_log.parent_id%TYPE DEFAULT NULL,
         a_description_in       IN typ_description DEFAULT NULL
     ) RETURN pete_run_log.id%TYPE IS
-        l_run_log_id pete_run_log.id%TYPE := petes_run_log.nextval;
+    
     BEGIN
         --
-        pete_logger.log_start(a_run_log_id_in        => l_run_log_id,
+        g_last_run_log_id := petes_run_log.nextval;
+        --
+        pete_logger.log_start(a_run_log_id_in        => g_last_run_log_id,
                               a_parent_run_log_id_in => a_parent_run_log_id_in,
                               a_description_in       => a_description_in,
                               a_object_type_in       => a_object_type_in,
                               a_object_name_in       => a_object_name_in);
         --
-        RETURN l_run_log_id;
+        RETURN g_last_run_log_id;
         --
+    END;
+
+    --------------------------------------------------------------------------------
+    FUNCTION get_last_run_log_id RETURN pete_run_log.id%TYPE IS
+    BEGIN
+        RETURN g_last_run_log_id;
     END;
 
     --------------------------------------------------------------------------------

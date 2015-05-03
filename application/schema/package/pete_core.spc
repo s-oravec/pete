@@ -44,5 +44,7 @@ CREATE OR REPLACE PACKAGE pete_core AS
         a_error_message_in IN pete_run_log.error_message%TYPE DEFAULT NULL
     );
 
+    FUNCTION get_last_run_log_id RETURN pete_run_log.id%type;
+
 END;
 /
