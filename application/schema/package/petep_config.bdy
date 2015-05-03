@@ -1,4 +1,4 @@
-CREATE OR REPLACE PACKAGE BODY pete_config AS
+CREATE OR REPLACE PACKAGE BODY petep_config AS
 
     g_show_failures_only BOOLEAN;
 
