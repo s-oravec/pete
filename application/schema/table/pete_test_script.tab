@@ -7,6 +7,7 @@ create table PETE_TEST_SCRIPT
 ;
 comment on table PETE_TEST_SCRIPT
   is 'Test script';
+  
 comment on column PETE_TEST_SCRIPT.id
   is 'Test script surrogate identifier';
 comment on column PETE_TEST_SCRIPT.name
@@ -18,4 +19,3 @@ alter table PETE_TEST_SCRIPT
   add constraint PETE_TEST_SCRIPT_PK primary key (ID);
 alter table PETE_TEST_SCRIPT
   add constraint PETE_TEST_SCRIPT_UK1 unique (NAME);
-

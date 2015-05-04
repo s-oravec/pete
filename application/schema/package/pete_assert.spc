@@ -66,7 +66,7 @@ CREATE OR REPLACE PACKAGE pete_assert AS
     PROCEDURE fail(a_comment_in IN VARCHAR2 DEFAULT NULL);
 
     --
-    -- Tests equality of the inpurt parameters. Nulls are considered equal
+    -- Tests equality of the input parameters. Nulls are considered equal
     --
     PROCEDURE eq
     (
@@ -76,7 +76,7 @@ CREATE OR REPLACE PACKAGE pete_assert AS
     );
 
     --
-    -- Tests equality of the inpurt parameters. Nulls are considered equal
+    -- Tests equality of the input parameters. Nulls are considered equal
     --
     PROCEDURE eq
     (
@@ -86,7 +86,7 @@ CREATE OR REPLACE PACKAGE pete_assert AS
     );
 
     --
-    -- Tests equality of the inpurt parameters. Nulls are considered equal
+    -- Tests equality of the input parameters. Nulls are considered equal
     --
     PROCEDURE eq
     (
@@ -96,7 +96,17 @@ CREATE OR REPLACE PACKAGE pete_assert AS
     );
 
     --
-    -- Tests equality of the inpurt parameters. Nulls are considered equal
+    -- Tests equality of the input parameters. Nulls are considered equal
+    --
+    PROCEDURE eq
+    (
+        a_expected_in boolean,
+        a_actual_in   boolean,
+        a_comment_in  VARCHAR2 DEFAULT NULL
+    );
+    
+    --
+    -- Tests equality of the input parameters. Nulls are considered equal
     --
     PROCEDURE eq
     (

@@ -88,7 +88,7 @@ CREATE OR REPLACE PACKAGE pete AS
     PROCEDURE run_test_suite
     (
         a_suite_name_in         IN VARCHAR2 DEFAULT NULL,
-        a_style_conventional_in IN BOOLEAN DEFAULT NULL
+        a_style_conventional_in IN BOOLEAN DEFAULT true
     );
 
     --
