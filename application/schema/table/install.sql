@@ -36,10 +36,10 @@ prompt =====================================
 prompt
 @@pete_test_case_in_script.tab
 prompt
-prompt Creating table PETE_CONFIG
+prompt Creating table PETE_CONFIGURATION
 prompt =====================================
 prompt
-@@pete_config.tab
+@@pete_configuration.tab
 prompt
 prompt Creating table PETE_LOG
 prompt =====================================
