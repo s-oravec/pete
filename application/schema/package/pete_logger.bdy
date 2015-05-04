@@ -111,8 +111,9 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
         COMMIT;
     END;
 
-    --------------------------------------------------------------------------------     
+    --------------------------------------------------------------------------------
     PROCEDURE log_method_description(a_description_in IN pete_core.typ_description) IS
+        PRAGMA AUTONOMOUS_TRANSACTION;
     BEGIN
         --
         UPDATE pete_run_log
