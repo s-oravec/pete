@@ -1,5 +1,5 @@
 -- Create table
-create table PETE_CONFIG
+create table PETE_CONFIGURATION
 (
   key         VARCHAR2(255) not null,
   value       VARCHAR2(4000),
@@ -7,6 +7,6 @@ create table PETE_CONFIG
 )
 ;
 -- Create/Recreate primary, unique and foreign key constraints 
-alter table PETE_CONFIG
-  add constraint PETE_CONFIG_PK primary key (KEY)
+alter table PETE_CONFIGURATION
+  add constraint PETE_CONFIGURATION_PK primary key (KEY)
 ;
