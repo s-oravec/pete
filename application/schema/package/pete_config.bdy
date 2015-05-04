@@ -16,12 +16,12 @@ CREATE OR REPLACE PACKAGE BODY pete_config AS
     */
     PROCEDURE set_param
     (
-        a_key_in   pete_config.key%TYPE,
-        a_value_in pete_config.value%TYPE
+        a_key_in   pete_configuration.key%TYPE,
+        a_value_in pete_configuration.value%TYPE
     ) IS
         PRAGMA AUTONOMOUS_TRANSACTION;
     BEGIN
-        MERGE INTO pete_config c
+        MERGE INTO pete_configuration c
         USING (SELECT a_key_in key2, a_value_in value2 FROM dual) d
         ON (c.key = d.key2)
         WHEN MATCHED THEN
@@ -66,14 +66,14 @@ CREATE OR REPLACE PACKAGE BODY pete_config AS
 
     --------------------------------------------------------------------------------
     PROCEDURE init IS
-        l_value pete_config.value%TYPE;
+        l_value pete_configuration.value%TYPE;
     BEGIN
     
         --show failures only
         BEGIN
             SELECT VALUE
               INTO l_value
-              FROM pete_config c
+              FROM pete_configuration c
              WHERE c.key = SHOW_FAILURES_ONLY;
             --
             IF (l_value = C_TRUE)
