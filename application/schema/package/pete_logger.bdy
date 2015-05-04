@@ -7,7 +7,8 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
 
     --used to update log_run record as method description is available after 
     --log record for method is already created
-    g_run_log_id INTEGER;
+    g_run_log_id        INTEGER;
+    g_output_run_log_id INTEGER;
 
     --------------------------------------------------------------------------------
     FUNCTION get_package_description(a_package_name_in IN user_procedures.object_name%TYPE)
@@ -125,6 +126,7 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
     --
     --wrapper for trace log 
     --
+    --------------------------------------------------------------------------------
     PROCEDURE trace(a_trace_message_in VARCHAR2) IS
     BEGIN
         IF (g_trace)
@@ -140,6 +142,36 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
     BEGIN
         g_trace := a_value_in;
     END set_trace;
+
+    --------------------------------------------------------------------------------
+    FUNCTION get_output_run_log_id RETURN pete_run_log.id%TYPE IS
+    BEGIN
+        RETURN g_output_run_log_id;
+    END;
+
+    --------------------------------------------------------------------------------
+    PROCEDURE output_log(a_run_log_id_in IN pete_run_log.id%TYPE) IS
+    BEGIN
+        g_output_run_log_id := a_run_log_id_in;
+        dbms_output.put_line(chr(10));
+        FOR log_line IN (SELECT * FROM petev_output_run_log)
+        LOOP
+            dbms_output.put_line('.' || log_line.log);
+        END LOOP;
+        dbms_output.put_line(chr(10) || chr(10));
+    END;
+
+    --------------------------------------------------------------------------------                 
+    FUNCTION display_log(a_run_log_id_in IN pete_run_log.id%TYPE)
+        RETURN petet_log_tab
+        PIPELINED IS
+    BEGIN
+        g_output_run_log_id := a_run_log_id_in;
+        FOR log_line IN (SELECT petet_log(log) text FROM petev_output_run_log)
+        LOOP
+            PIPE ROW(log_line.text);
+        END LOOP;
+    END;
 
 BEGIN
     init(a_log_to_dbms_output_in => TRUE);

@@ -1,29 +1,41 @@
 CREATE OR REPLACE PACKAGE BODY pete AS
 
-    g_INIT_BY_METHOD CONSTANT VARCHAR2(255) := 'METHOD';
-    g_INIT_BY_USER   CONSTANT VARCHAR2(255) := 'USER';
-
-    g_init_by VARCHAR2(255);
-    g_result  pete_core.typ_is_success := TRUE;
-
-    --------------------------------------------------------------------------------
-    PROCEDURE init_impl
-    (
-        a_init_by               IN VARCHAR2,
-        a_log_to_dbms_output_in IN BOOLEAN DEFAULT TRUE
-    ) IS
-    BEGIN
-        --
-        g_init_by := a_init_by;
-        pete_logger.init(a_log_to_dbms_output_in => a_log_to_dbms_output_in);
-    END;
+    g_master_run_log_id pete_run_log.id%TYPE;
+    g_result            pete_core.typ_is_success := TRUE;
 
     --------------------------------------------------------------------------------
     PROCEDURE init(a_log_to_dbms_output_in IN BOOLEAN DEFAULT TRUE) IS
     BEGIN
-        init_impl(a_init_by               => g_INIT_BY_USER,
-                  a_log_to_dbms_output_in => a_log_to_dbms_output_in);
-    END init;
+        --
+        pete_logger.init(a_log_to_dbms_output_in => a_log_to_dbms_output_in);
+        --
+    END;
+
+    --------------------------------------------------------------------------------  
+    PROCEDURE begin_test
+    (
+        a_object_name_in IN pete_run_log.object_name%TYPE,
+        a_object_type_in IN pete_run_log.object_type%TYPE,
+        a_description_in IN pete_run_log.description%TYPE DEFAULT NULL
+    ) IS
+    BEGIN
+        g_result            := TRUE;
+        g_master_run_log_id := pete_core.begin_test(a_object_name_in => 'Pete:' ||
+                                                                        a_object_type_in || ':' ||
+                                                                        a_object_name_in,
+                                                    a_object_type_in => pete_core.g_OBJECT_TYPE_PETE,
+                                                    a_description_in => nvl(a_description_in,
+                                                                            'Pete run @ ' ||
+                                                                            to_char(systimestamp)));
+    END;
+
+    --------------------------------------------------------------------------------
+    PROCEDURE end_test IS
+    BEGIN
+        pete_core.end_test(a_run_log_id_in => g_master_run_log_id,
+                           a_is_succes_in  => g_result);
+        pete_logger.output_log(a_run_log_id_in => g_master_run_log_id);
+    END;
 
     --------------------------------------------------------------------------------
     PROCEDURE run
@@ -95,33 +107,25 @@ CREATE OR REPLACE PACKAGE BODY pete AS
     PROCEDURE run_test_suite
     (
         a_suite_name_in         IN VARCHAR2 DEFAULT NULL,
-        a_style_conventional_in IN BOOLEAN DEFAULT NULL
+        a_style_conventional_in IN BOOLEAN DEFAULT TRUE
     ) IS
-        l_style_conventional BOOLEAN := a_style_conventional_in;
-        l_suite_name         VARCHAR2(255) := a_suite_name_in;
+        l_style_conventional BOOLEAN := nvl(a_style_conventional_in, TRUE);
+        l_suite_name         VARCHAR2(255) := nvl(a_suite_name_in, USER);
     BEGIN
         --
-        init_impl(a_init_by => g_INIT_BY_METHOD);
-        --
-        IF a_suite_name_in IS NULL
-        THEN
-            l_style_conventional := TRUE;
-            l_suite_name         := USER;
-        END IF;
+        begin_test(a_object_name_in => l_suite_name,
+                   a_object_type_in => pete_core.g_OBJECT_TYPE_SUITE);
         --
         CASE l_style_conventional
             WHEN TRUE THEN
-                g_result := pete_convention_runner.run_suite(a_suite_name_in => l_suite_name);
+                g_result := pete_convention_runner.run_suite(a_suite_name_in        => l_suite_name,
+                                                             a_parent_run_log_id_in => g_master_run_log_id);
             WHEN FALSE THEN
-                g_result := pete_configuration_runner.run_suite(a_suite_name_in => l_suite_name);
-            ELSE
-                --
-                -- 1. find configuration suite
-                -- 2.1. if \e conf suite && \e conv suite -> raise ambiguous
-                -- 2.2. if ~\e conf suite && ~\e conv suite -> raise not exists
-                -- 2.3. run 
-                raise_application_error(-20000, 'not implemented run_suite');
+                g_result := pete_configuration_runner.run_suite(a_suite_name_in        => l_suite_name,
+                                                                a_parent_run_log_id_in => g_master_run_log_id);
         END CASE;
+        --
+        end_test;
         --
     END run_test_suite;
 
@@ -132,8 +136,16 @@ CREATE OR REPLACE PACKAGE BODY pete AS
         THEN
             raise_application_error(-20000, 'Test script name not specified');
         END IF;
-        init_impl(a_init_by => g_INIT_BY_METHOD);
-        g_result := pete_configuration_runner.run_script(a_script_name_in => a_script_name_in);
+        --
+        begin_test(a_object_name_in => a_script_name_in,
+                   a_object_type_in => pete_core.g_OBJECT_TYPE_SCRIPT);
+    
+        --
+        g_result := pete_configuration_runner.run_script(a_script_name_in       => a_script_name_in,
+                                                         a_parent_run_log_id_in => g_master_run_log_id);
+        --
+        end_test;
+        --
     END run_test_script;
 
     --------------------------------------------------------------------------------
@@ -143,8 +155,16 @@ CREATE OR REPLACE PACKAGE BODY pete AS
         THEN
             raise_application_error(-20000, 'Test case name not specified');
         END IF;
-        init_impl(a_init_by => g_INIT_BY_METHOD);
-        g_result := pete_configuration_runner.run_case(a_case_name_in => a_case_name_in);
+        --
+        begin_test(a_object_name_in => a_case_name_in,
+                   a_object_type_in => pete_core.g_OBJECT_TYPE_CASE);
+    
+        --
+        g_result := pete_configuration_runner.run_case(a_case_name_in         => a_case_name_in,
+                                                       a_parent_run_log_id_in => g_master_run_log_id);
+        --
+        end_test;
+        --
     END run_test_case;
 
     --------------------------------------------------------------------------------
@@ -158,21 +178,36 @@ CREATE OR REPLACE PACKAGE BODY pete AS
         THEN
             raise_application_error(-20000, 'Test package name not specified');
         END IF;
-        init_impl(a_init_by => g_INIT_BY_METHOD);
-        g_result := pete_convention_runner.run_package(a_package_name_in     => a_package_name_in,
-                                                       a_method_name_like_in => a_method_name_like_in);
+        --
+        begin_test(a_object_name_in => a_package_name_in,
+                   a_object_type_in => pete_core.g_OBJECT_TYPE_PACKAGE);
+        --
+        g_result := pete_convention_runner.run_package(a_package_name_in      => a_package_name_in,
+                                                       a_method_name_like_in  => a_method_name_like_in,
+                                                       a_parent_run_log_id_in => g_master_run_log_id);
+    
+        --
+        end_test;
+        --
     END run_test_package;
 
     --------------------------------------------------------------------------------
     PROCEDURE run_all_tests IS
     BEGIN
-        init_impl(a_init_by => g_INIT_BY_METHOD);
+        --
+        begin_test(a_object_name_in => 'Run all test',
+                   a_object_type_in => pete_core.g_OBJECT_TYPE_PETE);
+        --
         --1. run all Configuration scripts
-        g_result := pete_configuration_runner.run_all_test_scripts;
+        g_result := pete_configuration_runner.run_all_test_scripts AND g_result;
         --2. run user Conventional suite
         --TODO: fix test result
-        run_test_suite(a_suite_name_in         => USER,
-                       a_style_conventional_in => TRUE);
+        g_result := pete_convention_runner.run_suite(a_suite_name_in        => USER,
+                                                     a_parent_run_log_id_in => g_master_run_log_id) AND
+                    g_result;
+        --
+        end_test;
+        --
     END run_all_tests;
 
 END;
