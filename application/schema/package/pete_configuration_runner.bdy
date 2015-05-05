@@ -40,6 +40,7 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
         a_parent_run_log_id_in      IN pete_run_log.parent_id%TYPE DEFAULT NULL
     ) RETURN pete_core.typ_is_success IS
         --
+    
         l_plsql_block_template  VARCHAR2(32767) --
         := 'BEGIN' || chr(10) || --
            '  #StoredProcedureName#(a_xml_in => :1, a_xml_out => :2);' ||
@@ -54,6 +55,10 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
         l_result     pete_core.typ_is_success := TRUE;
     BEGIN
         -- create anonymous plsql block
+        pete_logger.trace('RUN_BLOCK: ' || 'a_parent_run_log_id_in:' ||
+                          NVL(to_char(a_parent_run_log_id_in), 'NULL') ||
+                          'block name : ' ||
+                          nvl(a_block_instance_in_case_in.block_name, 'NULL'));
         IF a_block_instance_in_case_in.anonymous_block IS NULL
         THEN
             BEGIN
@@ -73,7 +78,7 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
         ELSE
             l_plsql_block := a_block_instance_in_case_in.anonymous_block;
         END IF;
-    
+        pete_logger.trace('l_plsql_block:' || l_plsql_block);
         -- execute plsql block
         BEGIN
             l_run_log_id := pete_core.begin_test(a_object_name_in       => a_block_instance_in_case_in.test_case_name,
@@ -86,6 +91,7 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
             --
             IF a_block_instance_in_case_in.expected_output IS NOT NULL
             THEN
+                pete_logger.trace('block has expected_output - compare');
                 pete_assert.eq(a_expected_in => a_block_instance_in_case_in.expected_output,
                                a_actual_in   => l_xml_out,
                                a_comment_in  => 'Expected PLSQL block result');
@@ -107,6 +113,8 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
                                    a_error_message_in => dbms_utility.format_error_backtrace);
         END;
     
+        pete_logger.trace('l_result ' || CASE WHEN l_result THEN 'TRUE' ELSE
+                          'FALSE' END);
         RETURN l_result;
     
     END run_block;

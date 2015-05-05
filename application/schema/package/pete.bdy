@@ -49,6 +49,18 @@ CREATE OR REPLACE PACKAGE BODY pete AS
     ) IS
         l_cnt INTEGER;
     BEGIN
+        pete_logger.trace('RUN: ' || 'a_suite_name_in:' ||
+                          NVL(a_suite_name_in, 'NULL') || ', ' ||
+                          'a_package_name_in:' ||
+                          NVL(a_package_name_in, 'NULL') || ', ' ||
+                          'a_method_name_in:' || NVL(a_method_name_in, 'NULL') || ', ' ||
+                          'a_script_name_in:' || NVL(a_script_name_in, 'NULL') || ', ' ||
+                          'a_case_name_in:' || NVL(a_case_name_in, 'NULL') || ', ' ||
+                          'a_style_conventional_in:' ||
+                          NVL(CASE WHEN a_style_conventional_in THEN 'TRUE' WHEN
+                              NOT a_style_conventional_in THEN 'FALSE' ELSE NULL END,
+                              'NULL'));
+    
         --
         --check arguments
         -- iba method nema zmysel - potrebuje package
@@ -66,10 +78,9 @@ CREATE OR REPLACE PACKAGE BODY pete AS
           SELECT a_script_name_in AS x
             FROM dual
           UNION ALL
-          SELECT a_case_name_in AS x
-            FROM dual)
+          SELECT a_case_name_in AS x FROM dual)
         SELECT COUNT(x) INTO l_cnt FROM args;
-    
+        pete_logger.trace('l_cnt ' || l_cnt);
         --
         IF l_cnt > 1
         THEN
@@ -112,6 +123,12 @@ CREATE OR REPLACE PACKAGE BODY pete AS
         l_style_conventional BOOLEAN := nvl(a_style_conventional_in, TRUE);
         l_suite_name         VARCHAR2(255) := nvl(a_suite_name_in, USER);
     BEGIN
+        pete_logger.trace('RUN_TEST_SUITE: ' || 'a_suite_name_in:' ||
+                          NVL(a_suite_name_in, 'NULL') || ', ' ||
+                          'a_style_conventional_in:' ||
+                          NVL(CASE WHEN a_style_conventional_in THEN 'TRUE' WHEN
+                              NOT a_style_conventional_in THEN 'FALSE' ELSE NULL END,
+                              'NULL'));
         --
         begin_test(a_object_name_in => l_suite_name,
                    a_object_type_in => pete_core.g_OBJECT_TYPE_SUITE);
@@ -132,6 +149,8 @@ CREATE OR REPLACE PACKAGE BODY pete AS
     --------------------------------------------------------------------------------
     PROCEDURE run_test_script(a_script_name_in IN VARCHAR2) IS
     BEGIN
+        pete_logger.trace('RUN_TEST_SCRIPT: ' || 'a_script_name_in:' ||
+                          NVL(a_script_name_in, 'NULL'));
         IF a_script_name_in IS NULL
         THEN
             raise_application_error(-20000, 'Test script name not specified');
@@ -151,6 +170,8 @@ CREATE OR REPLACE PACKAGE BODY pete AS
     --------------------------------------------------------------------------------
     PROCEDURE run_test_case(a_case_name_in VARCHAR2) IS
     BEGIN
+        pete_logger.trace('RUN_TEST_CASE: ' || 'a_case_name_in:' ||
+                          NVL(a_case_name_in, 'NULL'));
         IF a_case_name_in IS NULL
         THEN
             raise_application_error(-20000, 'Test case name not specified');
@@ -174,6 +195,10 @@ CREATE OR REPLACE PACKAGE BODY pete AS
         a_method_name_like_in IN VARCHAR2 DEFAULT NULL
     ) IS
     BEGIN
+        pete_logger.trace('RUN_TEST_PACKAGE: ' || 'a_package_name_in:' ||
+                          NVL(a_package_name_in, 'NULL') || ', ' ||
+                          'a_method_name_like_in:' ||
+                          NVL(a_method_name_like_in, 'NULL'));
         IF a_package_name_in IS NULL
         THEN
             raise_application_error(-20000, 'Test package name not specified');
@@ -194,6 +219,7 @@ CREATE OR REPLACE PACKAGE BODY pete AS
     --------------------------------------------------------------------------------
     PROCEDURE run_all_tests IS
     BEGIN
+        pete_logger.trace('RUN_ALL_TESTS: ');
         --
         begin_test(a_object_name_in => 'Run all test',
                    a_object_type_in => pete_core.g_OBJECT_TYPE_PETE);
