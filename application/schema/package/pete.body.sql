@@ -68,7 +68,7 @@ CREATE OR REPLACE PACKAGE BODY pete AS
           UNION ALL
           SELECT a_case_name_in AS x
             FROM dual)
-        SELECT COUNT(*) INTO l_cnt FROM args WHERE x IS NOT NULL;
+        SELECT COUNT(x) INTO l_cnt FROM args;
     
         --
         IF l_cnt > 1
