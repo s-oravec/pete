@@ -56,7 +56,15 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
         PRAGMA AUTONOMOUS_TRANSACTION;
     BEGIN
         --
+        trace('LOG_START: ' || 'a_run_log_id_in:' ||
+              NVL(to_char(a_run_log_id_in), 'NULL') || ', ' ||
+              'a_parent_run_log_id_in:' ||
+              NVL(to_char(a_parent_run_log_id_in), 'NULL') || ', ' ||
+              'a_description_in:' || NVL(a_description_in, 'NULL') || ', ' ||
+              'a_object_type_in:' || NVL(a_object_type_in, 'NULL') || ', ' ||
+              'a_object_name_in:' || NVL(a_object_name_in, 'NULL'));
         g_run_log_id := a_run_log_id_in;
+    
         --
         lrec_pete_run_log.id          := a_run_log_id_in;
         lrec_pete_run_log.parent_id   := a_parent_run_log_id_in;
@@ -99,6 +107,11 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
         PRAGMA AUTONOMOUS_TRANSACTION;
     BEGIN
         --
+        trace('LOG_END: ' || 'a_run_log_id_in:' ||
+              NVL(to_char(a_run_log_id_in), 'NULL') || ', ' || 'a_result_in:' ||
+              NVL(a_result_in, 'NULL') || ', ' || 'a_error_code_in:' ||
+              NVL(to_char(a_error_code_in), 'NULL') || ', ' ||
+              'a_error_message_in:' || NVL(a_error_message_in, 'NULL'));
         UPDATE pete_run_log p
            SET p.result        = a_result_in,
                p.test_end      = systimestamp,
@@ -116,6 +129,8 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
         PRAGMA AUTONOMOUS_TRANSACTION;
     BEGIN
         --
+        trace('LOG_METHOD_DESCRIPTION: ' || 'a_description_in:' ||
+              NVL(a_description_in, 'NULL'));
         UPDATE pete_run_log
            SET description = a_description_in
          WHERE id = g_run_log_id; --set to package session veriable on start of method execution
@@ -167,6 +182,8 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
         RETURN petet_log_tab
         PIPELINED IS
     BEGIN
+        trace('DISPLAY_LOG: ' || 'a_run_log_id_in:' ||
+              NVL(to_char(a_run_log_id_in), 'NULL'));
         g_output_run_log_id := a_run_log_id_in;
         FOR log_line IN (SELECT petet_log(log) text FROM petev_output_run_log)
         LOOP

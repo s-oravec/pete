@@ -8,9 +8,11 @@ CREATE OR REPLACE PACKAGE BODY pete_assert IS
         l_from_pos NUMBER;
         --TODO: use precompiler directives here to get package name or set as literal during installation      
         lc_ASSERT_PACKAGE CONSTANT VARCHAR2(30) := USER || '.pete_ASSERT';
+        l_result  varchar2(1000);
     BEGIN
         --
         l_stack := dbms_utility.format_call_stack;
+         
         -- find las occurence of lc_ASSERT_PACKAGE in stack
         l_from_pos := 1;
         WHILE instr(l_stack, lc_ASSERT_PACKAGE, l_from_pos) > 0
@@ -25,6 +27,7 @@ CREATE OR REPLACE PACKAGE BODY pete_assert IS
 
     --
     -- TODO: review: what is use for this?
+    --      reviewed- it was used to display package and linenumber of an assert - to locate it easily. This feature was killed during the refactoring
     --------------------------------------------------------------------------------
     PROCEDURE get_assert_caller_info
     (
@@ -33,6 +36,7 @@ CREATE OR REPLACE PACKAGE BODY pete_assert IS
     ) IS
         l_stack VARCHAR2(1000);
     BEGIN
+        pete_logger.trace('GET_ASSERT_CALLER_INFO');
         l_stack           := get_call_stack_before_assert;
         a_object_name_out := TRIM(regexp_substr(l_stack,
                                                 '([xa-f0-9]+[ ]+)([0-9]+)(.*)',
@@ -40,12 +44,14 @@ CREATE OR REPLACE PACKAGE BODY pete_assert IS
                                                 1,
                                                 'i',
                                                 3));
+        pete_logger.trace ('a_object_name_out ' || a_object_name_out);
         a_line_number_out := to_number(regexp_substr(l_stack,
                                                      '([xa-f0-9]+[ ]+)([0-9]+)(.*)',
                                                      1,
                                                      1,
                                                      'i',
                                                      2));
+        pete_logger.trace('a_line_number_out ' || a_line_number_out);
     END get_assert_caller_info;
 
     --------------------------------------------------------------------------------
@@ -55,10 +61,15 @@ CREATE OR REPLACE PACKAGE BODY pete_assert IS
         a_comment_in IN VARCHAR2 DEFAULT NULL
     ) IS
     BEGIN
+    pete_logger.trace('THIS: ' || 
+      'a_value_in:' || NVL(case when a_value_in then 'TRUE' when not a_value_in then 'FALSE' else null end, 'NULL') || 
+', ' || 
+      'a_comment_in:' || NVL(a_comment_in, 'NULL'));
         CASE a_value_in
             WHEN TRUE THEN
-                NULL;
+                pete_logger.trace('assert this - true');
             ELSE
+                pete_logger.trace('assert this - false');
                 raise_application_error(-20000,
                                         'Assertion failed: ' ||
                                         nvl(a_comment_in,
