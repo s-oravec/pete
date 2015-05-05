@@ -3,20 +3,20 @@
 rem @@install_spc.sql
 rem @@install_bdy.sql
 
-@@pete.spc
-@@pete_assert.spc
-@@pete_config.spc
-@@pete_configuration_runner.spc
-@@pete_convention_runner.spc
-@@pete_core.spc
-@@pete_logger.spc
-@@pete.bdy
-@@pete_assert.bdy
-@@pete_config.bdy
-@@pete_configuration_runner.bdy
-@@pete_convention_runner.bdy
-@@pete_core.bdy
-@@pete_logger.bdy
+@@pete.spec.sql
+@@pete_assert.spec.sql
+@@pete_config.spec.sql
+@@pete_configuration_runner.spec.sql
+@@pete_convention_runner.spec.sql
+@@pete_core.spec.sql
+@@pete_logger.spec.sql
+@@pete.body.sql
+@@pete_assert.body.sql
+@@pete_config.body.sql
+@@pete_configuration_runner.body.sql
+@@pete_convention_runner.body.sql
+@@pete_core.body.sql
+@@pete_logger.body.sql
 
 @&&run_dir_end
 

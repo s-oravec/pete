@@ -17,7 +17,7 @@ grant create materialized view to pete_test;
 --testing only
 grant debug connect session to pete_test;
 
-connect pete_test/pete_test@local
+connect pete_test/pete_test
 
 prompt install pete application
 @install

@@ -20,5 +20,5 @@ create table PETE_RUN_LOG
 
 -- Create/Recreate primary, unique and foreign key constraints 
 alter table PETE_RUN_LOG
-  add constraint PETE_RUN_LOG_PK primary key (run_log_id)
+  add constraint PETE_RUN_LOG_PK primary key (id)
 ;
