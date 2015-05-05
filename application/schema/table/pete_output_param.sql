@@ -26,7 +26,7 @@ create index PETE_OUTPUT_PARAM_FK01 on PETE_OUTPUT_PARAM (TEST_SCRIPT_ID);
 alter table PETE_OUTPUT_PARAM
   add constraint PETE_OUTPUT_PARAM_PK primary key (ID);
 alter table PETE_OUTPUT_PARAM
-  add constraint PETE_OUTPUT_PARAM_UK01 unique (CODE, TEST_SCRIPT_ID);
+  add constraint PETE_OUTPUT_PARAM_UK01 unique (NAME, TEST_SCRIPT_ID);
 alter table PETE_OUTPUT_PARAM
   add constraint PETE_OUTPUT_PARAM_FK01 foreign key (TEST_SCRIPT_ID)
   references PETE_TEST_SCRIPT (ID);

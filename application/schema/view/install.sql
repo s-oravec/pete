@@ -4,12 +4,12 @@ prompt
 prompt Creating view PETEV_TEST_CASE_RUN
 prompt ===============================
 prompt
-@@petev_test_case_run.sql
+rem @@petev_test_case_run.sql
 prompt
 prompt Creating view PETEV_TEST_SCRIPT_RUN
 prompt =================================
 prompt
-@@petev_test_script_run.sql
+rem @@petev_test_script_run.sql
 prompt
 prompt Creating view PETEV_OUTPUT_RUN_LOG
 prompt =================================

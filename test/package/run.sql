@@ -6,7 +6,7 @@ prompt
 prompt
 prompt Install test package UT_PETE
 prompt ==================================
-@@ut_pete.pck
+@@ut_pete.package.sql
 prompt
 prompt Run test package UT_PETE
 prompt ===============================
@@ -15,7 +15,7 @@ prompt
 prompt
 prompt Install test package UT_PETE_CONFIG_RUNNER
 prompt ==================================
-@@ut_pete_config_runner.pck
+@@ut_pete_config_runner.package.sql
 prompt
 prompt Run test package UT_PETE
 prompt ===============================
@@ -24,7 +24,7 @@ prompt
 prompt
 prompt Install test package UT_PETE_ASSERT
 prompt ==================================
-@@ut_pete_assert.pck
+@@ut_pete_assert.package.sql
 prompt
 prompt Run test package UT_PETE_ASSERT
 prompt ===============================
@@ -33,7 +33,7 @@ prompt
 prompt
 prompt Install test package UT_PETE_SAVEPOINT
 prompt ==================================
-@@ut_pete_savepoint.pck
+@@ut_pete_savepoint.package.sql
 prompt
 prompt Run test package UT_PETE_SAVEPOINT
 prompt ===============================

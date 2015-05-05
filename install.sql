@@ -13,3 +13,5 @@ prompt install application
 @&&run_dir application
 
 show errors
+
+exit

@@ -10,3 +10,4 @@ sqlsn/sqlsn_modules/sqlsn-stack/lib/tmp/.x.sql
 *.~*
 .afiedt.buf.swp
 afiedt.buf
+node_modules
