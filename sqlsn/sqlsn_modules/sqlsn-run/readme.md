@@ -1,3 +1,25 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [SQLSN - run](#sqlsn---run)
+- [Usage](#usage)
+  - [Init](#init)
+  - [Globals](#globals)
+    - [g_run_path](#g_run_path)
+    - [g_run_action](#g_run_action)
+    - [g_run_script](#g_run_script)
+  - [Module internals](#module-internals)
+    - [stack_path](#stack_path)
+  - [Module command scripts](#module-command-scripts)
+    - [run_dir_begin](#run_dir_begin)
+    - [run_dir `<dir>`](#run_dir-dir)
+    - [run_script `<path/to/script>`](#run_script-pathtoscript)
+    - [run_dir_end](#run_dir_end)
+  - [](#)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # SQLSN - run
 
 Module implements commands for running scripts stored in tree of directories.

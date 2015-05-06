@@ -1,3 +1,23 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [SQLSN - stack](#sqlsn---stack)
+- [Usage](#usage)
+  - [Init](#init)
+  - [Globals](#globals)
+    - [g_stack\_`<stack_name>`_head](#g_stack%5C_stack_name_head)
+  - [Module internals](#module-internals)
+    - [m_stack\_`<stack_name>`_level](#m_stack%5C_stack_name_level)
+    - [m_stack\_`<stack_name>`_prev_level](#m_stack%5C_stack_name_prev_level)
+  - [Module command scripts](#module-command-scripts)
+    - [stack_create `<stack_name>`](#stack_create-stack_name)
+    - [stack_push `<stack_name>` `<value>`](#stack_push-stack_name-value)
+    - [stack_pop `<stack_name>` `<variable>`](#stack_pop-stack_name-variable)
+  - [````](#)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # SQLSN - stack
 
 Module implements stack. In SQL*Plus. Blah! But we need it, so ...

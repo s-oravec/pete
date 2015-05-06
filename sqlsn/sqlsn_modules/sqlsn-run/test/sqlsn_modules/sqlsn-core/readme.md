@@ -1,3 +1,28 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [Idea](#idea)
+  - [Goals](#goals)
+  - [Module](#module)
+    - [Should](#should)
+    - [Defines](#defines)
+    - [Uses](#uses)
+  - [Feature roadmap](#feature-roadmap)
+- [SQLSN - core](#sqlsn---core)
+- [Usage](#usage)
+  - [Initialize module](#initialize-module)
+  - [Requirements](#requirements)
+    - [g_sqlsn_modules_path](#g_sqlsn_modules_path)
+  - [Globals](#globals)
+    - [g_sqlsn_path](#g_sqlsn_path)
+  - [Module command scripts](#module-command-scripts)
+    - [sqslsn_require](#sqslsn_require)
+    - [sqslsn_require_from_path](#sqslsn_require_from_path)
+    - [sqlsn_noop](#sqlsn_noop)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Idea
 
 **SQLSN** should be simple Oracle SQL\*Plus library of scripts, which make SQL\*Plus a little bit more comfortable.
