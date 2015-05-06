@@ -1,16 +1,44 @@
-# Pete
+# [Pete](id:Pete)
 
-Pete - simple, yet powerful PL/SQL testing suite. Pete allows you to choose the right approach for your PL/SQL testing needs
+Pete is simple, yet powerful PL/SQL testing suite. Pete allows you to choose the right approach for your PL/SQL  code testing needs
 
-[Trello board](https://trello.com/b/3ni7suyn/pete)
+### [TOC](id:TOC)
 
-## Idea
+* [Pete](#Pete)
+* [1 Convention over Configuration](#Convention)
+    * [1.1 Installation](#ConventionInstallation) 
+    * [1.2 Tutorial](#ConventionTutorial)
+        * [1.2.1 Create test package with description](#CT1)
+        * [1.2.2 Declare hooks - before and after each | all methods](#CT2)
+        * [1.2.3 Declare testing methods](#CT3)
+        * [1.2.4 Implement hooks and testing methods](#CT4)
+        * [1.2.5 Run test package](#CT5)
+ 
+
+With Pete you can choose from 2 different approaches
 
 ### Convention over Configuration
 
+when you want
+
+* quick learning curve
+* almost human language for describing tests
+* selfcontained tests
+     
+### Configuration over Convention
+
+when you want
+
+* run test on different data sets - reusable test cases/scripts
+* split responsibilities for creation of data and code
+
+# [1 Convention over Configuration](id:Convention)
+
 You don't need to configure anything, just write your testing packages using simple convention and Pete will run your tests automagically.
 
-## Prerequisites
+## [1.1 Installation](id:ConventionInstallation)
+
+**1. Grant required privileges to target schema**
 
 ````
 grant connect to <pete_schema>;  
@@ -21,16 +49,13 @@ grant create sequence to <pete_schema>;
 grant create view to <pete_schema>;
 ````
 
-## Installation
-
-1. connect to target schema
-2. and install
+**2. Connect to target schema and install Pete objects**
 
 ````
 SQL> @install
 ````
 
-## Convention over Configuration tutorial
+## [1.2 Convention over Configuration tutorial](id:ConventionTutorial)
 
 Follow up this simple tutorial which will guide you through.
 
@@ -40,7 +65,7 @@ Follow up this simple tutorial which will guide you through.
 3. Implement hooks and testing methods
 5. Run test package
 
-### 1. Create test package with description
+### [1.2.1 Create test package with description](id:CT1)
 
 * package name has to have prefix `UT_`
 * package description has to be defined in `description` variable of package
@@ -55,7 +80,7 @@ END;
 /
 ````
 
-### 2. Declare hooks - before and after each | all methods
+### [1.2.2 Declare hooks - before and after each | all methods](id:CT2)
 
 * `before_all` - executed once before all other methods
 * `before_each` - executed before each method - except hooks
@@ -79,7 +104,7 @@ END;
 /
 ````
 
-### 3. Declare testing methods
+### [1.2.3 Declare testing methods](id:CT3)
 
 * a testing method has to be a procedure with zero mandatory arguments
 * there is no restriction on name of the method except hook method names - `before_all`, `before_each`, `after_each`, `after_all` which are reserved
@@ -108,7 +133,7 @@ END;
 /
 ````
 
-### 4. Implement hooks and testing methods
+### [1.2.4 Implement hooks and testing methods](id:CT4)
 
 * in package body implement `before_all` hook method
 
@@ -179,7 +204,7 @@ END;
 /
 ````
 
-### 5. Run test package
+### [1.2.5 Run test package](id:CT5)
 Running tests in Pete is supereasy.
 
 #### SQL*Plus
