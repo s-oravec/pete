@@ -46,17 +46,17 @@
 <li><a href="#configuration-over-convention">Configuration over Convention</a></li>
 </ul>
 </li>
+<li><a href="#installation">Installation</a></li>
 <li>
 <a href="#convention-over-configuration-1">Convention over Configuration</a>
 
 <ul>
-<li><a href="#installation">Installation</a></li>
 <li>
 <a href="#convention-over-configuration-tutorial">Convention over Configuration tutorial</a>
 
 <ul>
 <li><a href="#1-create-test-package-with-description">1. Create test package with description</a></li>
-<li><a href="#2-declare-hooks---before-and-after-each-%7C-all-methods">2. Declare hooks - before and after each | all methods</a></li>
+<li><a href="#2-declare-hooks---before-and-after-each-or-all-methods">2. Declare hooks - before and after each or all methods</a></li>
 <li><a href="#3-declare-testing-methods">3. Declare testing methods</a></li>
 <li><a href="#4-implement-hooks-and-testing-methods">4. Implement hooks and testing methods</a></li>
 <li>
@@ -66,6 +66,33 @@
 <li><a href="#sqlplus">SQL*Plus</a></li>
 </ul>
 </li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<a href="#configuration-over-convention-1">Configuration over Convention</a>
+
+<ul>
+<li>
+<a href="#configuration-over-convention-tutorial">Configuration over Convention tutorial</a>
+
+<ul>
+<li><a href="#1-create-tested-function">1. Create tested function</a></li>
+<li><a href="#2-create-testing-procedure">2. Create testing procedure</a></li>
+<li>
+<a href="#2-configure-test">2. Configure test</a>
+
+<ul>
+<li><a href="#21-plsql-block-definition">2.1 PL/SQL block definition</a></li>
+<li><a href="#22-test-case-definition">2.2 Test case definition</a></li>
+<li><a href="#23-input-argument">2.3 Input argument</a></li>
+<li><a href="#24-plsql-block-in-test-case">2.4 PL/SQL Block in Test Case</a></li>
+</ul>
+</li>
+<li><a href="#3-execute-test-case">3. Execute Test Case</a></li>
+<li><a href="#4-fix-error-in-function">4. Fix error in function</a></li>
+<li><a href="#5-execute-test-case-again">5. Execute Test Case again</a></li>
 </ul>
 </li>
 </ul>
@@ -103,12 +130,7 @@
 </ul>
 
 <h1>
-<a id="convention-over-configuration-1" class="anchor" href="#convention-over-configuration-1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Convention over Configuration</h1>
-
-<p>You don't need to configure anything, just write your testing packages using simple convention and Pete will run your tests automagically.</p>
-
-<h2>
-<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h2>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h1>
 
 <p><strong>1. Grant required privileges to target schema</strong></p>
 
@@ -124,6 +146,11 @@ grant create view to &lt;pete_schema&gt;;
 
 <pre><code>SQL&gt; @install
 </code></pre>
+
+<h1>
+<a id="convention-over-configuration-1" class="anchor" href="#convention-over-configuration-1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Convention over Configuration</h1>
+
+<p>You don't need to configure anything, just write your testing packages using simple convention and Pete will run your tests automagically.</p>
 
 <h2>
 <a id="convention-over-configuration-tutorial" class="anchor" href="#convention-over-configuration-tutorial" aria-hidden="true"><span class="octicon octicon-link"></span></a>Convention over Configuration tutorial</h2>
@@ -158,7 +185,7 @@ END;
 </code></pre>
 
 <h3>
-<a id="2-declare-hooks---before-and-after-each--all-methods" class="anchor" href="#2-declare-hooks---before-and-after-each--all-methods" aria-hidden="true"><span class="octicon octicon-link"></span></a>2. Declare hooks - before and after each | all methods</h3>
+<a id="2-declare-hooks---before-and-after-each-or-all-methods" class="anchor" href="#2-declare-hooks---before-and-after-each-or-all-methods" aria-hidden="true"><span class="octicon octicon-link"></span></a>2. Declare hooks - before and after each or all methods</h3>
 
 <ul>
 <li>
@@ -332,6 +359,240 @@ SQL&gt; exec pete.run(a_package_name_in =&gt; 'UT_TEST');
 .    AFTER_ALL - SUCCESS
 
 PL/SQL procedure successfully completed.
+
+</code></pre>
+
+<h1>
+<a id="configuration-over-convention-1" class="anchor" href="#configuration-over-convention-1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Configuration over Convention</h1>
+
+<p>Use Pete's Configuration over Convention mode when you want</p>
+
+<ul>
+<li>run test on different data sets - reusable test cases/scripts</li>
+<li>split responsibilities for creation of data and code</li>
+</ul>
+
+<h1>
+<a id="configuration-over-convention-tutorial" class="anchor" href="#configuration-over-convention-tutorial" aria-hidden="true"><span class="octicon octicon-link"></span></a>Configuration over Convention tutorial</h1>
+
+<h2>
+<a id="prereq" class="anchor" href="#prereq" aria-hidden="true"><span class="octicon octicon-link"></span></a>Prereq</h2>
+
+<p><a href="Installation">Install</a> Pete in Oracle's sample SCOTT schema.</p>
+
+<h3>
+<a id="1-create-tested-function" class="anchor" href="#1-create-tested-function" aria-hidden="true"><span class="octicon octicon-link"></span></a>1. Create tested function</h3>
+
+<p>Create some function to test and make at least my favourite error and forget to return result from function</p>
+
+<pre><code>CREATE OR REPLACE FUNCTION get_salary(a_deptno_in IN emp.sal%TYPE)
+    RETURN NUMBER AS
+    l_result NUMBER;
+BEGIN
+    SELECT SUM(sal) INTO l_result FROM emp WHERE deptno = a_deptno_in;
+END;
+/
+</code></pre>
+
+<h3>
+<a id="2-create-testing-procedure" class="anchor" href="#2-create-testing-procedure" aria-hidden="true"><span class="octicon octicon-link"></span></a>2. Create testing procedure</h3>
+
+<p>All testing procedured have to be able to be called using parameters <code>a_xml_in</code> - input XML and <code>a_xml_out</code> - output XML. All other parameters have to be optional.
+Testing procedure is just wrapper, that provides required interface to Pete.</p>
+
+<pre><code>CREATE OR REPLACE PROCEDURE test_get_salary
+(
+    a_xml_in  IN xmltype,
+    a_xml_out OUT xmltype
+) IS
+    l_result emp.sal%TYPE;
+BEGIN
+    --yuk!!!
+    l_result  := get_salary(a_deptno_in =&gt; to_number(a_xml_in.extract('/DEPTNO/text()')
+                                                     .getStringVal));
+    a_xml_out := xmltype.createxml('&lt;TOTAL_SAL&gt;' || l_result || '&lt;/TOTAL_SAL&gt;');
+END;
+
+/
+</code></pre>
+
+<h3>
+<a id="2-configure-test" class="anchor" href="#2-configure-test" aria-hidden="true"><span class="octicon octicon-link"></span></a>2. Configure test</h3>
+
+<h4>
+<a id="21-plsql-block-definition" class="anchor" href="#21-plsql-block-definition" aria-hidden="true"><span class="octicon octicon-link"></span></a>2.1 PL/SQL block definition</h4>
+
+<p>Create PL/SQL block definition in Pete repository.</p>
+
+<ul>
+<li>id - get it from sequence</li>
+<li>name - provide some nice name</li>
+<li>description - describe test implemented by PLSQL block</li>
+<li>method - in our case we have stored procedure, so only method argument will be specified</li>
+</ul>
+
+<pre><code>INSERT INTO pete_plsql_block
+    (id, name, description, method)
+VALUES
+    (petes_plsql_block.nextval,
+     'get_salary',
+     'generic get_salary test',
+     'TEST_GET_SALARY');
+</code></pre>
+
+<hr>
+
+<p><strong>The rest of the columns</strong></p>
+
+<ul>
+<li>test_script_id - identifier of TEST_SCRIPT entity. Use it when you want to "bind" PL/SQL block to specific test script only</li>
+<li>owner, package, method - specify method to be executed</li>
+<li>anonymous_block - specify anonymous PL/SQL block instead of stored procedure</li>
+</ul>
+
+<h4>
+<a id="22-test-case-definition" class="anchor" href="#22-test-case-definition" aria-hidden="true"><span class="octicon octicon-link"></span></a>2.2 Test case definition</h4>
+
+<p>Create test case definition in Pete repository.</p>
+
+<ul>
+<li>id - get it from sequence</li>
+<li>name - test case name - give it a good name</li>
+<li>description - describe test case</li>
+</ul>
+
+<pre><code>INSERT INTO pete_test_case
+    (id, NAME, description)
+VALUES
+    (petes_test_case.nextval, 'get_salary', 'get_salary should work as expected');
+</code></pre>
+
+<hr>
+
+<p><strong>The rest of the columns</strong></p>
+
+<ul>
+<li>test_script_id - identifier of TEST_SCRIPT entity. Use it when you want to "bind" test case to specific test script only</li>
+</ul>
+
+<h4>
+<a id="23-input-argument" class="anchor" href="#23-input-argument" aria-hidden="true"><span class="octicon octicon-link"></span></a>2.3 Input argument</h4>
+
+<p>Create input argument</p>
+
+<ul>
+<li>id - surrogate identifier, get it from sequence</li>
+<li>name - name it well, it would help with reusing </li>
+<li>value - value as XML</li>
+</ul>
+
+<pre><code>INSERT INTO pete_input_param
+    (id, name, value)
+VALUES
+    (petes_input_param.nextval, 'Accounting Department Identifier', '&lt;DEPTNO&gt;10&lt;/DEPTNO&gt;');
+</code></pre>
+
+<hr>
+
+<p><strong>The rest of the columns</strong></p>
+
+<ul>
+<li>test_script_id - identifier of TEST_SCRIPT entity. Use it when you want to "bind" test case to specific test script only</li>
+</ul>
+
+<h4>
+<a id="24-plsql-block-in-test-case" class="anchor" href="#24-plsql-block-in-test-case" aria-hidden="true"><span class="octicon octicon-link"></span></a>2.4 PL/SQL Block in Test Case</h4>
+
+<p>Now glue everything together - map PL/SQL to test case Test case mapping using input argument.</p>
+
+<ul>
+<li>id - surrogate identifier, get it from sequence</li>
+<li>test_case_id - identifier of our Test Case</li>
+<li>pslql_block_id - identifier of our PL/SQL block</li>
+<li>input_param_id - identifier of Input argument</li>
+<li>description - describe instance of PL/SQL block</li>
+<li>block_order - sort blocks in test case</li>
+</ul>
+
+<pre><code>INSERT INTO pete_plsql_block_in_case
+    (id,
+     test_case_id,
+     plsql_block_id,
+     input_param_id,
+     block_order,
+     description)
+VALUES
+    (petes_plsql_block_in_case.nextval,
+     petes_test_case.currval,
+     petes_plsql_block.currval,
+     petes_input_param.currval,
+     1,
+     'should not fail');
+</code></pre>
+
+<p><strong>The rest of the columns</strong></p>
+
+<ul>
+<li>output_param_id - identifier of expected result</li>
+</ul>
+
+<hr>
+
+<p>and commit;</p>
+
+<pre><code>commit;
+</code></pre>
+
+<h3>
+<a id="3-execute-test-case" class="anchor" href="#3-execute-test-case" aria-hidden="true"><span class="octicon octicon-link"></span></a>3. Execute Test Case</h3>
+
+<p>Now execute Test Case</p>
+
+<pre><code>begin
+  pete.run(a_case_name_in =&gt; 'get_salary');
+end;
+/
+</code></pre>
+
+<p>aaaaand ... it fails</p>
+
+<pre><code>.Pete run @ 23-APR-15 02.53.52.755920000 PM +02:00 - FAILURE
+.  get_salary should work as expected - FAILURE
+.    get_salary - FAILURE
+
+ORA-06503: PL/SQL: Function returned without value
+ --------------------------------------------------------------
+ORA-06512: at "SCOTT.GET_SALARY", line 11
+ORA-06512: at "SCOTT.TEST_GET_SALARY", line 9
+ORA-06512: at line 2
+ORA-06512: at "SCOTT.PETE_CONFIGURATION_RUNNER", line 86
+</code></pre>
+
+<h3>
+<a id="4-fix-error-in-function" class="anchor" href="#4-fix-error-in-function" aria-hidden="true"><span class="octicon octicon-link"></span></a>4. Fix error in function</h3>
+
+<p>Add missing return from function.</p>
+
+<pre><code>CREATE OR REPLACE FUNCTION get_salary(a_deptno_in IN emp.sal%TYPE)
+    RETURN NUMBER AS
+    l_result NUMBER;
+BEGIN
+    SELECT SUM(sal) INTO l_result FROM emp WHERE deptno = a_deptno_in;
+    return l_result;
+END;
+/
+</code></pre>
+
+<h3>
+<a id="5-execute-test-case-again" class="anchor" href="#5-execute-test-case-again" aria-hidden="true"><span class="octicon octicon-link"></span></a>5. Execute Test Case again</h3>
+
+<p>Execute Test Case again and now it succeeds!!!</p>
+
+<pre><code>
+.Pete run @ 23-APR-15 03.03.06.171390000 PM +02:00 - SUCCESS
+.  get_salary should work as expected - SUCCESS
+.    get_salary - SUCCESS
+
 
 </code></pre>
       </section>
