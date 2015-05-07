@@ -101,10 +101,10 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
 
     --
     -- Tests one package
-    -- %param a_package_name_in package name to be tested
-    -- %param a_test_package_in if true, then methods of a_package_name_in would be run
+    -- %argument a_package_name_in package name to be tested
+    -- %argument a_test_package_in if true, then methods of a_package_name_in would be run
     --                          if false, then methods of UT_ || a_package_name_in would be run
-    -- %param a_method_like_in filter for methods being run - if null, all methods would be run
+    -- %argument a_method_like_in filter for methods being run - if null, all methods would be run
     --
     --------------------------------------------------------------------------------
     FUNCTION run_package
@@ -191,7 +191,7 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
 
     --
     -- Tests suite
-    -- %param a_suite_name_in test suite name = USER
+    -- %argument a_suite_name_in test suite name = USER
     -- runs all UT% packages defined in users schema
     -- TODO: configurable prefix
     --

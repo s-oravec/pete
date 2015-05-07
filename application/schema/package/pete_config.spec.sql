@@ -7,8 +7,8 @@ CREATE OR REPLACE PACKAGE pete_config AS
     --
     -- Sets if result shows only failed asserts (true) or all (false).
     -- 
-    -- %param a_value_in
-    -- %param a_set_as_default if true then the a_value_in is stored in config table PETE_CONFIG and becomes sesssion default
+    -- %argument a_value_in
+    -- %argument a_set_as_default if true then the a_value_in is stored in config table PETE_CONFIG and becomes sesssion default
     --
     PROCEDURE set_show_failures_only
     (

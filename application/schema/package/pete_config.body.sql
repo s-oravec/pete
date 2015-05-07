@@ -7,9 +7,9 @@ CREATE OR REPLACE PACKAGE BODY pete_config AS
 
     --config table keys
     SHOW_FAILURES_ONLY VARCHAR2(30) := 'SHOW_FAILURES_ONLY';
-    
+
     --
-    gc_SHOW_FAILURES_ONLY_DEFAULT constant boolean := true;
+    gc_SHOW_FAILURES_ONLY_DEFAULT CONSTANT BOOLEAN := TRUE;
 
     /**
     * writes a value into konfig table
@@ -34,8 +34,8 @@ CREATE OR REPLACE PACKAGE BODY pete_config AS
     /**
     * Sets if result shows only failed asserts (true) or all (false).
     * 
-    * %param a_value_in
-    * %param a_set_as_default if true then the a_value_in is stored in config table PETE_CONFIG and becomes sesssion default
+    * %argument a_value_in
+    * %argument a_set_as_default if true then the a_value_in is stored in config table PETE_CONFIG and becomes sesssion default
     */
     --------------------------------------------------------------------------------
     PROCEDURE set_show_failures_only

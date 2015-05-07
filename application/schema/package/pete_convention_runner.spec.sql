@@ -10,7 +10,7 @@ CREATE OR REPLACE PACKAGE pete_convention_runner AS
     -- Tests suite
     -- runs all UT% packages defined in users schema
     --
-    -- %param a_suite_name_in test suite name = USER
+    -- %argument a_suite_name_in test suite name = USER
     --
     -- %return true - success, false - failure
     --
@@ -24,9 +24,9 @@ CREATE OR REPLACE PACKAGE pete_convention_runner AS
     --
     -- Tests one package
     --
-    -- %param a_package_in package name 
-    -- %param a_method_like_in filter for methods being run - if null, all methods would be run
-    -- %param a_description_in description
+    -- %argument a_package_in package name 
+    -- %argument a_method_like_in filter for methods being run - if null, all methods would be run
+    -- %argument a_description_in description
     --
     -- %return true - success, false - failure
     --
@@ -41,9 +41,9 @@ CREATE OR REPLACE PACKAGE pete_convention_runner AS
     --
     -- Tests one method
     --
-    -- %param a_package_in package name 
-    -- %param a_method_name_in method name
-    -- %param a_description_in description
+    -- %argument a_package_in package name 
+    -- %argument a_method_name_in method name
+    -- %argument a_description_in description
     --
     -- %return true - success, false - failure
     --

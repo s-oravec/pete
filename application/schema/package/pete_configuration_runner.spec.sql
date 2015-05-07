@@ -6,7 +6,7 @@ CREATE OR REPLACE PACKAGE pete_configuration_runner IS
 
     --
     -- runs test suite
-    -- %param a_suite_name_in suite name
+    -- %argument a_suite_name_in suite name
     --
     FUNCTION run_suite
     (
@@ -17,7 +17,7 @@ CREATE OR REPLACE PACKAGE pete_configuration_runner IS
     --
     -- Run test script identified by test script name - pete_test_script.name
     --
-    --%param p_name test script name - pete_test_script.name
+    --%argument p_name test script name - pete_test_script.name
     --
     FUNCTION run_script
     (
@@ -28,7 +28,7 @@ CREATE OR REPLACE PACKAGE pete_configuration_runner IS
     --
     -- Run test case identified by test case name - pete_test_case.name
     --
-    --%param p_name Test case name - pete_test_case.name
+    --%argument p_name Test case name - pete_test_case.name
     --
     FUNCTION run_case
     (
