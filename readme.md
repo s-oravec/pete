@@ -233,3 +233,215 @@ PL/SQL procedure successfully completed.
 
 ````
 
+# Configuration over Convention
+
+Use Pete's Configuration over Convention mode when you want
+
+* run test on different data sets - reusable test cases/scripts
+* split responsibilities for creation of data and code
+
+# Tutorial
+
+## Prereq
+
+[Install](Installation) Pete in Oracle's sample SCOTT schema.
+
+## 1. Create tested function
+
+Create some function to test and make at least my favourite error and forget to return result from function
+  
+````
+CREATE OR REPLACE FUNCTION get_salary(a_deptno_in IN emp.sal%TYPE)
+    RETURN NUMBER AS
+    l_result NUMBER;
+BEGIN
+    SELECT SUM(sal) INTO l_result FROM emp WHERE deptno = a_deptno_in;
+END;
+/
+````
+
+## 2. Create testing procedure
+
+All testing procedured have to be able to be called using parameters `a_xml_in` - input XML and `a_xml_out` - output XML. All other parameters have to be optional.
+Testing procedure is just wrapper, that provides required interface to Pete.
+
+````
+CREATE OR REPLACE PROCEDURE test_get_salary
+(
+    a_xml_in  IN xmltype,
+    a_xml_out OUT xmltype
+) IS
+    l_result emp.sal%TYPE;
+BEGIN
+    --yuk!!!
+    l_result  := get_salary(a_deptno_in => to_number(a_xml_in.extract('/DEPTNO/text()')
+                                                     .getStringVal));
+    a_xml_out := xmltype.createxml('<TOTAL_SAL>' || l_result || '</TOTAL_SAL>');
+END;
+
+/
+````
+
+## 2. Configure test
+
+### 2.1 PL/SQL block definition
+
+Create PL/SQL block definition in Pete repository.
+
+* id - get it from sequence
+* name - provide some nice name
+* description - describe test implemented by PLSQL block
+* method - in our case we have stored procedure, so only method argument will be specified
+
+````
+INSERT INTO pete_plsql_block
+    (id, name, description, method)
+VALUES
+    (petes_plsql_block.nextval,
+     'get_salary',
+     'generic get_salary test',
+     'TEST_GET_SALARY');
+````
+
+----
+
+**The rest of the columns**
+
+* test_script_id - identifier of TEST_SCRIPT entity. Use it when you want to "bind" PL/SQL block to specific test script only
+* owner, package, method - specify method to be executed
+* anonymous_block - specify anonymous PL/SQL block instead of stored procedure
+
+### 2.2 Test case definition
+
+Create test case definition in Pete repository.
+
+* id - get it from sequence
+* name - test case name - give it a good name
+* description - describe test case
+
+````
+INSERT INTO pete_test_case
+    (id, NAME, description)
+VALUES
+    (petes_test_case.nextval, 'get_salary', 'get_salary should work as expected');
+````
+
+----
+
+**The rest of the columns**
+
+* test_script_id - identifier of TEST_SCRIPT entity. Use it when you want to "bind" test case to specific test script only
+
+### 2.3 Input argument
+
+Create input argument
+
+* id - surrogate identifier, get it from sequence
+* name - name it well, it would help with reusing 
+* value - value as XML
+
+````
+INSERT INTO pete_input_param
+    (id, name, value)
+VALUES
+    (petes_input_param.nextval, 'Accounting Department Identifier', '<DEPTNO>10</DEPTNO>');
+````
+----
+
+**The rest of the columns**
+
+* test_script_id - identifier of TEST_SCRIPT entity. Use it when you want to "bind" test case to specific test script only
+
+### 2.4 PL/SQL Block in Test Case
+
+Now glue everything together - map PL/SQL to test case Test case mapping using input argument.
+
+* id - surrogate identifier, get it from sequence
+* test_case_id - identifier of our Test Case
+* pslql_block_id - identifier of our PL/SQL block
+* input_param_id - identifier of Input argument
+* description - describe instance of PL/SQL block
+* block_order - sort blocks in test case
+    
+````
+INSERT INTO pete_plsql_block_in_case
+    (id,
+     test_case_id,
+     plsql_block_id,
+     input_param_id,
+     block_order,
+     description)
+VALUES
+    (petes_plsql_block_in_case.nextval,
+     petes_test_case.currval,
+     petes_plsql_block.currval,
+     petes_input_param.currval,
+     1,
+     'should not fail');
+````
+
+**The rest of the columns**
+
+* output_param_id - identifier of expected result
+
+----
+
+and commit;
+
+````
+commit;
+````
+
+# 3. Execute Test Case
+
+Now execute Test Case
+
+````
+begin
+  pete.run(a_case_name_in => 'get_salary');
+end;
+/
+````
+
+aaaaand ... it fails
+
+````
+.Pete run @ 23-APR-15 02.53.52.755920000 PM +02:00 - FAILURE
+.  get_salary should work as expected - FAILURE
+.    get_salary - FAILURE
+
+ORA-06503: PL/SQL: Function returned without value
+ --------------------------------------------------------------
+ORA-06512: at "SCOTT.GET_SALARY", line 11
+ORA-06512: at "SCOTT.TEST_GET_SALARY", line 9
+ORA-06512: at line 2
+ORA-06512: at "SCOTT.PETE_CONFIGURATION_RUNNER", line 86
+````
+
+# 4. Fix error in function
+
+Add missing return from function.
+
+````
+CREATE OR REPLACE FUNCTION get_salary(a_deptno_in IN emp.sal%TYPE)
+    RETURN NUMBER AS
+    l_result NUMBER;
+BEGIN
+    SELECT SUM(sal) INTO l_result FROM emp WHERE deptno = a_deptno_in;
+    return l_result;
+END;
+/
+````
+
+# 5. Execute Test Case again
+
+And now it succeeds!!!
+
+````
+
+.Pete run @ 23-APR-15 03.03.06.171390000 PM +02:00 - SUCCESS
+.  get_salary should work as expected - SUCCESS
+.    get_salary - SUCCESS
+
+
+````
