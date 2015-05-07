@@ -31,31 +31,309 @@
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
-        <h1>
+        
+
+
+
+<p><strong>Table of Contents</strong>  <em>generated with <a href="https://github.com/thlorenz/doctoc">DocToc</a></em></p>
+
+<ul>
+<li>
+<a href="#pete">Pete</a>
+
+<ul>
+<li><a href="#convention-over-configuration">Convention over Configuration</a></li>
+<li><a href="#configuration-over-convention">Configuration over Convention</a></li>
+</ul>
+</li>
+<li>
+<a href="#convention-over-configuration-1">Convention over Configuration</a>
+
+<ul>
+<li><a href="#installation">Installation</a></li>
+<li>
+<a href="#convention-over-configuration-tutorial">Convention over Configuration tutorial</a>
+
+<ul>
+<li><a href="#1-create-test-package-with-description">1. Create test package with description</a></li>
+<li><a href="#2-declare-hooks---before-and-after-each-%7C-all-methods">2. Declare hooks - before and after each | all methods</a></li>
+<li><a href="#3-declare-testing-methods">3. Declare testing methods</a></li>
+<li><a href="#4-implement-hooks-and-testing-methods">4. Implement hooks and testing methods</a></li>
+<li>
+<a href="#5-run-test-package">5. Run test package</a>
+
+<ul>
+<li><a href="#sqlplus">SQL*Plus</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+
+<h1>
 <a id="pete" class="anchor" href="#pete" aria-hidden="true"><span class="octicon octicon-link"></span></a>Pete</h1>
 
-<p>Pete - simple, yet powerful PL/SQL testing suite.</p>
+<p>Pete is simple, yet powerful PL/SQL testing suite. Pete allows you to choose the right approach for your PL/SQL  code testing needs</p>
 
-<h2>
-<a id="idea" class="anchor" href="#idea" aria-hidden="true"><span class="octicon octicon-link"></span></a>Idea</h2>
+<p>With Pete you can choose from 2 different approaches</p>
 
-<p>TODO:</p>
+<h3>
+<a id="convention-over-configuration" class="anchor" href="#convention-over-configuration" aria-hidden="true"><span class="octicon octicon-link"></span></a>Convention over Configuration</h3>
+
+<p>when you want</p>
+
+<ul>
+<li>quick learning curve</li>
+<li>almost human language for describing tests</li>
+<li>selfcontained tests</li>
+</ul>
+
+<h3>
+<a id="configuration-over-convention" class="anchor" href="#configuration-over-convention" aria-hidden="true"><span class="octicon octicon-link"></span></a>Configuration over Convention</h3>
+
+<p>when you want</p>
+
+<ul>
+<li>run test on different data sets - reusable test cases/scripts</li>
+<li>split responsibilities for creation of data and code</li>
+</ul>
+
+<h1>
+<a id="convention-over-configuration-1" class="anchor" href="#convention-over-configuration-1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Convention over Configuration</h1>
+
+<p>You don't need to configure anything, just write your testing packages using simple convention and Pete will run your tests automagically.</p>
 
 <h2>
 <a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h2>
 
-<ol>
-<li>connect to target schema</li>
-<li>and install</li>
-</ol>
+<p><strong>1. Grant required privileges to target schema</strong></p>
+
+<pre><code>grant connect to &lt;pete_schema&gt;;  
+grant create table to &lt;pete_schema&gt;;
+grant create procedure to &lt;pete_schema&gt;;
+grant create type to &lt;pete_schema&gt;;
+grant create sequence to &lt;pete_schema&gt;;
+grant create view to &lt;pete_schema&gt;;
+</code></pre>
+
+<p><strong>2. Connect to target schema and install Pete objects</strong></p>
 
 <pre><code>SQL&gt; @install
 </code></pre>
 
 <h2>
-<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h2>
+<a id="convention-over-configuration-tutorial" class="anchor" href="#convention-over-configuration-tutorial" aria-hidden="true"><span class="octicon octicon-link"></span></a>Convention over Configuration tutorial</h2>
 
-<p>TODO:</p>
+<p>Follow up this simple tutorial which will guide you through.</p>
+
+<ol>
+<li>Create test package specification and describe your test</li>
+<li>Declare hooks</li>
+<li>Declare testing methods</li>
+<li>Implement hooks and testing methods</li>
+<li>Run test package</li>
+</ol>
+
+<h3>
+<a id="1-create-test-package-with-description" class="anchor" href="#1-create-test-package-with-description" aria-hidden="true"><span class="octicon octicon-link"></span></a>1. Create test package with description</h3>
+
+<ul>
+<li>package name has to have prefix <code>UT_</code>
+</li>
+<li>package description has to be defined in <code>description</code> variable of package</li>
+<li>variable have to be either <code>pete_core.typ_description</code> or some <code>varchar2</code> with less than <code>4000 bytes</code>
+</li>
+</ul>
+
+<pre><code>CREATE OR REPLACE PACKAGE ut_test AS
+
+    description VARCHAR2(255) := 'Test my amazing constraint';
+
+END;
+/
+</code></pre>
+
+<h3>
+<a id="2-declare-hooks---before-and-after-each--all-methods" class="anchor" href="#2-declare-hooks---before-and-after-each--all-methods" aria-hidden="true"><span class="octicon octicon-link"></span></a>2. Declare hooks - before and after each | all methods</h3>
+
+<ul>
+<li>
+<code>before_all</code> - executed once before all other methods</li>
+<li>
+<code>before_each</code> - executed before each method - except hooks</li>
+<li>
+<code>after_each</code> - execute after each method - except hooks</li>
+<li>
+<code>after_all</code> - execute once after all other methods</li>
+</ul>
+
+<p>All hook methods are optional. You choose whether to use them or not.</p>
+
+<pre><code>CREATE OR REPLACE PACKAGE ut_test AS
+
+    description VARCHAR2(255) := 'Test my amazing constraint';
+
+    -- hook method
+    PROCEDURE before_all;
+
+    -- hook method
+    PROCEDURE after_all;
+
+END;
+/
+</code></pre>
+
+<h3>
+<a id="3-declare-testing-methods" class="anchor" href="#3-declare-testing-methods" aria-hidden="true"><span class="octicon octicon-link"></span></a>3. Declare testing methods</h3>
+
+<ul>
+<li>a testing method has to be a procedure with zero mandatory arguments</li>
+<li>there is no restriction on name of the method except hook method names - <code>before_all</code>, <code>before_each</code>, <code>after_each</code>, <code>after_all</code> which are reserved</li>
+<li>methods are executed in order, in which they are defined in package specification
+
+<ul>
+<li>just reorder methods in package specification to change execution order</li>
+</ul>
+</li>
+<li>it is best practice to describe what method does (or Pete makes up something generic like <em>"Executing method ut_test.method_1"</em>)
+
+<ul>
+<li>it is even better to describe it using <code>default</code> value of some input argument (as you can use it in implementation, as you will see later)</li>
+</ul>
+</li>
+</ul>
+
+<pre><code>CREATE OR REPLACE PACKAGE ut_test AS
+
+    description VARCHAR2(255) := 'Test my amazing constraint';
+
+    -- hook method
+    PROCEDURE before_all;
+
+    PROCEDURE ins_child_without_parent_fails(d VARCHAR2 := 'Insert child without existing parent fails');
+
+    PROCEDURE ins_child_with_parent_succeeds(d VARCHAR2 := 'Insert child with existing parent succeeds');
+
+    -- hook method
+    PROCEDURE after_all;
+
+END;
+
+/
+</code></pre>
+
+<h3>
+<a id="4-implement-hooks-and-testing-methods" class="anchor" href="#4-implement-hooks-and-testing-methods" aria-hidden="true"><span class="octicon octicon-link"></span></a>4. Implement hooks and testing methods</h3>
+
+<ul>
+<li>in package body implement <code>before_all</code> hook method</li>
+</ul>
+
+<pre><code>CREATE OR REPLACE PACKAGE BODY ut_test AS
+
+    PROCEDURE before_all IS
+    BEGIN
+        EXECUTE IMMEDIATE 'create table x_parent (id integer primary key)';
+        EXECUTE IMMEDIATE 'create table x_child (id integer primary key, parent_id integer references x_parent(id))';
+    END;
+
+</code></pre>
+
+<ul>
+<li>implement first test method
+
+<ul>
+<li>call <code>pete_logger.log_method_description(d)</code> to set method description</li>
+<li>implement test, that inserts into child table without existence of a referenced parent - it should fail</li>
+</ul>
+</li>
+</ul>
+
+<pre><code>    PROCEDURE ins_child_without_parent_fails(d VARCHAR2) IS
+        l_thrown BOOLEAN := FALSE;
+    BEGIN
+        --log
+        pete_logger.log_method_description(d);
+        --test
+        BEGIN
+            EXECUTE IMMEDIATE 'insert into x_child values (1,1)';
+            l_thrown := FALSE;
+        EXCEPTION
+            WHEN OTHERS THEN
+                l_thrown := TRUE;
+        END;
+        --assert
+        IF NOT l_thrown
+        THEN
+            raise_application_error(-20000,
+                                    q'{It should throw and it doesn't, so fix it!}'); --TODO: add description
+        END IF;
+    END ins_child_without_parent_fails;
+</code></pre>
+
+<ul>
+<li>implement second test method
+
+<ul>
+<li>again, set method description</li>
+<li>insert parent and then child record</li>
+</ul>
+</li>
+</ul>
+
+<pre><code>    PROCEDURE ins_child_with_parent_succeeds(d VARCHAR2) IS
+    BEGIN
+        --log
+        pete_logger.log_method_description(d);
+        --assert
+        EXECUTE IMMEDIATE 'insert into x_parent values (1)';
+        EXECUTE IMMEDIATE 'insert into x_child values (1,1)';
+    END;
+</code></pre>
+
+<ul>
+<li>implement <code>after_all</code> hook method to cleanup after tests</li>
+</ul>
+
+<pre><code>    PROCEDURE after_all IS
+    BEGIN
+        EXECUTE IMMEDIATE 'drop table x_child';
+        EXECUTE IMMEDIATE 'drop table x_parent';
+    END;
+
+END;
+
+/
+</code></pre>
+
+<h3>
+<a id="5-run-test-package" class="anchor" href="#5-run-test-package" aria-hidden="true"><span class="octicon octicon-link"></span></a>5. Run test package</h3>
+
+<p>Running tests in Pete is supereasy.</p>
+
+<h4>
+<a id="sqlplus" class="anchor" href="#sqlplus" aria-hidden="true"><span class="octicon octicon-link"></span></a>SQL*Plus</h4>
+
+<pre><code>SQL&gt; set serveroutput on size unlimited
+SQL&gt; set linesize 255
+SQL&gt; set pages 0
+SQL&gt; 
+SQL&gt; exec pete.run(a_package_name_in =&gt; 'UT_TEST');
+
+.Pete run @ 21-APR-15 02.42.52.753627000 PM +02:00 - SUCCESS
+.  Test my amazing constraint - SUCCESS
+.    BEFORE_ALL - SUCCESS
+.    Insert child without existing parent fails - SUCCESS
+.    Insert child with existing parent succeeds - SUCCESS
+.    AFTER_ALL - SUCCESS
+
+PL/SQL procedure successfully completed.
+
+</code></pre>
       </section>
     </div>
 
@@ -63,7 +341,7 @@
     <div id="footer_wrap" class="outer">
       <footer class="inner">
         <p class="copyright">Pete maintained by <a href="https://github.com/principal-engineering">principal-engineering</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
       </footer>
     </div>
 
