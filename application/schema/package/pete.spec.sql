@@ -27,14 +27,12 @@ CREATE OR REPLACE PACKAGE pete AS
             if \e pete_after_each.run
         if \e pete_after_all.run
     
-    run pro jiný nepovinný parametr by pouštìl "subset" toho výše: a_package_in - jednu package
+    run for other optional params will run "subset": a_package_in - jednu package
     a_script in - jeden skript
     a_method_in - jednu metodu
     a_case_in - jeden test case.
     
-    Pri vyplnìní a_package_in nebo a_method_in jde o "konvencni" spoustìní a proto budou rovnìž spuštìny všechny before/after metody/package
-    
-    a_style_in nepovinny, pouze, pokud dle obsahu parametru ke spousteni nepujde rozhodnout, který styl uživatel myslí (budou k dipozici oba)
+    a_style_in is optional, unless it is impossible to decide to which style use, when both are available
     */
 
     --

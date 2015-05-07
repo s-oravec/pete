@@ -61,20 +61,17 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
                           nvl(a_block_instance_in_case_in.block_name, 'NULL'));
         IF a_block_instance_in_case_in.anonymous_block IS NULL
         THEN
-            BEGIN
-                IF a_block_instance_in_case_in.package IS NOT NULL
-                THEN
-                    l_stored_procedure_name := a_block_instance_in_case_in.owner || '.' ||
-                                               a_block_instance_in_case_in.package || '.' ||
-                                               a_block_instance_in_case_in.method;
-                ELSE
-                    l_stored_procedure_name := a_block_instance_in_case_in.owner || '.' ||
-                                               a_block_instance_in_case_in.method;
-                END IF;
-                l_plsql_block := REPLACE(l_plsql_block_template,
-                                         '#StoredProcedureName#',
-                                         l_stored_procedure_name);
-            END;
+        
+            l_stored_procedure_name := CASE
+                                           WHEN a_block_instance_in_case_in.owner IS NOT NULL THEN
+                                            a_block_instance_in_case_in.owner || '.'
+                                       END || CASE
+                                           WHEN a_block_instance_in_case_in.package IS NOT NULL THEN
+                                            a_block_instance_in_case_in.package || '.'
+                                       END || a_block_instance_in_case_in.method;
+            l_plsql_block           := REPLACE(l_plsql_block_template,
+                                               '#StoredProcedureName#',
+                                               l_stored_procedure_name);
         ELSE
             l_plsql_block := a_block_instance_in_case_in.anonymous_block;
         END IF;
@@ -110,7 +107,10 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
                                    a_xml_in_in        => a_block_instance_in_case_in.input,
                                    a_xml_out_in       => l_xml_out,
                                    a_error_code_in    => SQLCODE,
-                                   a_error_message_in => dbms_utility.format_error_backtrace);
+                                   a_error_message_in => dbms_utility.format_error_stack ||
+                                                         ' --------------------------------------------------------------' ||
+                                                         chr(10) ||
+                                                         dbms_utility.format_error_backtrace);
         END;
     
         pete_logger.trace('l_result ' || CASE WHEN l_result THEN 'TRUE' ELSE

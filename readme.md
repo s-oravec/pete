@@ -38,11 +38,7 @@ when you want
 * run test on different data sets - reusable test cases/scripts
 * split responsibilities for creation of data and code
 
-# Convention over Configuration
-
-You don't need to configure anything, just write your testing packages using simple convention and Pete will run your tests automagically.
-
-## Installation
+# Installation
 
 **1. Grant required privileges to target schema**
 
@@ -60,6 +56,10 @@ grant create view to <pete_schema>;
 ````
 SQL> @install
 ````
+
+# Convention over Configuration
+
+You don't need to configure anything, just write your testing packages using simple convention and Pete will run your tests automagically.
 
 ## Convention over Configuration tutorial
 
