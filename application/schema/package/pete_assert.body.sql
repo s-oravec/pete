@@ -221,7 +221,7 @@ Actual:  ' || a_actual_in);
     END fail;
 
     --
-    -- Tests equality of the input parameters. Nulls are considered equal
+    -- Tests equality of the input arguments. Nulls are considered equal
     --------------------------------------------------------------------------------
     PROCEDURE eq
     (
@@ -239,7 +239,7 @@ Actual:  ' || a_actual_in);
     END eq;
 
     --
-    -- Tests equality of the input parameters. Nulls are considered equal
+    -- Tests equality of the input arguments. Nulls are considered equal
     --------------------------------------------------------------------------------
     PROCEDURE eq
     (
@@ -257,7 +257,7 @@ Actual:  ' || a_actual_in);
     END eq;
 
     --
-    -- Tests equality of the input parameters. Nulls are considered equal
+    -- Tests equality of the input arguments. Nulls are considered equal
     --------------------------------------------------------------------------------
     PROCEDURE eq
     (
@@ -292,7 +292,7 @@ Actual:  ' || a_actual_in);
     END;
 
     --
-    -- Tests equality of the input parameters. Nulls are considered equal
+    -- Tests equality of the input arguments. Nulls are considered equal
     --------------------------------------------------------------------------------
     PROCEDURE eq
     (

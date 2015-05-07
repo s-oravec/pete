@@ -5,9 +5,9 @@ CREATE OR REPLACE PACKAGE pete_assert AS
     --
 
     --
-    -- Basic assert procedure. Every other procedure transform it's parameters and calls this one
-    -- %param a_value_in value, that is expected to be true
-    -- %param a_comment_in comment in case of failing assert
+    -- Basic assert procedure. Every other procedure transform it's arguments and calls this one
+    -- %argument a_value_in value, that is expected to be true
+    -- %argument a_comment_in comment in case of failing assert
     --
     PROCEDURE this
     (
@@ -66,7 +66,7 @@ CREATE OR REPLACE PACKAGE pete_assert AS
     PROCEDURE fail(a_comment_in IN VARCHAR2 DEFAULT NULL);
 
     --
-    -- Tests equality of the input parameters. Nulls are considered equal
+    -- Tests equality of the input arguments. Nulls are considered equal
     --
     PROCEDURE eq
     (
@@ -76,7 +76,7 @@ CREATE OR REPLACE PACKAGE pete_assert AS
     );
 
     --
-    -- Tests equality of the input parameters. Nulls are considered equal
+    -- Tests equality of the input arguments. Nulls are considered equal
     --
     PROCEDURE eq
     (
@@ -86,7 +86,7 @@ CREATE OR REPLACE PACKAGE pete_assert AS
     );
 
     --
-    -- Tests equality of the input parameters. Nulls are considered equal
+    -- Tests equality of the input arguments. Nulls are considered equal
     --
     PROCEDURE eq
     (
@@ -96,7 +96,7 @@ CREATE OR REPLACE PACKAGE pete_assert AS
     );
 
     --
-    -- Tests equality of the input parameters. Nulls are considered equal
+    -- Tests equality of the input arguments. Nulls are considered equal
     --
     PROCEDURE eq
     (
@@ -106,7 +106,7 @@ CREATE OR REPLACE PACKAGE pete_assert AS
     );
     
     --
-    -- Tests equality of the input parameters. Nulls are considered equal
+    -- Tests equality of the input arguments. Nulls are considered equal
     --
     PROCEDURE eq
     (
