@@ -24,7 +24,7 @@ CREATE OR REPLACE PACKAGE pete_logger AS
     --
     -- update method description - defined on method
     --
-    -- %param a_description_in method description
+    -- %argument a_description_in method description
     --
     --------------------------------------------------------------------------------  
     PROCEDURE log_method_description(a_description_in IN pete_core.typ_description);
