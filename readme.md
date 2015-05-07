@@ -5,8 +5,8 @@
 - [Pete](#pete)
     - [Convention over Configuration](#convention-over-configuration)
     - [Configuration over Convention](#configuration-over-convention)
+- [Installation](#installation)
 - [Convention over Configuration](#convention-over-configuration-1)
-  - [Installation](#installation)
   - [Convention over Configuration tutorial](#convention-over-configuration-tutorial)
     - [1. Create test package with description](#1-create-test-package-with-description)
     - [2. Declare hooks - before and after each | all methods](#2-declare-hooks---before-and-after-each-%7C-all-methods)
@@ -14,6 +14,23 @@
     - [4. Implement hooks and testing methods](#4-implement-hooks-and-testing-methods)
     - [5. Run test package](#5-run-test-package)
       - [SQL*Plus](#sqlplus)
+- [Configuration over Convention](#configuration-over-convention-1)
+- [Configuration over Convention tutorial](#configuration-over-convention-tutorial)
+  - [Prereq](#prereq)
+    - [1. Create tested function](#1-create-tested-function)
+    - [2. Create testing procedure](#2-create-testing-procedure)
+    - [2. Configure test](#2-configure-test)
+      - [2.1 PL/SQL block definition](#21-plsql-block-definition)
+  - [](#)
+      - [2.2 Test case definition](#22-test-case-definition)
+  - [](#-1)
+      - [2.3 Input argument](#23-input-argument)
+  - [````](#)
+      - [2.4 PL/SQL Block in Test Case](#24-plsql-block-in-test-case)
+  - [](#-2)
+    - [3. Execute Test Case](#3-execute-test-case)
+    - [4. Fix error in function](#4-fix-error-in-function)
+    - [5. Execute Test Case again](#5-execute-test-case-again)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -240,13 +257,13 @@ Use Pete's Configuration over Convention mode when you want
 * run test on different data sets - reusable test cases/scripts
 * split responsibilities for creation of data and code
 
-# Tutorial
+# Configuration over Convention tutorial
 
 ## Prereq
 
 [Install](Installation) Pete in Oracle's sample SCOTT schema.
 
-## 1. Create tested function
+### 1. Create tested function
 
 Create some function to test and make at least my favourite error and forget to return result from function
   
@@ -260,7 +277,7 @@ END;
 /
 ````
 
-## 2. Create testing procedure
+### 2. Create testing procedure
 
 All testing procedured have to be able to be called using parameters `a_xml_in` - input XML and `a_xml_out` - output XML. All other parameters have to be optional.
 Testing procedure is just wrapper, that provides required interface to Pete.
@@ -282,9 +299,9 @@ END;
 /
 ````
 
-## 2. Configure test
+### 2. Configure test
 
-### 2.1 PL/SQL block definition
+#### 2.1 PL/SQL block definition
 
 Create PL/SQL block definition in Pete repository.
 
@@ -311,7 +328,7 @@ VALUES
 * owner, package, method - specify method to be executed
 * anonymous_block - specify anonymous PL/SQL block instead of stored procedure
 
-### 2.2 Test case definition
+#### 2.2 Test case definition
 
 Create test case definition in Pete repository.
 
@@ -332,7 +349,7 @@ VALUES
 
 * test_script_id - identifier of TEST_SCRIPT entity. Use it when you want to "bind" test case to specific test script only
 
-### 2.3 Input argument
+#### 2.3 Input argument
 
 Create input argument
 
@@ -352,7 +369,7 @@ VALUES
 
 * test_script_id - identifier of TEST_SCRIPT entity. Use it when you want to "bind" test case to specific test script only
 
-### 2.4 PL/SQL Block in Test Case
+#### 2.4 PL/SQL Block in Test Case
 
 Now glue everything together - map PL/SQL to test case Test case mapping using input argument.
 
@@ -392,7 +409,7 @@ and commit;
 commit;
 ````
 
-# 3. Execute Test Case
+### 3. Execute Test Case
 
 Now execute Test Case
 
@@ -418,7 +435,7 @@ ORA-06512: at line 2
 ORA-06512: at "SCOTT.PETE_CONFIGURATION_RUNNER", line 86
 ````
 
-# 4. Fix error in function
+### 4. Fix error in function
 
 Add missing return from function.
 
@@ -433,9 +450,9 @@ END;
 /
 ````
 
-# 5. Execute Test Case again
+### 5. Execute Test Case again
 
-And now it succeeds!!!
+Execute Test Case again and now it succeeds!!!
 
 ````
 
