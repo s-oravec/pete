@@ -1,5 +1,26 @@
 CREATE OR REPLACE PACKAGE BODY pete_assert IS
 
+    gc_null     CONSTANT VARCHAR2(4) := 'NULL';
+    gc_not_null CONSTANT VARCHAR2(10) := 'NOT NULL';
+
+    -- todo configuration
+    gc_date_mask CONSTANT VARCHAR2(22) := 'dd.mm.yyyy hh24:mi:ss';
+
+    --
+    -- converts a boolean value to a string representation - 'TRUE', 'FALSE', 'NULL'
+    --
+    FUNCTION bool2char(a_bool_in IN BOOLEAN) RETURN VARCHAR2 IS
+    BEGIN
+        IF (a_bool_in)
+        THEN
+            RETURN 'TRUE';
+        ELSIF (NOT a_bool_in)
+        THEN
+            RETURN 'FALSE';
+        ELSE
+            RETURN 'NULL';
+        END IF;
+    END;
     --
     -- parse formated call stack and get stack before call of assert package
     --------------------------------------------------------------------------------  
@@ -8,11 +29,11 @@ CREATE OR REPLACE PACKAGE BODY pete_assert IS
         l_from_pos NUMBER;
         --TODO: use precompiler directives here to get package name or set as literal during installation      
         lc_ASSERT_PACKAGE CONSTANT VARCHAR2(30) := USER || '.pete_ASSERT';
-        l_result  varchar2(1000);
+--        l_result VARCHAR2(1000);
     BEGIN
         --
         l_stack := dbms_utility.format_call_stack;
-         
+    
         -- find las occurence of lc_ASSERT_PACKAGE in stack
         l_from_pos := 1;
         WHILE instr(l_stack, lc_ASSERT_PACKAGE, l_from_pos) > 0
@@ -44,7 +65,7 @@ CREATE OR REPLACE PACKAGE BODY pete_assert IS
                                                 1,
                                                 'i',
                                                 3));
-        pete_logger.trace ('a_object_name_out ' || a_object_name_out);
+        pete_logger.trace('a_object_name_out ' || a_object_name_out);
         a_line_number_out := to_number(regexp_substr(l_stack,
                                                      '([xa-f0-9]+[ ]+)([0-9]+)(.*)',
                                                      1,
@@ -57,25 +78,43 @@ CREATE OR REPLACE PACKAGE BODY pete_assert IS
     --------------------------------------------------------------------------------
     PROCEDURE this
     (
-        a_value_in   IN BOOLEAN,
-        a_comment_in IN VARCHAR2 DEFAULT NULL
+        a_value_in    IN BOOLEAN,
+        a_comment_in  IN VARCHAR2,
+        a_expected_in IN VARCHAR2,
+        a_actual_in   in VARCHAR2
+        
     ) IS
     BEGIN
-    pete_logger.trace('THIS: ' || 
-      'a_value_in:' || NVL(case when a_value_in then 'TRUE' when not a_value_in then 'FALSE' else null end, 'NULL') || 
-', ' || 
-      'a_comment_in:' || NVL(a_comment_in, 'NULL'));
+        pete_logger.trace('THIS: ' || 'a_value_in:' ||
+                          NVL(CASE WHEN a_value_in THEN 'TRUE' WHEN
+                              NOT a_value_in THEN 'FALSE' ELSE NULL END,
+                              'NULL') || ', ' || 'a_comment_in:' ||
+                          NVL(a_comment_in, 'NULL') || ', ' ||
+                          'a_expected_in:' || NVL(a_expected_in, 'NULL') || ', ' ||
+                          'a_actual_in:' || NVL(a_actual_in, 'NULL'));
         CASE a_value_in
             WHEN TRUE THEN
                 pete_logger.trace('assert this - true');
             ELSE
                 pete_logger.trace('assert this - false');
                 raise_application_error(-20000,
-                                        'Assertion failed: ' ||
-                                        nvl(a_comment_in,
-                                            'Value expected to be true'));
+                                        'Assertion failed: ' || a_comment_in || '
+Expected:' || a_expected_in || '
+Actual:  ' || a_actual_in);
         END CASE;
     END this;
+
+    PROCEDURE this
+    (
+        a_value_in    IN BOOLEAN,
+        a_comment_in  IN VARCHAR2 default null
+        
+    ) IS
+    BEGIN
+      this (a_value_in => a_value_in,
+          a_comment_in => nvl(a_comment_in, 'Expected value to be true'), a_expected_in => 'TRUE', a_actual_in => bool2char(a_value_in));
+    END this;
+    
 
     -- 
     -- Group of assert procedure for testing null values
@@ -88,7 +127,9 @@ CREATE OR REPLACE PACKAGE BODY pete_assert IS
     ) IS
     BEGIN
         this(a_value_in IS NULL,
-             nvl(a_comment_in, a_value_in || ' is expected to be null.'));
+             nvl(a_comment_in, a_value_in || ' is expected to be null.'),
+             gc_null,
+             to_char(a_value_in));
     END is_null;
 
     --------------------------------------------------------------------------------
@@ -99,7 +140,9 @@ CREATE OR REPLACE PACKAGE BODY pete_assert IS
     ) IS
     BEGIN
         this(a_value_in IS NULL,
-             nvl(a_comment_in, a_value_in || ' is expected to be null.'));
+             nvl(a_comment_in, a_value_in || ' is expected to be null.'),
+             gc_null,
+             a_value_in);
     END is_null;
 
     --------------------------------------------------------------------------------
@@ -110,7 +153,9 @@ CREATE OR REPLACE PACKAGE BODY pete_assert IS
     ) IS
     BEGIN
         this(a_value_in IS NULL,
-             nvl(a_comment_in, a_value_in || ' is expected to be null.'));
+             nvl(a_comment_in, a_value_in || ' is expected to be null.'),
+             gc_null,
+             to_char(a_value_in, gc_date_mask));
     END is_null;
 
     -- 
@@ -123,7 +168,9 @@ CREATE OR REPLACE PACKAGE BODY pete_assert IS
     ) IS
     BEGIN
         this(a_value_in IS NOT NULL,
-             nvl(a_comment_in, a_value_in || ' is expected to be not null.'));
+             nvl(a_comment_in, a_value_in || ' is expected to be not null.'),
+             gc_not_null,
+             to_char(a_value_in));
     END is_not_null;
 
     --------------------------------------------------------------------------------
@@ -134,7 +181,9 @@ CREATE OR REPLACE PACKAGE BODY pete_assert IS
     ) IS
     BEGIN
         this(a_value_in IS NOT NULL,
-             nvl(a_comment_in, a_value_in || ' is expected to be not null.'));
+             nvl(a_comment_in, a_value_in || ' is expected to be not null.'),
+             gc_not_null,
+             a_value_in);
     END is_not_null;
 
     --------------------------------------------------------------------------------
@@ -145,7 +194,9 @@ CREATE OR REPLACE PACKAGE BODY pete_assert IS
     ) IS
     BEGIN
         this(a_value_in IS NOT NULL,
-             nvl(a_comment_in, a_value_in || ' is expected to be not null.'));
+             nvl(a_comment_in, a_value_in || ' is expected to be not null.'),
+             gc_not_null,
+             to_char(a_value_in, gc_date_mask));
     END is_not_null;
 
     --
@@ -154,7 +205,7 @@ CREATE OR REPLACE PACKAGE BODY pete_assert IS
     --------------------------------------------------------------------------------
     PROCEDURE pass(a_comment_in IN VARCHAR2 DEFAULT NULL) IS
     BEGIN
-        this(TRUE, nvl(a_comment_in, 'You have to pass!!!'));
+        this(TRUE, nvl(a_comment_in, 'You have to pass!!!'), NULL, NULL);
     END pass;
 
     --
@@ -163,7 +214,10 @@ CREATE OR REPLACE PACKAGE BODY pete_assert IS
     --------------------------------------------------------------------------------
     PROCEDURE fail(a_comment_in IN VARCHAR2 DEFAULT NULL) IS
     BEGIN
-        this(FALSE, nvl(a_comment_in, 'You shall not pass!!!'));
+        this(FALSE,
+             nvl(a_comment_in, 'You shall not pass!!!'),
+             'FAIL',
+             'FAIL!!!');
     END fail;
 
     --
@@ -179,7 +233,9 @@ CREATE OR REPLACE PACKAGE BODY pete_assert IS
         this(a_expected_in = a_actual_in OR
              (a_expected_in IS NULL AND a_actual_in IS NULL),
              nvl(a_comment_in,
-                 a_expected_in || ' expected to be equal to ' || a_actual_in));
+                 a_expected_in || ' expected to be equal to ' || a_actual_in),
+             to_char(a_expected_in),
+             to_char(a_actual_in));
     END eq;
 
     --
@@ -195,7 +251,9 @@ CREATE OR REPLACE PACKAGE BODY pete_assert IS
         this(a_expected_in = a_actual_in OR
              (a_expected_in IS NULL AND a_actual_in IS NULL),
              nvl(a_comment_in,
-                 a_expected_in || ' expected to be equal to ' || a_actual_in));
+                 a_expected_in || ' expected to be equal to ' || a_actual_in),
+             a_expected_in,
+             a_actual_in);
     END eq;
 
     --
@@ -211,7 +269,9 @@ CREATE OR REPLACE PACKAGE BODY pete_assert IS
         this(a_expected_in = a_actual_in OR
              (a_expected_in IS NULL AND a_actual_in IS NULL),
              nvl(a_comment_in,
-                 a_expected_in || ' expected to be equal to ' || a_actual_in));
+                 a_expected_in || ' expected to be equal to ' || a_actual_in),
+             to_char(a_expected_in, gc_date_mask),
+             to_char(a_actual_in, gc_date_mask));
     END eq;
 
     --------------------------------------------------------------------------------
@@ -225,9 +285,10 @@ CREATE OR REPLACE PACKAGE BODY pete_assert IS
         this(a_expected_in = a_actual_in OR
              (a_expected_in IS NULL AND a_actual_in IS NULL),
              nvl(a_comment_in,
-                 CASE WHEN a_expected_in THEN 'true' ELSE 'false'
-                 END || ' expected to be equal to ' || CASE WHEN a_actual_in THEN
-                 'true' ELSE 'false' END));
+                 bool2char(a_expected_in) || ' expected to be equal to ' ||
+                 bool2char(a_actual_in)),
+             bool2char(a_expected_in),
+             bool2char(a_actual_in));
     END;
 
     --
@@ -247,7 +308,9 @@ CREATE OR REPLACE PACKAGE BODY pete_assert IS
                  nvl(a_comment_in,
                      a_expected_in.extract('/')
                      .getclobval() || ' expected to be equal to ' || a_actual_in.extract('/')
-                     .getclobval()));
+                     .getclobval()),
+                 '<doesnt show actual content at the momement>',
+                 '<todo>'); --todo
         ELSE
             this((a_expected_in IS NULL AND a_actual_in IS NULL) OR
                  (a_expected_in.extract('/')
@@ -255,7 +318,9 @@ CREATE OR REPLACE PACKAGE BODY pete_assert IS
                  nvl(a_comment_in,
                      a_expected_in.extract('/')
                      .getclobval() || ' expected to be equal to ' || a_actual_in.extract('/')
-                     .getclobval()));
+                     .getclobval()),
+                 '<doesnt show actual content at the momement>',
+                 '<todo>'); --todo);
         END IF;
     END eq;
 
