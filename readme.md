@@ -9,25 +9,20 @@
 - [Convention over Configuration](#convention-over-configuration-1)
   - [Convention over Configuration tutorial](#convention-over-configuration-tutorial)
     - [1. Create test package with description](#1-create-test-package-with-description)
-    - [2. Declare hooks - before and after each | all methods](#2-declare-hooks---before-and-after-each-%7C-all-methods)
+    - [2. Declare hooks - before and after each or all methods](#2-declare-hooks---before-and-after-each-or-all-methods)
     - [3. Declare testing methods](#3-declare-testing-methods)
     - [4. Implement hooks and testing methods](#4-implement-hooks-and-testing-methods)
     - [5. Run test package](#5-run-test-package)
       - [SQL*Plus](#sqlplus)
 - [Configuration over Convention](#configuration-over-convention-1)
-- [Configuration over Convention tutorial](#configuration-over-convention-tutorial)
-  - [Prereq](#prereq)
+  - [Configuration over Convention tutorial](#configuration-over-convention-tutorial)
     - [1. Create tested function](#1-create-tested-function)
     - [2. Create testing procedure](#2-create-testing-procedure)
     - [2. Configure test](#2-configure-test)
       - [2.1 PL/SQL block definition](#21-plsql-block-definition)
-  - [](#)
       - [2.2 Test case definition](#22-test-case-definition)
-  - [](#-1)
       - [2.3 Input argument](#23-input-argument)
-  - [````](#)
       - [2.4 PL/SQL Block in Test Case](#24-plsql-block-in-test-case)
-  - [](#-2)
     - [3. Execute Test Case](#3-execute-test-case)
     - [4. Fix error in function](#4-fix-error-in-function)
     - [5. Execute Test Case again](#5-execute-test-case-again)
@@ -103,7 +98,7 @@ END;
 /
 ````
 
-### 2. Declare hooks - before and after each | all methods
+### 2. Declare hooks - before and after each or all methods
 
 * `before_all` - executed once before all other methods
 * `before_each` - executed before each method - except hooks
@@ -363,6 +358,7 @@ INSERT INTO pete_input_param
 VALUES
     (petes_input_param.nextval, 'Accounting Department Identifier', '<DEPTNO>10</DEPTNO>');
 ````
+
 ----
 
 **The rest of the columns**
