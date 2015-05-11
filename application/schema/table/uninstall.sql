@@ -9,6 +9,6 @@ drop table pete_test_case_in_script cascade constraints purge;
 drop table pete_configuration cascade constraints purge;
 drop table pete_run_log cascade constraints purge;
 drop table pete_run_log_detail cascade constraints purge;
-drop table pete_output_param cascade constraints purge;
+drop table pete_expected_result cascade constraints purge;
 
 @&&run_dir_end

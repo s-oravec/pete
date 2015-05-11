@@ -51,10 +51,10 @@ prompt =====================================
 prompt
 @@pete_run_log_detail.sql
 prompt
-prompt Creating table PETE_OUTPUT_PARAM
+prompt Creating table PETE_EXPECTED_RESULT
 prompt =====================================
 prompt
-@@pete_output_param.sql
+@@pete_expected_result.sql
 
 
 
