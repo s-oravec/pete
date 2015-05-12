@@ -11,15 +11,15 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
                blk.package,
                blk.method,
                blk.anonymous_block,
-               inpar.value         input,
+               inarg.value         input,
                er.value        expected_output
           FROM pete_plsql_block_in_case tc_i,
                pete_plsql_block         blk,
-               pete_input_param         inpar,
+               pete_input_argument   inarg,
                pete_expected_result     er,
                pete_test_case           tc
          WHERE tc_i.plsql_block_id = blk.id
-           AND tc_i.input_param_id = inpar.id(+)
+           AND tc_i.input_argument_id = inarg.id(+)
            AND tc_i.output_param_id = er.id(+)
            AND tc_i.test_case_id = p_test_case_id
            AND tc.id = tc_i.test_case_id
