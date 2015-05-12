@@ -1,12 +1,12 @@
 create table PETE_PLSQL_BLOCK_IN_CASE
 (
-  id              INTEGER not null,
-  test_case_id    INTEGER not null,
-  plsql_block_id  INTEGER not null,
+  id                 INTEGER not null,
+  test_case_id       INTEGER not null,
+  plsql_block_id     INTEGER not null,
   input_argument_id  INTEGER,
-  output_param_id INTEGER,
-  block_order     INTEGER,
-  description     varchar2(4000)
+  expected_result_id INTEGER,
+  block_order        INTEGER,
+  description        varchar2(4000)
 )
 ;
 comment on table PETE_PLSQL_BLOCK_IN_CASE
@@ -20,6 +20,8 @@ comment on column PETE_PLSQL_BLOCK_IN_CASE.plsql_block_id
   is 'PLSQL block identifier';
 comment on column PETE_PLSQL_BLOCK_IN_CASE.input_argument_id
   is 'Input argument identifier';
+comment on column PETE_PLSQL_BLOCK_IN_CASE.expected_result_id
+  is 'Expected result identifier';
 comment on column PETE_PLSQL_BLOCK_IN_CASE.block_order
   is 'Block order in Test case';
 comment on column PETE_PLSQL_BLOCK_IN_CASE.description

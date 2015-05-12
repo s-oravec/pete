@@ -1,7 +1,7 @@
 @&&run_dir_begin
 
-drop sequence petes_input_param;
-drop sequence petes_output_param;
+drop sequence petes_input_argument;
+drop sequence petes_expected_result;
 drop sequence petes_plsql_block;
 drop sequence petes_plsql_block_in_case;
 drop sequence petes_test_case;

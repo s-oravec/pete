@@ -1,15 +1,15 @@
 @&&run_dir_begin
 
 prompt
-prompt Creating sequence PETES_INPUT_PARAM
+prompt Creating sequence PETES_INPUT_ARGUMENT
 prompt =================================
 prompt
-@@petes_input_param.sql
+@@petes_input_argument.sql
 prompt
-prompt Creating sequence PETES_OUTPUT_PARAM
+prompt Creating sequence PETES_EXPECTED_RESULT
 prompt =================================
 prompt
-@@petes_output_param.sql
+@@petes_expected_result.sql
 prompt
 prompt Creating sequence PETES_PLSQL_BLOCK
 prompt =================================

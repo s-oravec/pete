@@ -8,7 +8,7 @@ create table PETE_EXPECTED_RESULT
 )
 ;
 comment on table PETE_EXPECTED_RESULT
-  is 'PLSQL block expected output parameters';
+  is 'PLSQL block expected output arguments';
   
 comment on column PETE_EXPECTED_RESULT.id
   is 'Surrogate key';
