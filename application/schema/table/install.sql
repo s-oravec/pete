@@ -6,10 +6,10 @@ prompt =============================
 prompt
 @@pete_test_script.sql
 prompt
-prompt Creating table PETE_INPUT_PARAM
+prompt Creating table PETE_INPUT_ARGUMENT
 prompt =============================
 prompt
-@@pete_input_param.sql
+@@pete_input_argument.sql
 prompt
 prompt Creating table PETE_PLSQL_BLOCK
 prompt =============================
