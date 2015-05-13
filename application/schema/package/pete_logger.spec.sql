@@ -58,6 +58,13 @@ CREATE OR REPLACE PACKAGE pete_logger AS
     --------------------------------------------------------------------------------  
     PROCEDURE init(a_log_to_dbms_output_in IN BOOLEAN DEFAULT TRUE);
 
+
+    --
+    -- logs assert result
+    -- 
+    procedure log_assert(a_result_in boolean, a_comment_in varchar2);
+
+
     --------------------------------------------------------------------------------
     -- tracing methods
     --------------------------------------------------------------------------------
