@@ -1,5 +1,7 @@
 CREATE OR REPLACE PACKAGE pete AS
 
+    VERSION constant varchar2(100) := '0.1.0';
+
     /*
     
     Configuration
