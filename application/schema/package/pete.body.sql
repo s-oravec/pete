@@ -83,6 +83,7 @@ CREATE OR REPLACE PACKAGE BODY pete AS
         pete_logger.trace('l_cnt ' || l_cnt);
         --
         IF l_cnt > 1
+           AND a_method_name_in IS NULL
         THEN
             raise_application_error(pete.gc_CONFLICTING_INPUT,
                                     'Conflicting input - too many arguments set');
@@ -94,19 +95,14 @@ CREATE OR REPLACE PACKAGE BODY pete AS
                            a_style_conventional_in => a_style_conventional_in);
         ELSIF a_package_name_in IS NOT NULL
         THEN
-            run_test_package(a_package_name_in => a_package_name_in);
+            run_test_package(a_package_name_in     => a_package_name_in,
+                             a_method_name_like_in => a_method_name_in);
         ELSIF a_script_name_in IS NOT NULL
         THEN
             run_test_script(a_script_name_in => a_script_name_in);
         ELSIF a_case_name_in IS NOT NULL
         THEN
             run_test_case(a_case_name_in => a_case_name_in);
-        ELSIF a_package_name_in IS NOT NULL
-              AND a_method_name_in IS NOT NULL
-        
-        THEN
-            run_test_package(a_package_name_in     => a_package_name_in,
-                             a_method_name_like_in => a_method_name_in);
         ELSE
             raise_application_error(pete.gc_AMBIGUOUS_INPUT,
                                     'Ambiguous input - nothing specified');

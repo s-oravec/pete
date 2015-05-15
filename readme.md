@@ -274,7 +274,7 @@ END;
 
 ### 2. Create testing procedure
 
-All testing procedured have to be able to be called using parameters `a_xml_in` - input XML and `a_xml_out` - output XML. All other parameters have to be optional.
+All testing procedured have to be able to be called using arguments `a_xml_in` - input XML and `a_xml_out` - output XML. All other arguments have to be optional.
 Testing procedure is just wrapper, that provides required interface to Pete.
 
 ````
@@ -353,10 +353,10 @@ Create input argument
 * value - value as XML
 
 ````
-INSERT INTO pete_input_param
+INSERT INTO pete_input_argument
     (id, name, value)
 VALUES
-    (petes_input_param.nextval, 'Accounting Department Identifier', '<DEPTNO>10</DEPTNO>');
+    (petes_input_argument.nextval, 'Accounting Department Identifier', '<DEPTNO>10</DEPTNO>');
 ````
 
 ----
@@ -372,7 +372,7 @@ Now glue everything together - map PL/SQL to test case Test case mapping using i
 * id - surrogate identifier, get it from sequence
 * test_case_id - identifier of our Test Case
 * pslql_block_id - identifier of our PL/SQL block
-* input_param_id - identifier of Input argument
+* input_argument_id - identifier of Input argument
 * description - describe instance of PL/SQL block
 * block_order - sort blocks in test case
     
@@ -381,21 +381,21 @@ INSERT INTO pete_plsql_block_in_case
     (id,
      test_case_id,
      plsql_block_id,
-     input_param_id,
+     input_argument_id,
      block_order,
      description)
 VALUES
     (petes_plsql_block_in_case.nextval,
      petes_test_case.currval,
      petes_plsql_block.currval,
-     petes_input_param.currval,
+     petes_input_argument.currval,
      1,
      'should not fail');
 ````
 
 **The rest of the columns**
 
-* output_param_id - identifier of expected result
+* expected_result_id - identifier of expected result
 
 ----
 
