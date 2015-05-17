@@ -105,7 +105,7 @@ END;
 * `after_each` - execute after each method - except hooks
 * `after_all` - execute once after all other methods
 
-All hook methods are optional. You choose whether to use them or not.
+All hook methods are optional. You choose whether to implement them or not.
 
 ````
 CREATE OR REPLACE PACKAGE ut_test AS
@@ -274,8 +274,9 @@ END;
 
 ### 2. Create testing procedure
 
-All testing procedured have to be able to be called using arguments `a_xml_in` - input XML and `a_xml_out` - output XML. All other arguments have to be optional.
-Testing procedure is just wrapper, that provides required interface to Pete.
+All testing procedures have to be able to be called using arguments `a_xml_in` - input XML and `a_xml_out` - output XML. All other arguments have to be optional.
+Testing procedure is just wrapper, that provides required interface to Pete. 
+From Pete's point of view, testing procedure succeeds if it finishes without raising an exception.
 
 ````
 CREATE OR REPLACE PROCEDURE test_get_salary
@@ -303,7 +304,7 @@ Create PL/SQL block definition in Pete repository.
 * id - get it from sequence
 * name - provide some nice name
 * description - describe test implemented by PLSQL block
-* method - in our case we have stored procedure, so only method argument will be specified
+* method - in our case we have stored procedure, so only method argument will be specified, no owner, no package
 
 ````
 INSERT INTO pete_plsql_block
@@ -367,7 +368,7 @@ VALUES
 
 #### 2.4 PL/SQL Block in Test Case
 
-Now glue everything together - map PL/SQL to test case Test case mapping using input argument.
+Now glue everything together - map a given PL/SQL block with a given input argument to a predefined test case.
 
 * id - surrogate identifier, get it from sequence
 * test_case_id - identifier of our Test Case
@@ -395,7 +396,7 @@ VALUES
 
 **The rest of the columns**
 
-* expected_result_id - identifier of expected result
+* expected_result_id - identifier of expected result, if there is one
 
 ----
 
@@ -433,7 +434,7 @@ ORA-06512: at "SCOTT.PETE_CONFIGURATION_RUNNER", line 86
 
 ### 4. Fix error in function
 
-Add missing return from function.
+Add a missing return from function.
 
 ````
 CREATE OR REPLACE FUNCTION get_salary(a_deptno_in IN emp.sal%TYPE)
@@ -448,7 +449,7 @@ END;
 
 ### 5. Execute Test Case again
 
-Execute Test Case again and now it succeeds!!!
+Execute the Test Case again and now it succeeds!!!
 
 ````
 
