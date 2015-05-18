@@ -147,30 +147,34 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
         --
     END;
 
-    procedure log_assert(a_result_in boolean, a_comment_in varchar2)
-    is
+    PROCEDURE log_assert
+    (
+        a_result_in  BOOLEAN,
+        a_comment_in VARCHAR2
+    ) IS
         PRAGMA AUTONOMOUS_TRANSACTION;
-        lrec_pete_run_log pete_run_log%rowtype;
-    begin
-    
+        lrec_pete_run_log pete_run_log%ROWTYPE;
+    BEGIN
+
         --
         lrec_pete_run_log.id          := petes_run_log.nextval;
         lrec_pete_run_log.parent_id   := g_parent_run_log_id_in;
         lrec_pete_run_log.object_type := g_object_type_in;
         lrec_pete_run_log.object_name := g_object_name_in;
         lrec_pete_run_log.test_begin  := systimestamp;
-        lrec_pete_run_log.test_end  := systimestamp;
+        lrec_pete_run_log.test_end    := systimestamp;
         lrec_pete_run_log.description := a_comment_in;
-        if (a_result_in) then 
-        lrec_pete_run_log.result := pete_core.g_SUCCESS;
-        else 
-        lrec_pete_run_log.result := pete_core.g_SUCCESS;
-end if;
+        IF (a_result_in)
+        THEN
+            lrec_pete_run_log.result := pete_core.g_SUCCESS;
+        ELSE
+            lrec_pete_run_log.result := pete_core.g_FAILURE;
+        END IF;
         --
         INSERT INTO pete_run_log VALUES lrec_pete_run_log;
         --
         COMMIT;
-end;
+    END log_assert;
 
     --
     --wrapper for trace log 
