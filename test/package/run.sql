@@ -38,6 +38,16 @@ prompt
 prompt Run test package UT_PETE_SAVEPOINT
 prompt ===============================
 exec pete.run(a_package_name_in => 'UT_PETE_SAVEPOINT');
+prompt
+prompt
+prompt Install test package UT_PETE_LOGGER
+prompt ==================================
+@@ut_pete_logger.package.sql
+prompt
+prompt Run test package UT_PETE_SAVEPOINT
+prompt ===============================
+exec pete.run(a_package_name_in => 'UT_PETE_LOGGER');
+
 
 
 
