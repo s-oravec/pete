@@ -9,6 +9,9 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
     --log record for method is already created
     g_run_log_id        INTEGER;
     g_output_run_log_id INTEGER;
+        g_parent_run_log_id_in   integer;
+        g_object_type_in  pete_run_log.object_type%type;
+        g_object_name_in pete_run_log.object_name%type;
 
     --------------------------------------------------------------------------------
     FUNCTION get_package_description(a_package_name_in IN user_procedures.object_name%TYPE)
@@ -63,7 +66,12 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
               'a_description_in:' || NVL(a_description_in, 'NULL') || ', ' ||
               'a_object_type_in:' || NVL(a_object_type_in, 'NULL') || ', ' ||
               'a_object_name_in:' || NVL(a_object_name_in, 'NULL'));
+
         g_run_log_id := a_run_log_id_in;
+        g_parent_run_log_id_in   := a_parent_run_log_id_in;
+        g_object_type_in := a_object_type_in;
+        g_object_name_in := a_object_name_in;
+
     
         --
         lrec_pete_run_log.id          := a_run_log_id_in;
@@ -133,11 +141,40 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
               NVL(a_description_in, 'NULL'));
         UPDATE pete_run_log
            SET description = a_description_in
-         WHERE id = g_run_log_id; --set to package session veriable on start of method execution
+         WHERE id = g_run_log_id; --set to package session variable on start of method execution
         --
         COMMIT;
         --
     END;
+
+    PROCEDURE log_assert
+    (
+        a_result_in  BOOLEAN,
+        a_comment_in VARCHAR2
+    ) IS
+        PRAGMA AUTONOMOUS_TRANSACTION;
+        lrec_pete_run_log pete_run_log%ROWTYPE;
+    BEGIN
+
+        --
+        lrec_pete_run_log.id          := petes_run_log.nextval;
+        lrec_pete_run_log.parent_id   := g_parent_run_log_id_in;
+        lrec_pete_run_log.object_type := g_object_type_in;
+        lrec_pete_run_log.object_name := g_object_name_in;
+        lrec_pete_run_log.test_begin  := systimestamp;
+        lrec_pete_run_log.test_end    := systimestamp;
+        lrec_pete_run_log.description := a_comment_in;
+        IF (a_result_in)
+        THEN
+            lrec_pete_run_log.result := pete_core.g_SUCCESS;
+        ELSE
+            lrec_pete_run_log.result := pete_core.g_FAILURE;
+        END IF;
+        --
+        INSERT INTO pete_run_log VALUES lrec_pete_run_log;
+        --
+        COMMIT;
+    END log_assert;
 
     --
     --wrapper for trace log 
