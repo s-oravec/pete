@@ -213,8 +213,7 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
         LOOP
             l_print := TRUE;
             IF (NOT pete_config.get_show_hook_methods AND
-               log_line.description IN
-               ('BEFORE_EACH', 'BEFORE_ALL', 'AFTER_EACH', 'AFTER_ALL'))
+               log_line.object_type = pete_core.g_OBJECT_TYPE_HOOK)
             THEN
                 pete_logger.trace('not printing hook methods - ' ||
                                   log_line.log);
