@@ -1,0 +1,8 @@
+0.1.1 20.5.2015
+f - printing of asssert results (configurable)
+f - configurable printing hook methods
+b - several minor bug fixes
+d - minor documentation improvment
+
+0.1.0 14.5.2015
+Initial release
