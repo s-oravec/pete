@@ -7,11 +7,11 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
 
     --used to update log_run record as method description is available after 
     --log record for method is already created
-    g_run_log_id        INTEGER;
-    g_output_run_log_id INTEGER;
-        g_parent_run_log_id_in   integer;
-        g_object_type_in  pete_run_log.object_type%type;
-        g_object_name_in pete_run_log.object_name%type;
+    g_run_log_id           INTEGER;
+    g_output_run_log_id    INTEGER;
+    g_parent_run_log_id_in INTEGER;
+    g_object_type_in       pete_run_log.object_type%TYPE;
+    g_object_name_in       pete_run_log.object_name%TYPE;
 
     --------------------------------------------------------------------------------
     FUNCTION get_package_description(a_package_name_in IN user_procedures.object_name%TYPE)
@@ -66,12 +66,11 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
               'a_description_in:' || NVL(a_description_in, 'NULL') || ', ' ||
               'a_object_type_in:' || NVL(a_object_type_in, 'NULL') || ', ' ||
               'a_object_name_in:' || NVL(a_object_name_in, 'NULL'));
-
-        g_run_log_id := a_run_log_id_in;
-        g_parent_run_log_id_in   := a_parent_run_log_id_in;
-        g_object_type_in := a_object_type_in;
-        g_object_name_in := a_object_name_in;
-
+    
+        g_run_log_id           := a_run_log_id_in;
+        g_parent_run_log_id_in := a_parent_run_log_id_in;
+        g_object_type_in       := a_object_type_in;
+        g_object_name_in       := a_object_name_in;
     
         --
         lrec_pete_run_log.id          := a_run_log_id_in;
@@ -155,11 +154,11 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
         PRAGMA AUTONOMOUS_TRANSACTION;
         lrec_pete_run_log pete_run_log%ROWTYPE;
     BEGIN
-
+    
         --
         lrec_pete_run_log.id          := petes_run_log.nextval;
         lrec_pete_run_log.parent_id   := g_parent_run_log_id_in;
-        lrec_pete_run_log.object_type := g_object_type_in;
+        lrec_pete_run_log.object_type := pete_core.g_OBJECT_TYPE_ASSERT;
         lrec_pete_run_log.object_name := g_object_name_in;
         lrec_pete_run_log.test_begin  := systimestamp;
         lrec_pete_run_log.test_end    := systimestamp;
@@ -204,16 +203,43 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
 
     --------------------------------------------------------------------------------
     PROCEDURE output_log(a_run_log_id_in IN pete_run_log.id%TYPE) IS
+        l_print BOOLEAN;
     BEGIN
+        trace('OUTPUT_LOG: ' || 'a_run_log_id_in:' ||
+              NVL(to_char(a_run_log_id_in), 'NULL'));
         g_output_run_log_id := a_run_log_id_in;
         dbms_output.put_line(chr(10));
         FOR log_line IN (SELECT * FROM petev_output_run_log)
         LOOP
-            if (not pete_config.get_show_hook_methods and log_line.description in ('BEFORE_EACH', 'BEFORE_ALL', 'AFTER_EACH', 'AFTER_ALL')) then 
-              pete_logger.trace('nevypisuju hook metody');
-            else
-            dbms_output.put_line('.' || log_line.log);
-            end if;
+            l_print := TRUE;
+            IF (NOT pete_config.get_show_hook_methods AND
+               log_line.description IN
+               ('BEFORE_EACH', 'BEFORE_ALL', 'AFTER_EACH', 'AFTER_ALL'))
+            THEN
+                pete_logger.trace('not printing hook methods - ' ||
+                                  log_line.log);
+                l_print := FALSE;
+            ELSIF log_line.object_type = pete_core.g_OBJECT_TYPE_ASSERT
+            THEN
+                IF (pete_config.get_show_asserts = pete_config.g_ASSERTS_NONE)
+                THEN
+                    pete_logger.trace('not printing asserts - ' ||
+                                      log_line.log);
+                    l_print := FALSE;
+                ELSIF (pete_config.get_show_asserts =
+                      pete_config.g_ASSERTS_FAILED AND
+                      log_line.result = pete_core.g_SUCCESS)
+                THEN
+                    pete_logger.trace('not printing success asserts - ' ||
+                                      log_line.log);
+                    l_print := FALSE;
+                END IF;
+            END IF;
+
+            IF (l_print)
+            THEN
+                dbms_output.put_line('.' || log_line.log);
+            END IF;
         END LOOP;
         dbms_output.put_line(chr(10) || chr(10));
     END;

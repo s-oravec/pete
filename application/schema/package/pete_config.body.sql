@@ -1,20 +1,20 @@
 CREATE OR REPLACE PACKAGE BODY pete_config AS
 
-    g_show_failures_only BOOLEAN;
-    g_show_hook_methods  BOOLEAN;
+    g_show_asserts      NUMBER;
+    g_show_hook_methods BOOLEAN;
 
     C_TRUE  VARCHAR2(10) := 'TRUE';
     C_FALSE VARCHAR2(10) := 'FALSE';
 
     --config table keys
-    SHOW_FAILURES_ONLY VARCHAR2(30) := 'SHOW_FAILURES_ONLY';
-    SHOW_HOOK_METHODS  VARCHAR2(30) := 'SHOW_HOOK_METHODS';
+    SHOW_ASSERTS      VARCHAR2(30) := 'SHOW_ASSERTS';
+    SHOW_HOOK_METHODS VARCHAR2(30) := 'SHOW_HOOK_METHODS';
     --
-    gc_SHOW_FAILURES_ONLY_DEFAULT CONSTANT BOOLEAN := TRUE;
-    gc_SHOW_HOOK_METHODS_DEFAULT  CONSTANT BOOLEAN := FALSE;
+    gc_SHOW_ASSERTS_DEFAULT      CONSTANT NUMBER := pete_config.g_ASSERTS_FAILED;
+    gc_SHOW_HOOK_METHODS_DEFAULT CONSTANT BOOLEAN := FALSE;
 
     /**
-    * writes a value into konfig table
+    * writes a value into the config table
     */
     PROCEDURE set_param
     (
@@ -53,24 +53,24 @@ CREATE OR REPLACE PACKAGE BODY pete_config AS
     END;
 
     --------------------------------------------------------------------------------
-    PROCEDURE set_show_failures_only
+    PROCEDURE set_show_ASSERTS
     (
-        a_value_in       BOOLEAN,
+        a_value_in       NUMBER,
         a_set_as_default IN BOOLEAN DEFAULT FALSE
     ) IS
     
     BEGIN
-        g_show_failures_only := a_value_in;
+        g_show_ASSERTS := a_value_in;
         IF (a_set_as_default)
         THEN
-            set_boolean_param(SHOW_FAILURES_ONLY, a_value_in);
+            set_param(SHOW_ASSERTS, a_value_in);
         END IF;
     END;
 
     --------------------------------------------------------------------------------
-    FUNCTION get_show_failures_only RETURN BOOLEAN IS
+    FUNCTION get_show_ASSERTS RETURN NUMBER IS
     BEGIN
-        RETURN g_show_failures_only;
+        RETURN g_show_ASSERTS;
     END;
 
     --------------------------------------------------------------------------------
@@ -99,25 +99,19 @@ CREATE OR REPLACE PACKAGE BODY pete_config AS
         l_value pete_configuration.value%TYPE;
     BEGIN
     
-        --show failures only
+        --todo refactoring to read param    
+        --show asserts
         BEGIN
             SELECT VALUE
-              INTO l_value
+              INTO g_show_ASSERTS
               FROM pete_configuration c
-             WHERE c.key = SHOW_FAILURES_ONLY;
-            --
-            IF (l_value = C_TRUE)
-            THEN
-                g_show_failures_only := TRUE;
-            ELSE
-                g_show_failures_only := FALSE;
-            END IF;
-        
+             WHERE c.key = SHOW_ASSERTS;
         EXCEPTION
             WHEN no_data_found THEN
-                g_show_failures_only := gc_SHOW_FAILURES_ONLY_DEFAULT;
+                g_show_ASSERTS := gc_SHOW_ASSERTS_DEFAULT;
         END;
     
+        --todo refactoring to read boolean param    
         --show hook methods
         BEGIN
             SELECT VALUE
