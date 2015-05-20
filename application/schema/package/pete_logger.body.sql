@@ -209,7 +209,11 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
         dbms_output.put_line(chr(10));
         FOR log_line IN (SELECT * FROM petev_output_run_log)
         LOOP
+            if (not pete_config.get_show_hook_methods and log_line.description in ('BEFORE_EACH', 'BEFORE_ALL', 'AFTER_EACH', 'AFTER_ALL')) then 
+              pete_logger.trace('nevypisuju hook metody');
+            else
             dbms_output.put_line('.' || log_line.log);
+            end if;
         END LOOP;
         dbms_output.put_line(chr(10) || chr(10));
     END;

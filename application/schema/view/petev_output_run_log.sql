@@ -6,7 +6,7 @@ SELECT lpad(' ', (LEVEL - 1) * 2, ' ') || --x
        CASE
            WHEN l.error_message IS NOT NULL THEN
             chr(10) || chr(10) || error_message || chr(10) || chr(10)
-       end log
+       end log, description
   FROM pete_run_log l
  START WITH id = pete_logger.get_output_run_log_id
 CONNECT BY PRIOR id = parent_id

@@ -21,5 +21,23 @@ CREATE OR REPLACE PACKAGE pete_config AS
     --
     FUNCTION get_show_failures_only RETURN BOOLEAN;
 
+
+    --Sets if result shows hook methods
+    --
+    -- %argument a_value_in
+    -- %argument a_set_as_default if true then the a_value_in is stored in config table PETE_CONFIG and becomes sesssion default
+    --
+    procedure set_show_hook_methods   
+    (
+        a_value_in       IN BOOLEAN,
+        a_set_as_default IN BOOLEAN DEFAULT FALSE
+    );
+
+    --
+    -- returns current settings of show_hook_methods system parameter
+    --
+    FUNCTION get_show_hook_methods RETURN BOOLEAN;
+
+
 END;
 /
