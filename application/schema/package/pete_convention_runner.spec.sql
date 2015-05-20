@@ -43,6 +43,7 @@ CREATE OR REPLACE PACKAGE pete_convention_runner AS
     --
     -- %argument a_package_in package name 
     -- %argument a_method_name_in method name
+    -- %argument a_object_type_in method type (METHOD|HOOK)
     -- %argument a_description_in description
     --
     -- %return true - success, false - failure
@@ -51,6 +52,7 @@ CREATE OR REPLACE PACKAGE pete_convention_runner AS
     (
         a_package_name_in      IN pete_core.typ_object_name,
         a_method_name_in       IN pete_core.typ_object_name,
+        a_object_type_in       in pete_core.typ_object_type,
         a_description_in       IN pete_core.typ_description DEFAULT NULL,
         a_parent_run_log_id_in IN pete_run_log.parent_id%TYPE DEFAULT NULL
     ) RETURN pete_core.typ_is_success;

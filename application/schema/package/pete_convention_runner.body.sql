@@ -51,6 +51,7 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
             pete_logger.trace('has hook method, execute');
             RETURN run_method(a_package_name_in      => a_package_name_in,
                               a_method_name_in       => a_hook_method_name_in,
+                              a_object_type_in       => pete_core.g_OBJECT_TYPE_HOOK,
                               a_description_in       => a_hook_method_name_in,
                               a_parent_run_log_id_in => a_parent_run_log_id_in);
         ELSE
@@ -64,6 +65,7 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
     (
         a_package_name_in      IN pete_core.typ_object_name,
         a_method_name_in       IN pete_core.typ_object_name,
+        a_object_type_in       in pete_core.typ_object_type,
         a_description_in       IN pete_core.typ_description DEFAULT NULL,
         a_parent_run_log_id_in IN pete_run_log.parent_id%TYPE DEFAULT NULL
     ) RETURN pete_core.typ_is_success IS
@@ -73,7 +75,7 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
     BEGIN
         l_run_log_id := pete_core.begin_test(a_object_name_in       => a_package_name_in || '.' ||
                                                                        a_method_name_in,
-                                             a_object_type_in       => pete_core.g_OBJECT_TYPE_METHOD,
+                                             a_object_type_in       => a_object_type_in,
                                              a_description_in       => a_description_in,
                                              a_parent_run_log_id_in => a_parent_run_log_id_in);
         --
@@ -160,6 +162,7 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
                 --
                 l_result := run_method(a_package_name_in      => a_package_name_in,
                                        a_method_name_in       => r_method.procedure_name,
+                                       a_object_type_in       => pete_core.g_OBJECT_TYPE_METHOD,
                                        a_parent_run_log_id_in => l_run_log_id) AND
                             l_result;
                 --
