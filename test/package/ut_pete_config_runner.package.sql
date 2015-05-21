@@ -69,6 +69,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_config_runner AS
         VALUES
             (petes_input_argument.nextval, 'test', a_xml_in)
         RETURNING id INTO g_input_argument_id;
+
         --
         UPDATE pete_plsql_block_in_case bc
            SET bc.input_argument_id = g_input_argument_id
@@ -187,12 +188,13 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_config_runner AS
     PROCEDURE after_each IS
         PRAGMA AUTONOMOUS_TRANSACTION;
     BEGIN
+        pete_logger.trace ('g_pete_plsql_block_in_case_id' || g_pete_plsql_block_in_case_id);
         DELETE FROM pete_plsql_block_in_case
          WHERE id = g_pete_plsql_block_in_case_id;
+        pete_logger.trace ('g_test_case_id ' || g_test_case_id);
         DELETE FROM pete_test_case WHERE id = g_test_case_id;
+        pete_logger.trace ('g_block_id' || g_block_id);
         DELETE FROM pete_plsql_block WHERE id = g_block_id;
-        helper_delete_input;
-        helper_delete_output;
         COMMIT;
     END;
 
