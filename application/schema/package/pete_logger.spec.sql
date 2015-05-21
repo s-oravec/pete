@@ -33,12 +33,13 @@ CREATE OR REPLACE PACKAGE pete_logger AS
     --------------------------------------------------------------------------------      
     PROCEDURE log_end
     (
-        a_run_log_id_in    IN pete_run_log.id%TYPE,
-        a_result_in        IN pete_run_log.result%TYPE,
-        a_xml_in_in        IN pete_run_log.xml_in%TYPE,
-        a_xml_out_in       IN pete_run_log.xml_out%TYPE,
-        a_error_code_in    IN pete_run_log.error_code%TYPE,
-        a_error_message_in IN pete_run_log.error_message%TYPE
+        a_run_log_id_in      IN pete_run_log.id%TYPE,
+        a_result_in          IN pete_run_log.result%TYPE,
+        a_xml_in_in          IN pete_run_log.xml_in%TYPE,
+        a_xml_out_in         IN pete_run_log.xml_out%TYPE,
+        a_error_code_in      IN pete_run_log.error_code%TYPE,
+        a_error_stack_in     IN pete_run_log.error_stack%TYPE,
+        a_error_backtrace_in IN pete_run_log.error_backtrace%TYPE
     );
 
     --------------------------------------------------------------------------------
@@ -58,13 +59,15 @@ CREATE OR REPLACE PACKAGE pete_logger AS
     --------------------------------------------------------------------------------  
     PROCEDURE init(a_log_to_dbms_output_in IN BOOLEAN DEFAULT TRUE);
 
-
     --
     -- logs assert result
     -- 
-    procedure log_assert(a_result_in boolean, a_comment_in varchar2);
-
-
+    PROCEDURE log_assert
+    (
+        a_result_in  BOOLEAN,
+        a_comment_in VARCHAR2
+    );
+ 
     --------------------------------------------------------------------------------
     -- tracing methods
     --------------------------------------------------------------------------------

@@ -92,9 +92,8 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
         WHEN OTHERS THEN
             pete_core.end_test(a_run_log_id_in    => l_run_log_id,
                                a_is_succes_in     => FALSE,
-                               a_error_code_in    => SQLCODE,
-                               a_error_message_in => dbms_utility.format_error_stack ||
-                                                     dbms_utility.format_error_backtrace);
+                               a_error_code_in    => SQLCODE
+                               );
             --
             l_result := FALSE;
             RETURN l_result;

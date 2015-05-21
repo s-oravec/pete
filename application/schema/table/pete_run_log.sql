@@ -13,7 +13,8 @@ create table PETE_RUN_LOG
   test_begin         TIMESTAMP(6),
   test_end           TIMESTAMP(6),
   error_code         INTEGER,
-  error_message      VARCHAR2(4000),
+  error_stack        VARCHAR2(4000),
+  error_backtrace    VARCHAR2(4000),
   xml_in             XMLTYPE,
   xml_out            XMLTYPE
 );

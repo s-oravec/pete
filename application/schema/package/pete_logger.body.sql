@@ -109,23 +109,26 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
         a_xml_in_in        IN pete_run_log.xml_in%TYPE,
         a_xml_out_in       IN pete_run_log.xml_out%TYPE,
         a_error_code_in    IN pete_run_log.error_code%TYPE,
-        a_error_message_in IN pete_run_log.error_message%TYPE
+        a_error_stack_in IN pete_run_log.error_stack%TYPE,
+        a_error_backtrace_in IN pete_run_log.error_backtrace%TYPE
     ) IS
         PRAGMA AUTONOMOUS_TRANSACTION;
     BEGIN
         --
-        trace('LOG_END: ' || 'a_run_log_id_in:' ||
-              NVL(to_char(a_run_log_id_in), 'NULL') || ', ' || 'a_result_in:' ||
-              NVL(a_result_in, 'NULL') || ', ' || 'a_error_code_in:' ||
-              NVL(to_char(a_error_code_in), 'NULL') || ', ' ||
-              'a_error_message_in:' || NVL(a_error_message_in, 'NULL'));
+    trace('LOG_END: ' || 
+      'a_run_log_id_in:' || NVL(to_char(a_run_log_id_in), 'NULL') || ', ' || 
+      'a_result_in:' || NVL(a_result_in, 'NULL') || ', ' || 
+      'a_error_code_in:' || NVL(to_char(a_error_code_in), 'NULL') || ', ' || 
+      'a_error_stack_in:' || NVL(a_error_stack_in, 'NULL') || ', ' || 
+      'a_error_backtrace_in:' || NVL(a_error_backtrace_in, 'NULL'));
         UPDATE pete_run_log p
            SET p.result        = a_result_in,
                p.test_end      = systimestamp,
                p.xml_in        = a_xml_in_in,
                p.xml_out       = a_xml_out_in,
                p.error_code    = a_error_code_in,
-               p.error_message = a_error_message_in
+               p.error_stack = a_error_stack_in,
+               p.error_backtrace = a_error_backtrace_in
          WHERE id = a_run_log_id_in;
         --
         COMMIT;
