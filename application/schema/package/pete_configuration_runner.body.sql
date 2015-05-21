@@ -106,11 +106,7 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
                                    a_is_succes_in     => l_result,
                                    a_xml_in_in        => a_block_instance_in_case_in.input,
                                    a_xml_out_in       => l_xml_out,
-                                   a_error_code_in    => SQLCODE,
-                                   a_error_message_in => dbms_utility.format_error_stack ||
-                                                         ' --------------------------------------------------------------' ||
-                                                         chr(10) ||
-                                                         dbms_utility.format_error_backtrace);
+                                   a_error_code_in    => SQLCODE);
         END;
     
         pete_logger.trace('l_result ' || CASE WHEN l_result THEN 'TRUE' ELSE

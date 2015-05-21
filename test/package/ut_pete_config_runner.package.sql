@@ -5,11 +5,11 @@ CREATE OR REPLACE PACKAGE ut_pete_config_runner AS
     -- run_configruation - test case
     PROCEDURE run_test_case(d VARCHAR2 := 'simple test case should succeed');
 
-    PROCEDURE input_parameter_succeeds(d VARCHAR2 := 'Test case succeed with defined input parameters');
+    PROCEDURE input_argument_succeeds(d VARCHAR2 := 'Test case succeed with defined input arguments');
 
-    PROCEDURE expected_out_param_succeeds(d VARCHAR2 := 'PLSQL block in test case should succeed when returns expected output');
+    PROCEDURE expected_result_succeeds(d VARCHAR2 := 'PLSQL block in test case should succeed when returns expected result');
 
-    PROCEDURE unexpected_out_param_fails(d VARCHAR2 := 'PLSQL block in test case should fail when returns unexpected output');
+    PROCEDURE unexpected_result_fails(d VARCHAR2 := 'PLSQL block in test case should fail when returns unexpected result');
 
     -- hook methods
     PROCEDURE before_each;
@@ -30,8 +30,8 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_config_runner AS
     g_block_id                    pete_plsql_block.id%TYPE;
     g_test_case_id                pete_test_case.id%TYPE;
     g_pete_plsql_block_in_case_id pete_plsql_block_in_case.id%TYPE;
-    g_input_param_id              pete_input_param.id%TYPE;
-    g_output_param_id             pete_output_param.id%TYPE;
+    g_input_argument_id           pete_input_argument.id%TYPE;
+    g_expected_result_id          pete_expected_result.id%TYPE;
 
     g_result pete_core.typ_is_success;
 
@@ -64,14 +64,14 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_config_runner AS
         PRAGMA AUTONOMOUS_TRANSACTION;
     BEGIN
         --
-        INSERT INTO pete_input_param
+        INSERT INTO pete_input_argument
             (id, NAME, VALUE)
         VALUES
-            (petes_input_param.nextval, 'test', a_xml_in)
-        RETURNING id INTO g_input_param_id;
+            (petes_input_argument.nextval, 'test', a_xml_in)
+        RETURNING id INTO g_input_argument_id;
         --
         UPDATE pete_plsql_block_in_case bc
-           SET bc.input_param_id = g_input_param_id
+           SET bc.input_argument_id = g_input_argument_id
          WHERE bc.test_case_id = g_test_case_id
            AND bc.plsql_block_id = g_block_id;
         --
@@ -82,14 +82,14 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_config_runner AS
         PRAGMA AUTONOMOUS_TRANSACTION;
     BEGIN
         --
-        INSERT INTO pete_output_param
+        INSERT INTO pete_expected_result
             (id, NAME, VALUE)
         VALUES
-            (petes_output_param.nextval, 'test', a_xml_in)
-        RETURNING id INTO g_output_param_id;
+            (petes_expected_result.nextval, 'test', a_xml_in)
+        RETURNING id INTO g_expected_result_id;
         --
         UPDATE pete_plsql_block_in_case bc
-           SET bc.output_param_id = g_output_param_id
+           SET bc.expected_result_id = g_expected_result_id
          WHERE bc.test_case_id = g_test_case_id
            AND bc.plsql_block_id = g_block_id;
         --
@@ -100,11 +100,11 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_config_runner AS
         PRAGMA AUTONOMOUS_TRANSACTION;
     BEGIN
         UPDATE pete_plsql_block_in_case bc
-           SET bc.input_param_id = NULL
+           SET bc.input_argument_id = NULL
          WHERE bc.test_case_id = g_test_case_id
            AND bc.plsql_block_id = g_block_id;
         --
-        DELETE FROM pete_input_param WHERE id = g_input_param_id;
+        DELETE FROM pete_input_argument WHERE id = g_input_argument_id;
         --
         COMMIT;
         --
@@ -114,11 +114,11 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_config_runner AS
         PRAGMA AUTONOMOUS_TRANSACTION;
     BEGIN
         UPDATE pete_plsql_block_in_case bc
-           SET bc.output_param_id = NULL
+           SET bc.expected_result_id = NULL
          WHERE bc.test_case_id = g_test_case_id
            AND bc.plsql_block_id = g_block_id;
         --
-        DELETE FROM pete_input_param WHERE id = g_output_param_id;
+        DELETE FROM pete_expected_result WHERE id = g_expected_result_id;
         --
         COMMIT;
         --
@@ -133,7 +133,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_config_runner AS
         --
     END;
 
-    PROCEDURE input_parameter_succeeds(d VARCHAR2) IS
+    PROCEDURE input_argument_succeeds(d VARCHAR2) IS
         l_xml xmltype := xmltype.createxml('<message>Hello world!</message>');
     BEGIN
         --log
@@ -148,7 +148,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_config_runner AS
         --
     END;
 
-    PROCEDURE expected_out_param_succeeds(d VARCHAR2) IS
+    PROCEDURE expected_result_succeeds(d VARCHAR2) IS
         l_xml xmltype := xmltype.createxml('<message>Hello world!</message>');
     BEGIN
         --log
@@ -165,7 +165,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_config_runner AS
         --
     END;
 
-    PROCEDURE unexpected_out_param_fails(d VARCHAR2) IS
+    PROCEDURE unexpected_result_fails(d VARCHAR2) IS
         l_xml1 xmltype := xmltype.createxml('<message>Hello world!</message>');
         l_xml2 xmltype := xmltype.createxml('<message>Hello mooon!</message>');
     BEGIN
@@ -191,6 +191,8 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_config_runner AS
          WHERE id = g_pete_plsql_block_in_case_id;
         DELETE FROM pete_test_case WHERE id = g_test_case_id;
         DELETE FROM pete_plsql_block WHERE id = g_block_id;
+        helper_delete_input;
+        helper_delete_output;
         COMMIT;
     END;
 
