@@ -4,8 +4,8 @@
 @&&run_dir sequence
 @&&run_dir type
 @&&run_dir function
-@&&run_dir package
 @&&run_dir view
+@&&run_dir package
 
 prompt Compiling invalid objects
 begin

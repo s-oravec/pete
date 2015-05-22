@@ -3,7 +3,7 @@ CREATE OR REPLACE PACKAGE BODY pete_assert IS
     gc_null     CONSTANT VARCHAR2(4) := 'NULL';
     gc_not_null CONSTANT VARCHAR2(10) := 'NOT NULL';
 
-    -- todo configuration
+    -- todo: configuration
     gc_date_mask CONSTANT VARCHAR2(22) := 'dd.mm.yyyy hh24:mi:ss';
 
     --
@@ -21,6 +21,7 @@ CREATE OR REPLACE PACKAGE BODY pete_assert IS
             RETURN 'NULL';
         END IF;
     END;
+
     --
     -- parse formated call stack and get stack before call of assert package
     --------------------------------------------------------------------------------  
@@ -28,8 +29,8 @@ CREATE OR REPLACE PACKAGE BODY pete_assert IS
         l_stack    VARCHAR2(1000);
         l_from_pos NUMBER;
         --TODO: use precompiler directives here to get package name or set as literal during installation      
-        lc_ASSERT_PACKAGE CONSTANT VARCHAR2(30) := USER || '.pete_ASSERT';
---        l_result VARCHAR2(1000);
+        lc_ASSERT_PACKAGE CONSTANT VARCHAR2(30) := USER || '.PETE_ASSERT';
+        --l_result VARCHAR2(1000);
     BEGIN
         --
         l_stack := dbms_utility.format_call_stack;
@@ -47,8 +48,8 @@ CREATE OR REPLACE PACKAGE BODY pete_assert IS
     END get_call_stack_before_assert;
 
     --
-    -- TODO: review: what is use for this?
-    --      reviewed- it was used to display package and linenumber of an assert - to locate it easily. This feature was killed during the refactoring
+    --TODO: review: what is use for this?
+    --reviewed- it was used to display package and linenumber of an assert - to locate it easily. This feature was killed during the refactoring
     --------------------------------------------------------------------------------
     PROCEDURE get_assert_caller_info
     (
@@ -81,7 +82,7 @@ CREATE OR REPLACE PACKAGE BODY pete_assert IS
         a_value_in    IN BOOLEAN,
         a_comment_in  IN VARCHAR2,
         a_expected_in IN VARCHAR2,
-        a_actual_in   in VARCHAR2
+        a_actual_in   IN VARCHAR2
         
     ) IS
     BEGIN
@@ -96,12 +97,13 @@ CREATE OR REPLACE PACKAGE BODY pete_assert IS
             WHEN TRUE THEN
                 pete_logger.trace('assert this - true');
                 --dbms_output.put_line('.      ASSERT SUCCESS - ' || a_comment_in);
-                pete_logger.log_assert (true, '  ASSERT - ' || a_comment_in);
-
+                pete_logger.log_assert(TRUE, '  ASSERT - ' || a_comment_in);
+            
             ELSE
                 pete_logger.trace('assert this - false');
---                dbms_output.put_line('.      ASSERT FAILURE - ' || a_comment_in);
-                pete_logger.log_assert (false, '  ASSERT FAILURE - ' || a_comment_in);
+                --                dbms_output.put_line('.      ASSERT FAILURE - ' || a_comment_in);
+                pete_logger.log_assert(FALSE,
+                                       '  ASSERT FAILURE - ' || a_comment_in);
                 raise_application_error(-20000,
                                         'Assertion failed: ' || a_comment_in || '
 Expected:' || a_expected_in || '
@@ -111,15 +113,16 @@ Actual:  ' || a_actual_in);
 
     PROCEDURE this
     (
-        a_value_in    IN BOOLEAN,
-        a_comment_in  IN VARCHAR2 default null
+        a_value_in   IN BOOLEAN,
+        a_comment_in IN VARCHAR2 DEFAULT NULL
         
     ) IS
     BEGIN
-      this (a_value_in => a_value_in,
-          a_comment_in => nvl(a_comment_in, 'Expected value to be true'), a_expected_in => 'TRUE', a_actual_in => bool2char(a_value_in));
+        this(a_value_in    => a_value_in,
+             a_comment_in  => nvl(a_comment_in, 'Expected value to be true'),
+             a_expected_in => 'TRUE',
+             a_actual_in   => bool2char(a_value_in));
     END this;
-    
 
     -- 
     -- Group of assert procedure for testing null values
@@ -315,7 +318,7 @@ Actual:  ' || a_actual_in);
                      .getclobval() || ' expected to be equal to ' || a_actual_in.extract('/')
                      .getclobval()),
                  '<doesnt show actual content at the momement>',
-                 '<todo>'); --todo
+                 '<todo>'); --todo: implement xml diff
         ELSE
             this((a_expected_in IS NULL AND a_actual_in IS NULL) OR
                  (a_expected_in.extract('/')
@@ -325,7 +328,7 @@ Actual:  ' || a_actual_in);
                      .getclobval() || ' expected to be equal to ' || a_actual_in.extract('/')
                      .getclobval()),
                  '<doesnt show actual content at the momement>',
-                 '<todo>'); --todo);
+                 '<todo>'); --todo: implement xml diff
         END IF;
     END eq;
 

@@ -1,20 +1,25 @@
 @&&run_dir_begin
 
+prompt Dropping package PETE
 drop package pete;
-drop package pete_assert;
-drop package pete_config;
-drop package pete_configuration_runner;
-drop package pete_convention_runner;
-drop package pete_core;
-drop package pete_logger;
 
-rem drop package body pete;
-rem drop package body pete_assert;
-rem drop package body pete_config;
-rem drop package body pete_configuration_runner;
-rem drop package body pete_convention_runner;
-rem drop package body pete_core;
-rem drop package body pete_logger;
+prompt Dropping package PETE_ASSERT
+drop package pete_assert;
+
+prompt Dropping package PETE_CONFIG
+drop package pete_config;
+
+prompt Dropping package PETE_CONFIG_RUNNER
+drop package pete_configuration_runner;
+
+prompt Dropping package PETE_CONVENTION_RUNNER
+drop package pete_convention_runner;
+
+prompt Dropping package PETE_CORE
+drop package pete_core;
+
+prompt Dropping package PETE_LOGGER
+drop package pete_logger;
 
 @&&run_dir_end
 

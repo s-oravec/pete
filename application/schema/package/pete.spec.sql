@@ -1,6 +1,6 @@
 CREATE OR REPLACE PACKAGE pete AS
 
-    VERSION constant varchar2(100) := '0.1.1';
+    VERSION CONSTANT VARCHAR2(100) := '0.1.1';
 
     /*
     
@@ -65,7 +65,8 @@ CREATE OR REPLACE PACKAGE pete AS
         a_method_name_in        IN VARCHAR2 DEFAULT NULL,
         a_script_name_in        IN VARCHAR2 DEFAULT NULL,
         a_case_name_in          IN VARCHAR2 DEFAULT NULL,
-        a_style_conventional_in IN BOOLEAN DEFAULT NULL
+        a_style_conventional_in IN BOOLEAN DEFAULT NULL,
+        a_parent_run_log_id_in  IN INTEGER DEFAULT NULL
     );
 
     -- Thrown if the input can't be clearly interpreted
@@ -88,7 +89,8 @@ CREATE OR REPLACE PACKAGE pete AS
     PROCEDURE run_test_suite
     (
         a_suite_name_in         IN VARCHAR2 DEFAULT NULL,
-        a_style_conventional_in IN BOOLEAN DEFAULT true
+        a_style_conventional_in IN BOOLEAN DEFAULT TRUE,
+        a_parent_run_log_id_in  IN INTEGER DEFAULT NULL
     );
 
     --
@@ -96,14 +98,22 @@ CREATE OR REPLACE PACKAGE pete AS
     --
     -- %argument a_script_name_in name of the script to be run
     --
-    PROCEDURE run_test_script(a_script_name_in IN VARCHAR2);
+    PROCEDURE run_test_script
+    (
+        a_script_name_in       IN VARCHAR2,
+        a_parent_run_log_id_in IN INTEGER DEFAULT NULL
+    );
 
     --
     -- Runs a script identified by name
     --
     -- %argument a_script_name_in name of the script to be run
     --
-    PROCEDURE run_test_case(a_case_name_in IN VARCHAR2);
+    PROCEDURE run_test_case
+    (
+        a_case_name_in         IN VARCHAR2,
+        a_parent_run_log_id_in IN INTEGER DEFAULT NULL
+    );
 
     --
     -- Runs tests for a given package. Such tests are in a test package which can be derived from the given one.    
@@ -116,15 +126,16 @@ CREATE OR REPLACE PACKAGE pete AS
     --
     PROCEDURE run_test_package
     (
-        a_package_name_in     IN VARCHAR2,
-        a_method_name_like_in IN VARCHAR2 DEFAULT NULL
+        a_package_name_in      IN VARCHAR2,
+        a_method_name_like_in  IN VARCHAR2 DEFAULT NULL,
+        a_parent_run_log_id_in IN INTEGER DEFAULT NULL
     );
 
     --
     -- Runs all availaible tests. That means all configured scripts from table pete_scripts and all
     -- test packages conforming convention.
     --
-    PROCEDURE run_all_tests;
+    PROCEDURE run_all_tests(a_parent_run_log_id_in IN INTEGER DEFAULT NULL);
 
     --
     -- core --------------------------------------------------------------------------------

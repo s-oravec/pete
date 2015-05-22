@@ -1,15 +1,11 @@
 @&&run_dir_begin
 
-set serveroutput on size unlimited
 
-prompt
+
 prompt Install test package UT_PETE_FUNCTIONS
-prompt ==================================
 @@ut_pete_functions.package.sql
-prompt
-prompt Run test package UT_PETE_FUNCTIONS
-prompt ===============================
-exec pete.run(a_package_name_in => 'UT_PETE_FUNCTIONS');
-prompt
+
+rem prompt Run test package UT_PETE_FUNCTIONS
+rem exec pete.run(a_package_name_in => 'UT_PETE_FUNCTIONS');
 
 @&&run_dir_end

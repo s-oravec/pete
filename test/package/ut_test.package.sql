@@ -2,14 +2,12 @@ CREATE OR REPLACE PACKAGE ut_test AS
 
     description VARCHAR2(255) := 'Test my amazing constraint';
 
-    -- hook method
     PROCEDURE before_all;
 
     PROCEDURE ins_child_without_parent_fails(d VARCHAR2 := 'Insert child without existing parent fails');
 
     PROCEDURE ins_child_with_parent_succeeds(d VARCHAR2 := 'Insert child with existing parent succeeds');
 
-    -- hook method
     PROCEDURE after_all;
 
 END;
@@ -39,7 +37,7 @@ CREATE OR REPLACE PACKAGE BODY ut_test AS
         IF NOT l_thrown
         THEN
             raise_application_error(-20000,
-                                    q'{It should throw and it doesn't, so fix it!}'); --TODO: add description
+                                    q'{It should throw and it doesn't, so fix it!}');
         END IF;
     END ins_child_without_parent_fails;
 

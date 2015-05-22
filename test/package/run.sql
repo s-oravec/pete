@@ -1,54 +1,33 @@
 @&&run_dir_begin
 
-set serveroutput on size unlimited
-
-prompt
-prompt
 prompt Install test package UT_PETE
-prompt ==================================
 @@ut_pete.package.sql
-prompt
-prompt Run test package UT_PETE
-prompt ===============================
-exec pete.run(a_package_name_in => 'UT_PETE');
-prompt
-prompt
+
+rem prompt Run test package UT_PETE
+rem exec pete.run(a_package_name_in => 'UT_PETE');
+
 prompt Install test package UT_PETE_CONFIG_RUNNER
-prompt ==================================
 @@ut_pete_config_runner.package.sql
-prompt
-prompt Run test package UT_PETE
-prompt ===============================
-exec pete.run(a_package_name_in => 'UT_PETE_CONFIG_RUNNER');
-prompt
-prompt
+
+rem prompt Run test package UT_PETE
+rem exec pete.run(a_package_name_in => 'UT_PETE_CONFIG_RUNNER');
+
 prompt Install test package UT_PETE_ASSERT
-prompt ==================================
 @@ut_pete_assert.package.sql
-prompt
-prompt Run test package UT_PETE_ASSERT
-prompt ===============================
-exec pete.run(a_package_name_in => 'UT_PETE_ASSERT');
-prompt
-prompt
+
+rem prompt Run test package UT_PETE_ASSERT
+rem exec pete.run(a_package_name_in => 'UT_PETE_ASSERT');
+
 prompt Install test package UT_PETE_SAVEPOINT
-prompt ==================================
 @@ut_pete_savepoint.package.sql
-prompt
-prompt Run test package UT_PETE_SAVEPOINT
-prompt ===============================
-exec pete.run(a_package_name_in => 'UT_PETE_SAVEPOINT');
-prompt
-prompt
+
+rem prompt Run test package UT_PETE_SAVEPOINT
+rem exec pete.run(a_package_name_in => 'UT_PETE_SAVEPOINT');
+
 prompt Install test package UT_PETE_LOGGER
-prompt ==================================
 @@ut_pete_logger.package.sql
-prompt
-prompt Run test package UT_PETE_SAVEPOINT
-prompt ===============================
-exec pete.run(a_package_name_in => 'UT_PETE_LOGGER');
 
-
-
+rem prompt Run test package UT_PETE_SAVEPOINT
+rem exec pete.run(a_package_name_in => 'UT_PETE_LOGGER');
 
 @&&run_dir_end

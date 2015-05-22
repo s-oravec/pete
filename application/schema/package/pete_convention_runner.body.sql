@@ -65,7 +65,7 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
     (
         a_package_name_in      IN pete_core.typ_object_name,
         a_method_name_in       IN pete_core.typ_object_name,
-        a_object_type_in       in pete_core.typ_object_type,
+        a_object_type_in       IN pete_core.typ_object_type,
         a_description_in       IN pete_core.typ_description DEFAULT NULL,
         a_parent_run_log_id_in IN pete_run_log.parent_id%TYPE DEFAULT NULL
     ) RETURN pete_core.typ_is_success IS
@@ -90,10 +90,9 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
         --
     EXCEPTION
         WHEN OTHERS THEN
-            pete_core.end_test(a_run_log_id_in    => l_run_log_id,
-                               a_is_succes_in     => FALSE,
-                               a_error_code_in    => SQLCODE
-                               );
+            pete_core.end_test(a_run_log_id_in => l_run_log_id,
+                               a_is_succes_in  => FALSE,
+                               a_error_code_in => SQLCODE);
             --
             l_result := FALSE;
             RETURN l_result;
@@ -220,7 +219,7 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
         pete_logger.trace('l_run_log_id ' || l_run_log_id);
         --
         l_result := run_hook_method(a_package_name_in      => a_suite_name_in ||
-                                                              '.pete_BEFORE_ALL',
+                                                              '.PETE_BEFORE_ALL',
                                     a_hook_method_name_in  => 'RUN',
                                     a_parent_run_log_id_in => l_run_log_id) AND
                     l_result;
@@ -235,7 +234,7 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
             pete_logger.trace('spoustena package ' ||
                               lrec_test_package.object_name);
             l_result := run_hook_method(a_package_name_in      => a_suite_name_in ||
-                                                                  '.pete_BEFORE_EACH',
+                                                                  '.PETE_BEFORE_EACH',
                                         a_hook_method_name_in  => 'RUN',
                                         a_parent_run_log_id_in => l_run_log_id) AND
                         l_result;
@@ -245,7 +244,7 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
                         l_result;
             --
             l_result := run_hook_method(a_package_name_in      => a_suite_name_in ||
-                                                                  '.pete_AFTER_EACH',
+                                                                  '.PETE_AFTER_EACH',
                                         a_hook_method_name_in  => 'RUN',
                                         a_parent_run_log_id_in => l_run_log_id) AND
                         l_result;
@@ -253,7 +252,7 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
         END LOOP test_packages;
         --
         l_result := run_hook_method(a_package_name_in      => a_suite_name_in ||
-                                                              '.pete_AFTER_ALL',
+                                                              '.PETE_AFTER_ALL',
                                     a_hook_method_name_in  => 'RUN',
                                     a_parent_run_log_id_in => l_run_log_id) AND
                     l_result;

@@ -1,9 +1,6 @@
 @&&run_dir_begin
 
-prompt
-prompt Creating function petef_sum_interval
-prompt ==================================
-prompt
+prompt Creating function PETEF_SUM_INTERVAL
 @@petef_sum_interval.sql
 
 @&&run_dir_end
