@@ -149,6 +149,13 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
                                      'AFTER_EACH')
                                 AND (a_method_name_like_in IS NULL OR
                                     procedure_name LIKE a_method_name_like_in)
+                                AND NOT EXISTS
+                              (SELECT 1
+                                       FROM user_arguments ua
+                                      WHERE ua.object_name = up.procedure_name
+                                        AND ua.package_name = up.object_name
+                                        AND (ua.defaulted = 'N' OR
+                                            ua.in_out IN ('OUT', 'IN/OUT')))
                               ORDER BY up.subprogram_id)
             
             LOOP
