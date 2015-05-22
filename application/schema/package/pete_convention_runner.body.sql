@@ -154,8 +154,11 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
                                        FROM user_arguments ua
                                       WHERE ua.object_name = up.procedure_name
                                         AND ua.package_name = up.object_name
-                                        AND (ua.defaulted = 'N' OR
-                                            ua.in_out IN ('OUT', 'IN/OUT')))
+                                        AND ( --
+                                             (ua.in_out IN ('OUT', 'IN/OUT')) OR --function result or out, in/out argument in procedure
+                                             (ua.argument_name IS NOT NULL AND
+                                             ua.defaulted = 'N') --procedure argument without default value
+                                            ))
                               ORDER BY up.subprogram_id)
             
             LOOP
@@ -235,7 +238,7 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
         FOR lrec_test_package IN (SELECT DISTINCT object_name
                                     FROM user_objects
                                    WHERE object_type = 'PACKAGE'
-                                     AND object_name LIKE 'UT\_%' ESCAPE '\')
+                                     AND object_name LIKE 'UT|_%' ESCAPE '|')
         LOOP
             --
             pete_logger.trace('spoustena package ' ||
