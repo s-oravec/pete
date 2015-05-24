@@ -34,6 +34,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_savepoint AS
         pete_logger.log_method_description(d);
         --
         ROLLBACK TO SAVEPOINT ut_pete_savepoint_sp1;
+        ROLLBACK;
     END;
 
 END ut_pete_savepoint;

@@ -27,7 +27,7 @@ select tmp.code,
                ts.description,
                rank() over(partition by ts.id, tcts.test_case_id order by bltc.block_order desc) my_rank,
                tcts.test_case_id,
-               tcts.script_order,
+               tcts.case_order,
                bltc.plsql_block_id,
                bltc.block_order
           from pete_test_script ts, pete_test_case_in_script tcts, pete_plsql_block_in_case bltc

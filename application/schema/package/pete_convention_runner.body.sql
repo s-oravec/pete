@@ -139,28 +139,43 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
                         l_result;
             --
             <<tested_methods_loop>>
-            FOR r_method IN (SELECT procedure_name
-                               FROM user_procedures up
-                              WHERE object_name = a_package_name_in
-                                AND procedure_name NOT IN
-                                    ('BEFORE_ALL',
-                                     'BEFORE_EACH',
-                                     'AFTER_ALL',
-                                     'AFTER_EACH')
-                                AND (a_method_name_like_in IS NULL OR
-                                    procedure_name LIKE a_method_name_like_in)
-                                AND NOT EXISTS
-                              (SELECT 1
-                                       FROM user_arguments ua
-                                      WHERE ua.object_name = up.procedure_name
-                                        AND ua.package_name = up.object_name
-                                        AND ( --
-                                             (ua.in_out IN ('OUT', 'IN/OUT')) OR --function result or out, in/out argument in procedure
-                                             (ua.argument_name IS NOT NULL AND
-                                             ua.defaulted = 'N') --procedure argument without default value
-                                            ))
-                              ORDER BY up.subprogram_id)
-            
+            FOR r_method IN
+                -- NoFormat Start
+                (
+                WITH convention_runner_procedures AS
+                 (SELECT /*+ materialize */
+                         procedure_name,
+                         subprogram_id,
+                         SUM(CASE WHEN procedure_name LIKE 'OO%' THEN 1 ELSE 0 END) over() AS oo_method
+                    FROM user_procedures up
+                   WHERE object_name = a_package_name_in
+                     --ignore hooks
+                     AND procedure_name NOT IN ('BEFORE_ALL', 'BEFORE_EACH', 'AFTER_ALL', 'AFTER_EACH')
+                     --a_method_name_like_in filter
+                     AND (a_method_name_like_in IS NULL OR procedure_NAME LIKE a_method_name_like_in)
+                     AND procedure_name IS NOT NULL                     
+                     --skipped methods
+                     AND procedure_name NOT LIKE 'XX%'
+                        -- it is not a function or a procedure with out/in_out arguments
+                        -- or a procedure in argument without default value
+                     AND NOT EXISTS
+                   (SELECT 1
+                      FROM user_arguments ua
+                     WHERE ua.object_name = up.procedure_name
+                       AND ua.package_name = up.object_name
+                       AND ( --function result or out, in/out argument in procedure
+                            (ua.in_out IN ('OUT', 'IN/OUT')) OR
+                           --procedure argument without default value 
+                            (ua.argument_name IS NOT NULL AND ua.defaulted = 'N')))
+                 )
+                SELECT procedure_name
+                  FROM convention_runner_procedures
+                 WHERE (oo_method = 0) --no oo method in packge
+                    OR --some oo methods
+                       (oo_method > 0 AND procedure_name LIKE 'OO%')
+                 ORDER BY subprogram_id
+                )
+                -- NoFormat End
             LOOP
                 pete_logger.trace('spustim metodu ' || r_method.procedure_name);
                 l_result := run_hook_method(a_package_name_in      => a_package_name_in,
@@ -213,15 +228,18 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
         a_description_in       IN pete_core.typ_description DEFAULT NULL,
         a_parent_run_log_id_in IN pete_run_log.parent_id%TYPE DEFAULT NULL
     ) RETURN pete_core.typ_is_success IS
+        --TYPE typ_package_name_tab IS TABLE OF user_objects.object_type%TYPE;
+        --l_package_name_tab typ_package_name_tab;
         l_result     pete_core.typ_is_success := TRUE;
         l_run_log_id INTEGER;
     BEGIN
         --
-        pete_logger.trace('RUN_SUITE: ' || 'a_suite_name_in:' ||
-                          NVL(a_suite_name_in, 'NULL') || ', ' ||
-                          'a_description_in:' || NVL(a_description_in, 'NULL') || ', ' ||
+        pete_logger.trace('RUN_SUITE: ' || --
+                          'a_suite_name_in:' || NVL(a_suite_name_in, 'NULL') || ', ' || --
+                          'a_description_in:' || NVL(a_description_in, 'NULL') || ', ' || --
                           'a_parent_run_log_id_in:' ||
-                          NVL(to_char(a_parent_run_log_id_in), 'NULL'));
+                          NVL(to_char(a_parent_run_log_id_in), 'NULL') --
+                          );
         l_run_log_id := pete_core.begin_test(a_object_name_in       => a_suite_name_in,
                                              a_object_type_in       => pete_core.g_OBJECT_TYPE_SUITE,
                                              a_description_in       => a_description_in,
@@ -235,10 +253,41 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
                     l_result;
         --
         <<test_packages_loop>>
-        FOR lrec_test_package IN (SELECT DISTINCT object_name
-                                    FROM user_objects
-                                   WHERE object_type = 'PACKAGE'
-                                     AND object_name LIKE 'UT|_%' ESCAPE '|')
+        FOR lrec_test_package IN
+            -- NoFormat Start
+            (
+            WITH convention_runner_procedures AS
+             (SELECT /*+ materialize */
+                     object_name,
+                     procedure_name,
+                     SUM(CASE WHEN object_name LIKE 'UT|_OO%' ESCAPE '|' THEN 1 ELSE 0 END) over() AS oo_package,
+                     SUM(CASE WHEN procedure_name LIKE 'OO%' THEN 1 ELSE 0 END) over() AS oo_method
+                FROM user_procedures up
+               WHERE object_name LIKE 'UT|_%' ESCAPE '|'
+                 AND procedure_name IS NOT NULL
+                 --skipped methods
+                 AND procedure_name NOT LIKE 'XX%'
+                    -- it is not a function or a procedure with out/in_out arguments
+                    -- or a procedure in argument without default value
+                 AND NOT EXISTS
+               (SELECT 1
+                  FROM user_arguments ua
+                 WHERE ua.object_name = up.procedure_name
+                   AND ua.package_name = up.object_name
+                   AND ( --function result or out, in/out argument in procedure
+                        (ua.in_out IN ('OUT', 'IN/OUT')) OR
+                       --procedure argument without default value 
+                        (ua.argument_name IS NOT NULL AND ua.defaulted = 'N')))
+             )
+            SELECT DISTINCT object_name
+              FROM convention_runner_procedures
+             WHERE (oo_method = 0 AND oo_package = 0) --no oo object
+                OR --oo package or oo method
+                   ((oo_package > 0 AND object_name LIKE 'UT|_OO%' ESCAPE '|') OR
+                   (oo_method > 0 AND procedure_name LIKE 'OO%'))
+             ORDER BY object_name
+            )
+            -- NoFormat End
         LOOP
             --
             pete_logger.trace('spoustena package ' ||

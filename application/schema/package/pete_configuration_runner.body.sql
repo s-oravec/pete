@@ -1,37 +1,104 @@
 CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
 
     -- Cursor used to find PLSQL block in test case
+    -- NoFormat Start
     CURSOR gcur_test_case_instance(p_test_case_id NUMBER) IS
-        SELECT tc_i.plsql_block_id,
-               tc_i.test_case_id,
-               tc_i.block_order,
-               tc.name             AS test_case_name,
-               blk.name            AS block_name,
-               blk.owner,
-               blk.package,
-               blk.method,
-               blk.anonymous_block,
-               inarg.value         input,
-               er.value        expected_output
-          FROM pete_plsql_block_in_case tc_i,
-               pete_plsql_block         blk,
-               pete_input_argument   inarg,
-               pete_expected_result     er,
-               pete_test_case           tc
-         WHERE tc_i.plsql_block_id = blk.id
-           AND tc_i.input_argument_id = inarg.id(+)
-           AND tc_i.expected_result_id = er.id(+)
-           AND tc_i.test_case_id = p_test_case_id
-           AND tc.id = tc_i.test_case_id
-         ORDER BY tc_i.block_order;
+        WITH plsql_blocks AS
+         (SELECT /*+ materialized */
+                 blk.id,
+                 blk.name,
+                 blk.owner,
+                 blk.package,
+                 blk.method,
+                 blk.anonymous_block,
+                 bic.description,
+                 bic.block_order,
+                 bic.run_modifier,
+                 inarg.value AS input,
+                 er.value AS expected_output,
+                 SUM(CASE WHEN bic.run_modifier = 'ONLY' THEN 1 ELSE 0 END) OVER() AS overall_block_only
+            FROM pete_plsql_block_in_case bic,
+                 pete_plsql_block         blk,
+                 pete_input_argument      inarg,
+                 pete_expected_result     er
+           WHERE bic.test_case_id = p_test_case_id
+             AND (bic.run_modifier != 'SKIP' OR bic.run_modifier IS NULL)
+             AND inarg.id(+) = bic.input_argument_id
+             AND er.id(+) = bic.expected_result_id
+             AND blk.id = bic.plsql_block_id)
+        SELECT id,
+               NAME,
+               owner,
+               PACKAGE,
+               method,
+               anonymous_block,
+               description,
+               input,
+               expected_output
+          FROM plsql_blocks
+         WHERE -- no ONLY run modifiers
+               (overall_block_only = 0)
+               -- or block has only modifier
+            OR (run_modifier = 'ONLY')
+         ORDER BY block_order;
+        -- NoFormat End
 
     -- Cursor used to find test case in test script
+    -- NoFormat Start
     CURSOR gcur_test_case_in_test_script(p_test_cript_id NUMBER) IS
-        SELECT tc.*
-          FROM pete_test_case_in_script ts_tc, pete_test_case tc
-         WHERE ts_tc.test_script_id = p_test_cript_id
-           AND tc.id = ts_tc.test_case_id
-         ORDER BY ts_tc.script_order;
+        WITH test_cases AS
+         (SELECT /*+ materialize */
+          DISTINCT tc.*,
+                   cis.case_order,
+                   cis.run_modifier,
+                   SUM(CASE WHEN cis.run_modifier = 'ONLY' THEN 1 ELSE 0 END) OVER() AS overall_case_only,
+                   SUM(CASE WHEN bic.run_modifier = 'ONLY' THEN 1 ELSE 0 END) OVER() AS overall_block_only,
+                   SUM(CASE WHEN bic.run_modifier = 'ONLY' THEN 1 ELSE 0 END) OVER(PARTITION BY tc.id) AS case_has_block_only
+            FROM pete_test_case_in_script cis,
+                 pete_test_case           tc,
+                 pete_plsql_block_in_case bic
+           WHERE cis.test_script_id = p_test_cript_id
+             AND (cis.run_modifier != 'SKIP' OR cis.run_modifier IS NULL)
+             AND bic.test_case_id = cis.test_case_id
+             AND (bic.run_modifier != 'SKIP' OR bic.run_modifier IS NULL)
+             AND tc.id = cis.test_case_id
+           ORDER BY cis.case_order)
+        SELECT id, NAME, description
+          FROM test_cases
+         WHERE --no ONLY run modifiers
+               (overall_case_only = 0 AND overall_block_only = 0)
+               --or case or its blocks have ONLY run modifier 
+            OR (run_modifier = 'ONLY' OR case_has_block_only > 0)
+         ORDER BY case_order;
+        -- NoFormat End
+
+    -- Cursor used to find test scripts to run
+    -- NoFormat Start
+    CURSOR gcur_test_scripts IS
+        WITH test_scripts AS
+         (SELECT /*+ materialize */ 
+        DISTINCT ts.*,
+                 SUM(CASE WHEN ts.run_modifier  = 'ONLY' THEN 1 ELSE 0 END) OVER() AS overall_script_only,
+                 SUM(CASE WHEN cis.run_modifier = 'ONLY' THEN 1 ELSE 0 END) OVER() AS overall_case_only,
+                 SUM(CASE WHEN bic.run_modifier = 'ONLY' THEN 1 ELSE 0 END) OVER() AS overall_block_only,
+                 SUM(CASE WHEN cis.run_modifier = 'ONLY' THEN 1 ELSE 0 END) OVER (PARTITION BY ts.id) AS script_has_case_only,
+                 SUM(CASE WHEN bic.run_modifier = 'ONLY' THEN 1 ELSE 0 END) OVER (PARTITION BY ts.id) AS script_has_block_only
+            FROM pete_test_script         ts,
+                 pete_test_case_in_script cis,
+                 pete_plsql_block_in_case bic
+           WHERE (ts.run_modifier != 'SKIP' OR ts.run_modifier IS NULL)
+             AND cis.test_script_id = ts.id
+             AND (cis.run_modifier != 'SKIP' OR cis.run_modifier IS NULL)
+             AND bic.test_case_id = cis.test_case_id
+             AND (bic.run_modifier != 'SKIP' OR bic.run_modifier IS NULL)
+         )
+        SELECT id, NAME, run_modifier, DESCRIPTION
+          FROM test_scripts
+         WHERE --no ONLY run modifiers
+               (overall_script_only = 0 AND overall_case_only = 0 AND overall_block_only = 0)
+               --or script or its case/block have ONLY run modifier
+            OR (run_modifier = 'ONLY' OR script_has_case_only > 0 OR script_has_block_only > 0);
+    -- NoFormat End
 
     -------------------------------------------------------------------------------------------------------------------------------
     FUNCTION run_block
@@ -58,7 +125,7 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
         pete_logger.trace('RUN_BLOCK: ' || 'a_parent_run_log_id_in:' ||
                           NVL(to_char(a_parent_run_log_id_in), 'NULL') ||
                           'block name : ' ||
-                          nvl(a_block_instance_in_case_in.block_name, 'NULL'));
+                          nvl(a_block_instance_in_case_in.name, 'NULL'));
         IF a_block_instance_in_case_in.anonymous_block IS NULL
         THEN
         
@@ -78,9 +145,9 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
         pete_logger.trace('l_plsql_block:' || l_plsql_block);
         -- execute plsql block
         BEGIN
-            l_run_log_id := pete_core.begin_test(a_object_name_in       => a_block_instance_in_case_in.test_case_name,
+            l_run_log_id := pete_core.begin_test(a_object_name_in       => a_block_instance_in_case_in.name,
                                                  a_object_type_in       => pete_core.g_OBJECT_TYPE_BLOCK,
-                                                 a_description_in       => a_block_instance_in_case_in.block_name,
+                                                 a_description_in       => a_block_instance_in_case_in.description,
                                                  a_parent_run_log_id_in => a_parent_run_log_id_in);
             --
             EXECUTE IMMEDIATE l_plsql_block
@@ -102,11 +169,11 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
         EXCEPTION
             WHEN OTHERS THEN
                 l_result := FALSE;
-                pete_core.end_test(a_run_log_id_in    => l_run_log_id,
-                                   a_is_succes_in     => l_result,
-                                   a_xml_in_in        => a_block_instance_in_case_in.input,
-                                   a_xml_out_in       => l_xml_out,
-                                   a_error_code_in    => SQLCODE);
+                pete_core.end_test(a_run_log_id_in => l_run_log_id,
+                                   a_is_succes_in  => l_result,
+                                   a_xml_in_in     => a_block_instance_in_case_in.input,
+                                   a_xml_out_in    => l_xml_out,
+                                   a_error_code_in => SQLCODE);
         END;
     
         pete_logger.trace('l_result ' || CASE WHEN l_result THEN 'TRUE' ELSE
@@ -211,7 +278,7 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
         l_result pete_core.typ_is_success := TRUE;
     BEGIN
         <<test_scripts_in_configuration>>
-        FOR test_script IN (SELECT * FROM pete_test_script)
+        FOR test_script IN gcur_test_scripts
         LOOP
             l_result := run_script(a_test_script_in => test_script) AND
                         l_result;

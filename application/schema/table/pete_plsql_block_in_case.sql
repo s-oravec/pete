@@ -6,7 +6,8 @@ create table PETE_PLSQL_BLOCK_IN_CASE
   input_argument_id  INTEGER,
   expected_result_id INTEGER,
   block_order        INTEGER,
-  description        varchar2(4000)
+  run_modifier       VARCHAR2(30),
+  description        VARCHAR2(4000)
 )
 ;
 comment on table PETE_PLSQL_BLOCK_IN_CASE
@@ -24,6 +25,8 @@ comment on column PETE_PLSQL_BLOCK_IN_CASE.expected_result_id
   is 'Expected result identifier';
 comment on column PETE_PLSQL_BLOCK_IN_CASE.block_order
   is 'Block order in Test case';
+comment on column PETE_PLSQL_BLOCK_IN_CASE.run_modifier
+  is 'Run modifier - ONLY - only this PLSQL block in Test Case is executed; SKIP - this PLSQL block in Test Case will be skipped';
 comment on column PETE_PLSQL_BLOCK_IN_CASE.description
   is 'Description';
 
@@ -44,3 +47,8 @@ alter table PETE_PLSQL_BLOCK_IN_CASE
 alter table PETE_PLSQL_BLOCK_IN_CASE
   add constraint PETE_PLSQL_BLOCK_IN_CASE_FK03 foreign key (TEST_CASE_ID)
   references PETE_TEST_CASE (ID);
+
+alter table PETE_PLSQL_BLOCK_IN_CASE
+  add constraint PETE_PLSQL_BLOCK_IN_CASE_CHK01
+  check (run_modifier is null or run_modifier in ('ONLY','SKIP')
+  );
