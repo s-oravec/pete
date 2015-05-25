@@ -206,8 +206,36 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
     END;
 
     --------------------------------------------------------------------------------
+    PROCEDURE print_top_level_result(a_result_in IN BOOLEAN) IS
+    BEGIN
+        IF a_result_in
+        THEN
+            dbms_output.put_line('   SSSS   U     U   CCC     CCC   EEEEEEE   SSSS     SSSS   ');
+            dbms_output.put_line('  S    S  U     U  C   C   C   C  E        S    S   S    S  ');
+            dbms_output.put_line(' S        U     U C     C C     C E       S        S        ');
+            dbms_output.put_line('  S       U     U C       C       E        S        S       ');
+            dbms_output.put_line('   SSSS   U     U C       C       EEEE      SSSS     SSSS   ');
+            dbms_output.put_line('       S  U     U C       C       E             S        S  ');
+            dbms_output.put_line('        S U     U C     C C     C E              S        S ');
+            dbms_output.put_line('  S    S   U   U   C   C   C   C  E        S    S   S    S  ');
+            dbms_output.put_line('   SSSS     UUU     CCC     CCC   EEEEEEE   SSSS     SSSS   ');
+        ELSE
+            dbms_output.put_line(' FFFFFFF   AA     III  L      U     U RRRRR   EEEEEEE ');
+            dbms_output.put_line(' F        A  A     I   L      U     U R    R  E       ');
+            dbms_output.put_line(' F       A    A    I   L      U     U R     R E       ');
+            dbms_output.put_line(' F      A      A   I   L      U     U R     R E       ');
+            dbms_output.put_line(' FFFF   A      A   I   L      U     U RRRRRR  EEEE    ');
+            dbms_output.put_line(' F      AAAAAAAA   I   L      U     U R   R   E       ');
+            dbms_output.put_line(' F      A      A   I   L      U     U R    R  E       ');
+            dbms_output.put_line(' F      A      A   I   L       U   U  R     R E       ');
+            dbms_output.put_line(' F      A      A  III  LLLLLLL  UUU   R     R EEEEEEE ');
+        END IF;
+    END;
+
+    --------------------------------------------------------------------------------
     PROCEDURE output_log(a_run_log_id_in IN pete_run_log.id%TYPE) IS
-        l_print BOOLEAN;
+        l_print            BOOLEAN;
+        l_top_level_result BOOLEAN;
     BEGIN
         trace('OUTPUT_LOG: ' || 'a_run_log_id_in:' ||
               NVL(to_char(a_run_log_id_in), 'NULL'));
@@ -216,6 +244,16 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
         FOR log_line IN (SELECT * FROM petev_output_run_log)
         LOOP
             l_print := TRUE;
+            --first record in the view is the top level one
+            IF (l_top_level_result is null)
+            THEN
+                IF (log_line.result = pete_core.g_SUCCESS)
+                THEN
+                    l_top_level_result := TRUE;
+                ELSE
+                    l_top_level_result := FALSE;
+                END IF;
+            END IF;
             IF (NOT pete_config.get_show_hook_methods AND
                log_line.object_type = pete_core.g_OBJECT_TYPE_HOOK)
             THEN
@@ -250,6 +288,8 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
                 dbms_output.put_line('.' || log_line.log);
             END IF;
         END LOOP;
+    
+        print_top_level_result(l_top_level_result);
         dbms_output.put_line(chr(10) || chr(10));
     END;
 
