@@ -98,5 +98,29 @@ CREATE OR REPLACE PACKAGE pete_config AS
     --
     FUNCTION get_test_package_prefix RETURN VARCHAR2;
 
+    --
+    -- Date format
+    --------------------------------------------------------------------------------
+    --
+
+    g_DATE_FORMAT_DEFAULT CONSTANT VARCHAR2(30) := 'yyyy-mm-dd hh24:mi:ss';
+
+    --
+    -- Sets prefix for test packages
+    --
+    -- %argument a_value_in
+    -- %argument a_set_as_default if true then the a_value_in is stored in config table PETE_CONFIG and becomes sesssion default
+    --
+    PROCEDURE set_date_format
+    (
+        a_value_in       IN VARCHAR2 DEFAULT g_DATE_FORMAT_DEFAULT,
+        a_set_as_default IN BOOLEAN DEFAULT FALSE
+    );
+
+    --
+    -- returns current settings of show_hook_methods system parameter
+    --
+    FUNCTION get_date_format RETURN VARCHAR2;
+
 END;
 /

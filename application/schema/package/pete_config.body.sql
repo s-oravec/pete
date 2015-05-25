@@ -4,6 +4,7 @@ CREATE OR REPLACE PACKAGE BODY pete_config AS
     g_show_hook_methods   BOOLEAN;
     g_show_failures_only  BOOLEAN;
     g_test_package_prefix VARCHAR2(30);
+    g_date_format         VARCHAR2(30);
 
     C_TRUE  VARCHAR2(10) := 'TRUE';
     C_FALSE VARCHAR2(10) := 'FALSE';
@@ -13,6 +14,7 @@ CREATE OR REPLACE PACKAGE BODY pete_config AS
     SHOW_HOOK_METHODS   VARCHAR2(30) := 'SHOW_HOOK_METHODS';
     SHOW_FAILURES_ONLY  VARCHAR2(30) := 'SHOW_FAILURES_ONLY';
     TEST_PACKAGE_PREFIX VARCHAR2(30) := 'TEST_PACKAGE_PREFIX';
+    DATE_FORMAT         VARCHAR2(30) := 'DATE_FORMAT';
 
     -- reads value from config table
     --------------------------------------------------------------------------------
@@ -176,6 +178,26 @@ CREATE OR REPLACE PACKAGE BODY pete_config AS
     END;
 
     --------------------------------------------------------------------------------
+    PROCEDURE set_date_format
+    (
+        a_value_in       IN VARCHAR2 DEFAULT g_DATE_FORMAT_DEFAULT,
+        a_set_as_default IN BOOLEAN DEFAULT FALSE
+    ) IS
+    BEGIN
+        g_date_format := a_value_in;
+        IF a_set_as_default
+        THEN
+            set_param(DATE_FORMAT, a_value_in);
+        END IF;
+    END;
+
+    --------------------------------------------------------------------------------
+    FUNCTION get_date_format RETURN VARCHAR2 IS
+    BEGIN
+        RETURN g_date_format;
+    END;
+
+    --------------------------------------------------------------------------------
     PROCEDURE init IS
     BEGIN
         --show asserts
@@ -190,6 +212,9 @@ CREATE OR REPLACE PACKAGE BODY pete_config AS
         --test package prefix
         g_test_package_prefix := get_param(a_key_in           => TEST_PACKAGE_PREFIX,
                                            a_default_value_in => g_TEST_PACKAGE_PREFIX_DEFAULT);
+        --date format
+        g_date_format := get_param(a_key_in           => DATE_FORMAT,
+                                   a_default_value_in => g_DATE_FORMAT_DEFAULT);
     END init;
 
 BEGIN
