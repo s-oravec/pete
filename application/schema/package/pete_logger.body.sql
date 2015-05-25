@@ -208,27 +208,28 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
     --------------------------------------------------------------------------------
     PROCEDURE print_top_level_result(a_result_in IN BOOLEAN) IS
     BEGIN
+        dbms_output.put_line('.');
         IF a_result_in
         THEN
-            dbms_output.put_line('   SSSS   U     U   CCC     CCC   EEEEEEE   SSSS     SSSS   ');
-            dbms_output.put_line('  S    S  U     U  C   C   C   C  E        S    S   S    S  ');
-            dbms_output.put_line(' S        U     U C     C C     C E       S        S        ');
-            dbms_output.put_line('  S       U     U C       C       E        S        S       ');
-            dbms_output.put_line('   SSSS   U     U C       C       EEEE      SSSS     SSSS   ');
-            dbms_output.put_line('       S  U     U C       C       E             S        S  ');
-            dbms_output.put_line('        S U     U C     C C     C E              S        S ');
-            dbms_output.put_line('  S    S   U   U   C   C   C   C  E        S    S   S    S  ');
-            dbms_output.put_line('   SSSS     UUU     CCC     CCC   EEEEEEE   SSSS     SSSS   ');
+            dbms_output.put_line('.   SSSS   U     U   CCC     CCC   EEEEEEE   SSSS     SSSS   ');
+            dbms_output.put_line('.  S    S  U     U  C   C   C   C  E        S    S   S    S  ');
+            dbms_output.put_line('. S        U     U C     C C     C E       S        S        ');
+            dbms_output.put_line('.  S       U     U C       C       E        S        S       ');
+            dbms_output.put_line('.   SSSS   U     U C       C       EEEE      SSSS     SSSS   ');
+            dbms_output.put_line('.       S  U     U C       C       E             S        S  ');
+            dbms_output.put_line('.        S U     U C     C C     C E              S        S ');
+            dbms_output.put_line('.  S    S   U   U   C   C   C   C  E        S    S   S    S  ');
+            dbms_output.put_line('.   SSSS     UUU     CCC     CCC   EEEEEEE   SSSS     SSSS   ');
         ELSE
-            dbms_output.put_line(' FFFFFFF   AA     III  L      U     U RRRRR   EEEEEEE ');
-            dbms_output.put_line(' F        A  A     I   L      U     U R    R  E       ');
-            dbms_output.put_line(' F       A    A    I   L      U     U R     R E       ');
-            dbms_output.put_line(' F      A      A   I   L      U     U R     R E       ');
-            dbms_output.put_line(' FFFF   A      A   I   L      U     U RRRRRR  EEEE    ');
-            dbms_output.put_line(' F      AAAAAAAA   I   L      U     U R   R   E       ');
-            dbms_output.put_line(' F      A      A   I   L      U     U R    R  E       ');
-            dbms_output.put_line(' F      A      A   I   L       U   U  R     R E       ');
-            dbms_output.put_line(' F      A      A  III  LLLLLLL  UUU   R     R EEEEEEE ');
+            dbms_output.put_line('. FFFFFFF   AA     III  L      U     U RRRRR   EEEEEEE ');
+            dbms_output.put_line('. F        A  A     I   L      U     U R    R  E       ');
+            dbms_output.put_line('. F       A    A    I   L      U     U R     R E       ');
+            dbms_output.put_line('. F      A      A   I   L      U     U R     R E       ');
+            dbms_output.put_line('. FFFF   A      A   I   L      U     U RRRRRR  EEEE    ');
+            dbms_output.put_line('. F      AAAAAAAA   I   L      U     U R   R   E       ');
+            dbms_output.put_line('. F      A      A   I   L      U     U R    R  E       ');
+            dbms_output.put_line('. F      A      A   I   L       U   U  R     R E       ');
+            dbms_output.put_line('. F      A      A  III  LLLLLLL  UUU   R     R EEEEEEE ');
         END IF;
     END;
 
@@ -245,7 +246,7 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
         LOOP
             l_print := TRUE;
             --first record in the view is the top level one
-            IF (l_top_level_result is null)
+            IF (l_top_level_result IS NULL)
             THEN
                 IF (log_line.result = pete_core.g_SUCCESS)
                 THEN
