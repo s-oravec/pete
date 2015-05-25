@@ -1,6 +1,7 @@
 create or replace force view petev_output_run_log
  as
 SELECT lpad(' ', (LEVEL - 1) * 2, ' ') || --x
+       case when object_type = 'ASSERT' then '  ' end || --x
        description || --x
        ' - ' || RESULT || --x
        CASE

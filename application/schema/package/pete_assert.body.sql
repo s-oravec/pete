@@ -86,28 +86,26 @@ CREATE OR REPLACE PACKAGE BODY pete_assert IS
         
     ) IS
     BEGIN
-        pete_logger.trace('THIS: ' || 'a_value_in:' ||
-                          NVL(CASE WHEN a_value_in THEN 'TRUE' WHEN
-                              NOT a_value_in THEN 'FALSE' ELSE NULL END,
-                              'NULL') || ', ' || 'a_comment_in:' ||
-                          NVL(a_comment_in, 'NULL') || ', ' ||
+        -- NoFormat Start
+        pete_logger.trace('THIS: ' || 'a_value_in:' || NVL(CASE WHEN a_value_in THEN 'TRUE' WHEN NOT a_value_in THEN 'FALSE' ELSE NULL END, 'NULL') || ', ' ||
+                          'a_comment_in:' || NVL(a_comment_in, 'NULL') || ', ' ||
                           'a_expected_in:' || NVL(a_expected_in, 'NULL') || ', ' ||
                           'a_actual_in:' || NVL(a_actual_in, 'NULL'));
+        -- NoFormat End
         CASE a_value_in
             WHEN TRUE THEN
                 pete_logger.trace('assert this - true');
-                --dbms_output.put_line('.      ASSERT SUCCESS - ' || a_comment_in);
-                pete_logger.log_assert(TRUE, '  ASSERT - ' || a_comment_in);
+                pete_logger.log_assert(a_result_in  => TRUE,
+                                       a_comment_in => 'ASSERT - ' || a_comment_in);
             
             ELSE
                 pete_logger.trace('assert this - false');
-                --                dbms_output.put_line('.      ASSERT FAILURE - ' || a_comment_in);
-                pete_logger.log_assert(FALSE,
-                                       '  ASSERT FAILURE - ' || a_comment_in);
+                pete_logger.log_assert(a_result_in  => FALSE,
+                                       a_comment_in => 'ASSERT FAILURE - ' || a_comment_in);
                 raise_application_error(-20000,
-                                        'Assertion failed: ' || a_comment_in || '
-Expected:' || a_expected_in || '
-Actual:  ' || a_actual_in);
+                                        'Assertion failed: ' || a_comment_in || chr(10) || --
+                                        'Expected:' || a_expected_in || chr(10) || --
+                                        'Actual:  ' || a_actual_in);
         END CASE;
     END this;
 
