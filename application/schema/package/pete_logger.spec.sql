@@ -67,7 +67,7 @@ CREATE OR REPLACE PACKAGE pete_logger AS
         a_result_in  BOOLEAN,
         a_comment_in VARCHAR2
     );
- 
+
     --------------------------------------------------------------------------------
     -- tracing methods
     --------------------------------------------------------------------------------

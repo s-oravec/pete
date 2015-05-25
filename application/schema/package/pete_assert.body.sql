@@ -96,14 +96,17 @@ CREATE OR REPLACE PACKAGE BODY pete_assert IS
             WHEN TRUE THEN
                 pete_logger.trace('assert this - true');
                 pete_logger.log_assert(a_result_in  => TRUE,
-                                       a_comment_in => 'ASSERT - ' || a_comment_in);
+                                       a_comment_in => 'ASSERT - ' ||
+                                                       a_comment_in);
             
             ELSE
                 pete_logger.trace('assert this - false');
                 pete_logger.log_assert(a_result_in  => FALSE,
-                                       a_comment_in => 'ASSERT FAILURE - ' || a_comment_in);
+                                       a_comment_in => 'ASSERT FAILURE - ' ||
+                                                       a_comment_in);
                 raise_application_error(-20000,
-                                        'Assertion failed: ' || a_comment_in || chr(10) || --
+                                        'Assertion failed: ' || a_comment_in ||
+                                        chr(10) || --
                                         'Expected:' || a_expected_in || chr(10) || --
                                         'Actual:  ' || a_actual_in);
         END CASE;

@@ -10,6 +10,32 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
     END;
 
     --------------------------------------------------------------------------------
+    FUNCTION get_tst_pkg_regexp RETURN VARCHAR2 IS
+    BEGIN
+        --TODO escape
+        RETURN '^' || pete_config.get_test_package_prefix || '.*';
+    END;
+
+    --------------------------------------------------------------------------------
+    FUNCTION get_tst_pkg_only_regexp RETURN VARCHAR2 IS
+    BEGIN
+        --TODO escape
+        RETURN '^' || pete_config.get_test_package_prefix || 'OO.*';
+    END;
+
+    --------------------------------------------------------------------------------
+    FUNCTION get_method_name_only_regexp RETURN VARCHAR2 IS
+    BEGIN
+        RETURN '^OO.*';
+    END;
+
+    --------------------------------------------------------------------------------
+    FUNCTION get_method_name_skip_regexp RETURN VARCHAR2 IS
+    BEGIN
+        RETURN '^XX.*';
+    END;
+
+    --------------------------------------------------------------------------------
     FUNCTION package_has_method
     (
         a_package_name_in IN user_procedures.object_name%TYPE,
@@ -116,6 +142,10 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
     ) RETURN pete_core.typ_is_success IS
         l_result     BOOLEAN := TRUE;
         l_run_log_id INTEGER;
+        --
+        l_method_only_regexp VARCHAR2(255) := get_method_name_only_regexp;
+        l_method_skip_regexp VARCHAR2(255) := get_method_name_skip_regexp;
+        --
     BEGIN
         --
         pete_logger.trace('RUN_PACKAGE: ' || 'a_package_name_in:' ||
@@ -146,7 +176,7 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
                  (SELECT /*+ materialize */
                          procedure_name,
                          subprogram_id,
-                         SUM(CASE WHEN procedure_name LIKE 'OO%' THEN 1 ELSE 0 END) over() AS oo_method
+                         SUM(CASE WHEN regexp_like(procedure_name, l_method_only_regexp) THEN 1 ELSE 0 END) over() AS oo_method
                     FROM user_procedures up
                    WHERE object_name = a_package_name_in
                      --ignore hooks
@@ -155,7 +185,7 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
                      AND (a_method_name_like_in IS NULL OR procedure_NAME LIKE a_method_name_like_in)
                      AND procedure_name IS NOT NULL                     
                      --skipped methods
-                     AND procedure_name NOT LIKE 'XX%'
+                     AND not regexp_like(procedure_name, l_method_skip_regexp)
                         -- it is not a function or a procedure with out/in_out arguments
                         -- or a procedure in argument without default value
                      AND NOT EXISTS
@@ -172,7 +202,7 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
                   FROM convention_runner_procedures
                  WHERE (oo_method = 0) --no oo method in packge
                     OR --some oo methods
-                       (oo_method > 0 AND procedure_name LIKE 'OO%')
+                       (oo_method > 0 AND regexp_like(procedure_name, l_method_only_regexp))
                  ORDER BY subprogram_id
                 )
                 -- NoFormat End
@@ -219,7 +249,6 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
     -- Tests suite
     -- %argument a_suite_name_in test suite name = USER
     -- runs all UT% packages defined in users schema
-    -- TODO: configurable prefix
     --
     --------------------------------------------------------------------------------    
     FUNCTION run_suite
@@ -228,10 +257,14 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
         a_description_in       IN pete_core.typ_description DEFAULT NULL,
         a_parent_run_log_id_in IN pete_run_log.parent_id%TYPE DEFAULT NULL
     ) RETURN pete_core.typ_is_success IS
-        --TYPE typ_package_name_tab IS TABLE OF user_objects.object_type%TYPE;
-        --l_package_name_tab typ_package_name_tab;
         l_result     pete_core.typ_is_success := TRUE;
         l_run_log_id INTEGER;
+        --
+        l_tst_pkg_only_regexp VARCHAR2(255) := get_tst_pkg_only_regexp;
+        l_tst_pkg_regexp      VARCHAR2(255) := get_tst_pkg_regexp;
+        l_method_only_regexp  VARCHAR2(255) := get_method_name_only_regexp;
+        l_method_skip_regexp  VARCHAR2(255) := get_method_name_skip_regexp;
+        --
     BEGIN
         --
         pete_logger.trace('RUN_SUITE: ' || --
@@ -260,13 +293,14 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
              (SELECT /*+ materialize */
                      object_name,
                      procedure_name,
-                     SUM(CASE WHEN object_name LIKE 'UT|_OO%' ESCAPE '|' THEN 1 ELSE 0 END) over() AS oo_package,
-                     SUM(CASE WHEN procedure_name LIKE 'OO%' THEN 1 ELSE 0 END) over() AS oo_method
+                     SUM(CASE WHEN regexp_like(object_name, l_tst_pkg_only_regexp) THEN 1 ELSE 0 END) over() AS oo_package,
+                     SUM(CASE WHEN regexp_like(procedure_name, l_method_only_regexp) THEN 1 ELSE 0 END) over() AS oo_method
                 FROM user_procedures up
-               WHERE object_name LIKE 'UT|_%' ESCAPE '|'
+               WHERE regexp_like(object_name, l_tst_pkg_regexp)
                  AND procedure_name IS NOT NULL
                  --skipped methods
-                 AND procedure_name NOT LIKE 'XX%'
+                 --AND procedure_name NOT LIKE 'XX%'
+                 AND not regexp_like(procedure_name, l_method_skip_regexp)
                     -- it is not a function or a procedure with out/in_out arguments
                     -- or a procedure in argument without default value
                  AND NOT EXISTS
@@ -283,8 +317,8 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
               FROM convention_runner_procedures
              WHERE (oo_method = 0 AND oo_package = 0) --no oo object
                 OR --oo package or oo method
-                   ((oo_package > 0 AND object_name LIKE 'UT|_OO%' ESCAPE '|') OR
-                   (oo_method > 0 AND procedure_name LIKE 'OO%'))
+                   ((oo_package > 0 AND regexp_like(object_name, l_tst_pkg_only_regexp)) OR
+                   (oo_method > 0 AND regexp_like(procedure_name, l_method_only_regexp)))
              ORDER BY object_name
             )
             -- NoFormat End

@@ -54,13 +54,13 @@ CREATE OR REPLACE PACKAGE BODY pete_core AS
                             a_xml_out_in         => a_xml_out_in,
                             a_error_code_in      => a_error_code_in,
                             a_error_stack_in     => CASE
-                                                        WHEN not a_is_succes_in THEN
+                                                        WHEN NOT a_is_succes_in THEN
                                                          dbms_utility.format_error_stack
                                                         ELSE
                                                          NULL
                                                     END,
                             a_error_backtrace_in => CASE
-                                                        WHEN not a_is_succes_in THEN
+                                                        WHEN NOT a_is_succes_in THEN
                                                          dbms_utility.format_error_backtrace
                                                         ELSE
                                                          NULL

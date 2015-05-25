@@ -1,25 +1,64 @@
 CREATE OR REPLACE PACKAGE BODY pete_config AS
 
-    g_show_asserts      NUMBER;
-    g_show_hook_methods BOOLEAN;
+    g_show_asserts        NUMBER;
+    g_show_hook_methods   BOOLEAN;
+    g_test_package_prefix VARCHAR2(30);
 
     C_TRUE  VARCHAR2(10) := 'TRUE';
     C_FALSE VARCHAR2(10) := 'FALSE';
 
     --config table keys
-    SHOW_ASSERTS      VARCHAR2(30) := 'SHOW_ASSERTS';
-    SHOW_HOOK_METHODS VARCHAR2(30) := 'SHOW_HOOK_METHODS';
-    --
-    gc_SHOW_ASSERTS_DEFAULT      CONSTANT NUMBER := pete_config.g_ASSERTS_FAILED;
-    gc_SHOW_HOOK_METHODS_DEFAULT CONSTANT BOOLEAN := FALSE;
+    SHOW_ASSERTS        VARCHAR2(30) := 'SHOW_ASSERTS';
+    SHOW_HOOK_METHODS   VARCHAR2(30) := 'SHOW_HOOK_METHODS';
+    TEST_PACKAGE_PREFIX VARCHAR2(30) := 'TEST_PACKAGE_PREFIX';
 
-    /**
-    * writes a value into the config table
-    */
+    -- reads value from config table
+    --------------------------------------------------------------------------------
+    FUNCTION get_param
+    (
+        a_key_in           IN pete_configuration.key%TYPE,
+        a_default_value_in IN pete_configuration.value%TYPE DEFAULT NULL
+    ) RETURN pete_configuration.value%TYPE IS
+    BEGIN
+        FOR config IN (SELECT VALUE
+                         FROM pete_configuration c
+                        WHERE key = a_key_in)
+        LOOP
+            RETURN config.value;
+        END LOOP;
+        --
+        RETURN a_default_value_in;
+        --
+    END get_param;
+
+    --------------------------------------------------------------------------------
+    FUNCTION get_boolean_param
+    (
+        a_key_in           IN pete_configuration.key%TYPE,
+        a_default_value_in IN BOOLEAN
+    ) RETURN BOOLEAN IS
+        l_value pete_configuration.value%TYPE;
+    BEGIN
+        l_value := get_param(a_key_in);
+    
+        IF (l_value = C_TRUE)
+        THEN
+            RETURN TRUE;
+        ELSIF (l_value = C_FALSE)
+        THEN
+            RETURN FALSE;
+        ELSE
+            RETURN a_default_value_in;
+        END IF;
+    
+    END;
+
+    --writes a value into the config table
+    --------------------------------------------------------------------------------
     PROCEDURE set_param
     (
-        a_key_in   pete_configuration.key%TYPE,
-        a_value_in pete_configuration.value%TYPE
+        a_key_in   IN pete_configuration.key%TYPE,
+        a_value_in IN pete_configuration.value%TYPE
     ) IS
         PRAGMA AUTONOMOUS_TRANSACTION;
     BEGIN
@@ -33,13 +72,12 @@ CREATE OR REPLACE PACKAGE BODY pete_config AS
         COMMIT;
     END set_param;
 
-    /**
-    * WRAPPER FOR BOOLEAN PARAMS
-    */
+    --wrapper for boolean params
+    --------------------------------------------------------------------------------
     PROCEDURE set_boolean_param
     (
-        a_key_in   pete_configuration.key%TYPE,
-        a_value_in BOOLEAN
+        a_key_in   IN pete_configuration.key%TYPE,
+        a_value_in IN BOOLEAN
     ) IS
         l_table_value VARCHAR2(10);
     BEGIN
@@ -53,14 +91,14 @@ CREATE OR REPLACE PACKAGE BODY pete_config AS
     END;
 
     --------------------------------------------------------------------------------
-    PROCEDURE set_show_ASSERTS
+    PROCEDURE set_show_asserts
     (
-        a_value_in       NUMBER,
+        a_value_in       IN NUMBER,
         a_set_as_default IN BOOLEAN DEFAULT FALSE
     ) IS
     
     BEGIN
-        g_show_ASSERTS := a_value_in;
+        g_show_asserts := a_value_in;
         IF (a_set_as_default)
         THEN
             set_param(SHOW_ASSERTS, a_value_in);
@@ -68,15 +106,15 @@ CREATE OR REPLACE PACKAGE BODY pete_config AS
     END;
 
     --------------------------------------------------------------------------------
-    FUNCTION get_show_ASSERTS RETURN NUMBER IS
+    FUNCTION get_show_asserts RETURN NUMBER IS
     BEGIN
-        RETURN g_show_ASSERTS;
+        RETURN g_show_asserts;
     END;
 
     --------------------------------------------------------------------------------
     PROCEDURE set_show_hook_methods
     (
-        a_value_in       BOOLEAN,
+        a_value_in       IN BOOLEAN,
         a_set_as_default IN BOOLEAN DEFAULT FALSE
     ) IS
     
@@ -95,42 +133,37 @@ CREATE OR REPLACE PACKAGE BODY pete_config AS
     END;
 
     --------------------------------------------------------------------------------
-    PROCEDURE init IS
-        l_value pete_configuration.value%TYPE;
+    PROCEDURE set_test_package_prefix
+    (
+        a_value_in       IN VARCHAR2 DEFAULT g_TEST_PACKAGE_PREFIX_DEFAULT,
+        a_set_as_default IN BOOLEAN DEFAULT FALSE
+    ) IS
     BEGIN
-    
-        --todo refactoring to read param    
+        g_test_package_prefix := a_value_in;
+        IF a_set_as_default
+        THEN
+            set_param(TEST_PACKAGE_PREFIX, a_value_in);
+        END IF;
+    END;
+
+    --------------------------------------------------------------------------------
+    FUNCTION get_test_package_prefix RETURN VARCHAR2 IS
+    BEGIN
+        RETURN g_test_package_prefix;
+    END;
+
+    --------------------------------------------------------------------------------
+    PROCEDURE init IS
+    BEGIN
         --show asserts
-        BEGIN
-            SELECT VALUE
-              INTO g_show_ASSERTS
-              FROM pete_configuration c
-             WHERE c.key = SHOW_ASSERTS;
-        EXCEPTION
-            WHEN no_data_found THEN
-                g_show_ASSERTS := gc_SHOW_ASSERTS_DEFAULT;
-        END;
-    
-        --todo refactoring to read boolean param    
+        g_show_asserts := get_param(a_key_in           => SHOW_ASSERTS,
+                                    a_default_value_in => g_SHOW_ASSERTS_DEFAULT);
         --show hook methods
-        BEGIN
-            SELECT VALUE
-              INTO l_value
-              FROM pete_configuration c
-             WHERE c.key = SHOW_HOOK_METHODS;
-            --
-            IF (l_value = C_TRUE)
-            THEN
-                g_SHOW_HOOK_METHODS := TRUE;
-            ELSE
-                g_SHOW_HOOK_METHODS := FALSE;
-            END IF;
-        
-        EXCEPTION
-            WHEN no_data_found THEN
-                g_SHOW_HOOK_METHODS := gc_SHOW_HOOK_METHODS_DEFAULT;
-        END;
-    
+        g_show_hook_methods := get_boolean_param(a_key_in           => SHOW_HOOK_METHODS,
+                                                 a_default_value_in => g_SHOW_HOOK_METHODS_DEFAULT);
+        --test package prefix
+        g_test_package_prefix := get_param(a_key_in           => TEST_PACKAGE_PREFIX,
+                                           a_default_value_in => g_TEST_PACKAGE_PREFIX_DEFAULT);
     END init;
 
 BEGIN

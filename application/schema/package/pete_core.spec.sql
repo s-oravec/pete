@@ -38,11 +38,11 @@ CREATE OR REPLACE PACKAGE pete_core AS
 
     PROCEDURE end_test
     (
-        a_run_log_id_in    IN pete_run_log.id%TYPE,
-        a_is_succes_in     IN typ_is_success DEFAULT TRUE,
-        a_xml_in_in        IN pete_run_log.xml_in%TYPE DEFAULT NULL,
-        a_xml_out_in       IN pete_run_log.xml_out%TYPE DEFAULT NULL,
-        a_error_code_in    IN pete_run_log.error_code%TYPE DEFAULT NULL
+        a_run_log_id_in IN pete_run_log.id%TYPE,
+        a_is_succes_in  IN typ_is_success DEFAULT TRUE,
+        a_xml_in_in     IN pete_run_log.xml_in%TYPE DEFAULT NULL,
+        a_xml_out_in    IN pete_run_log.xml_out%TYPE DEFAULT NULL,
+        a_error_code_in IN pete_run_log.error_code%TYPE DEFAULT NULL
     );
 
     FUNCTION get_last_run_log_id RETURN pete_run_log.id%TYPE;

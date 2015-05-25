@@ -100,11 +100,11 @@ CREATE OR REPLACE PACKAGE pete_assert AS
     --
     PROCEDURE eq
     (
-        a_expected_in boolean,
-        a_actual_in   boolean,
+        a_expected_in BOOLEAN,
+        a_actual_in   BOOLEAN,
         a_comment_in  VARCHAR2 DEFAULT NULL
     );
-    
+
     --
     -- Tests equality of the input arguments. Nulls are considered equal
     --
