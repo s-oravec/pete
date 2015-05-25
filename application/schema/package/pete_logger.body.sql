@@ -206,8 +206,49 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
     END;
 
     --------------------------------------------------------------------------------
+    FUNCTION do_output(a_log_line_in IN petev_output_run_log%ROWTYPE)
+        RETURN BOOLEAN IS
+    BEGIN
+        --
+        -- hook methods
+        IF (NOT pete_config.get_show_hook_methods AND
+           a_log_line_in.object_type = pete_core.g_OBJECT_TYPE_HOOK)
+        THEN
+            pete_logger.trace('not printing hook methods - ' ||
+                              a_log_line_in.log);
+            RETURN FALSE;
+        END IF;
+        --
+        -- asserts
+        IF a_log_line_in.object_type = pete_core.g_OBJECT_TYPE_ASSERT
+        THEN
+            IF (pete_config.get_show_asserts = pete_config.g_ASSERTS_NONE)
+            THEN
+                pete_logger.trace('not printing asserts - ' ||
+                                  a_log_line_in.log);
+                RETURN FALSE;
+            ELSIF (pete_config.get_show_asserts = pete_config.g_ASSERTS_FAILED AND
+                  a_log_line_in.result = pete_core.g_SUCCESS)
+            THEN
+                pete_logger.trace('not printing success asserts - ' ||
+                                  a_log_line_in.log);
+                RETURN FALSE;
+            END IF;
+        END IF;
+        --
+        -- failures only
+        IF (pete_config.get_show_failures_only AND
+           a_log_line_in.result = pete_core.g_SUCCESS)
+        THEN
+            RETURN FALSE;
+        END IF;
+        --
+        RETURN TRUE;
+        --
+    END;
+
+    --------------------------------------------------------------------------------
     PROCEDURE output_log(a_run_log_id_in IN pete_run_log.id%TYPE) IS
-        l_print BOOLEAN;
     BEGIN
         trace('OUTPUT_LOG: ' || 'a_run_log_id_in:' ||
               NVL(to_char(a_run_log_id_in), 'NULL'));
@@ -215,32 +256,9 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
         dbms_output.put_line(chr(10));
         FOR log_line IN (SELECT * FROM petev_output_run_log)
         LOOP
-            l_print := TRUE;
-            IF (NOT pete_config.get_show_hook_methods AND
-               log_line.object_type = pete_core.g_OBJECT_TYPE_HOOK)
+            IF (do_output(a_log_line_in => log_line))
             THEN
-                pete_logger.trace('not printing hook methods - ' ||
-                                  log_line.log);
-                l_print := FALSE;
-            ELSIF log_line.object_type = pete_core.g_OBJECT_TYPE_ASSERT
-            THEN
-                IF (pete_config.get_show_asserts = pete_config.g_ASSERTS_NONE)
-                THEN
-                    pete_logger.trace('not printing asserts - ' ||
-                                      log_line.log);
-                    l_print := FALSE;
-                ELSIF (pete_config.get_show_asserts =
-                      pete_config.g_ASSERTS_FAILED AND
-                      log_line.result = pete_core.g_SUCCESS)
-                THEN
-                    pete_logger.trace('not printing success asserts - ' ||
-                                      log_line.log);
-                    l_print := FALSE;
-                END IF;
-            END IF;
-        
-            IF (l_print)
-            THEN
+                --TODO: move to petev_output_run_log
                 IF log_line.object_type IN
                    (pete_core.g_OBJECT_TYPE_PACKAGE,
                     pete_core.g_OBJECT_TYPE_SCRIPT)
@@ -261,9 +279,12 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
         trace('DISPLAY_LOG: ' || 'a_run_log_id_in:' ||
               NVL(to_char(a_run_log_id_in), 'NULL'));
         g_output_run_log_id := a_run_log_id_in;
-        FOR log_line IN (SELECT petet_log(log) text FROM petev_output_run_log)
+        FOR log_line IN (SELECT * FROM petev_output_run_log)
         LOOP
-            PIPE ROW(log_line.text);
+            IF do_output(log_line)
+            THEN
+                PIPE ROW(petet_log(log_line.log));
+            END IF;
         END LOOP;
     END;
 

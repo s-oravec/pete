@@ -2,6 +2,7 @@ CREATE OR REPLACE PACKAGE BODY pete_config AS
 
     g_show_asserts        NUMBER;
     g_show_hook_methods   BOOLEAN;
+    g_show_failures_only  BOOLEAN;
     g_test_package_prefix VARCHAR2(30);
 
     C_TRUE  VARCHAR2(10) := 'TRUE';
@@ -10,6 +11,7 @@ CREATE OR REPLACE PACKAGE BODY pete_config AS
     --config table keys
     SHOW_ASSERTS        VARCHAR2(30) := 'SHOW_ASSERTS';
     SHOW_HOOK_METHODS   VARCHAR2(30) := 'SHOW_HOOK_METHODS';
+    SHOW_FAILURES_ONLY  VARCHAR2(30) := 'SHOW_FAILURES_ONLY';
     TEST_PACKAGE_PREFIX VARCHAR2(30) := 'TEST_PACKAGE_PREFIX';
 
     -- reads value from config table
@@ -133,6 +135,27 @@ CREATE OR REPLACE PACKAGE BODY pete_config AS
     END;
 
     --------------------------------------------------------------------------------
+    PROCEDURE set_show_failures_only
+    (
+        a_value_in       IN BOOLEAN,
+        a_set_as_default IN BOOLEAN DEFAULT FALSE
+    ) IS
+    
+    BEGIN
+        g_show_failures_only := a_value_in;
+        IF (a_set_as_default)
+        THEN
+            set_boolean_param(SHOW_FAILURES_ONLY, a_value_in);
+        END IF;
+    END;
+
+    --------------------------------------------------------------------------------
+    FUNCTION get_show_failures_only RETURN BOOLEAN IS
+    BEGIN
+        RETURN g_show_failures_only;
+    END;
+
+    --------------------------------------------------------------------------------
     PROCEDURE set_test_package_prefix
     (
         a_value_in       IN VARCHAR2 DEFAULT g_TEST_PACKAGE_PREFIX_DEFAULT,
@@ -161,6 +184,9 @@ CREATE OR REPLACE PACKAGE BODY pete_config AS
         --show hook methods
         g_show_hook_methods := get_boolean_param(a_key_in           => SHOW_HOOK_METHODS,
                                                  a_default_value_in => g_SHOW_HOOK_METHODS_DEFAULT);
+        --show failures only
+        g_show_failures_only := get_boolean_param(a_key_in           => SHOW_FAILURES_ONLY,
+                                                  a_default_value_in => g_SHOW_FAILURES_ONLY_DEFAULT);
         --test package prefix
         g_test_package_prefix := get_param(a_key_in           => TEST_PACKAGE_PREFIX,
                                            a_default_value_in => g_TEST_PACKAGE_PREFIX_DEFAULT);

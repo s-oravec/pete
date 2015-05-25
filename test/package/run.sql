@@ -18,4 +18,7 @@ prompt Install test package UT_PETE_SAVEPOINT
 prompt Install test package UT_PETE_LOGGER
 @@ut_pete_logger.package.sql
 
+prompt Install test package UT_PETE_CONFIG
+@@ut_pete_config.package.sql
+
 @&&run_dir_end

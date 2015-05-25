@@ -36,7 +36,7 @@ CREATE OR REPLACE PACKAGE pete_config AS
     g_SHOW_HOOK_METHODS_DEFAULT CONSTANT BOOLEAN := FALSE;
 
     --
-    -- Sets if result shows hook methods
+    -- Sets if default logger output shows hook methods
     --
     -- %argument a_value_in
     -- %argument a_set_as_default if true then the a_value_in is stored in config table PETE_CONFIG and becomes sesssion default
@@ -51,6 +51,28 @@ CREATE OR REPLACE PACKAGE pete_config AS
     -- returns current settings of show_hook_methods system parameter
     --
     FUNCTION get_show_hook_methods RETURN BOOLEAN;
+
+    --
+    -- Show failed packages/methods, scripts/cases/blocks only
+    --------------------------------------------------------------------------------
+    g_SHOW_FAILURES_ONLY_DEFAULT CONSTANT BOOLEAN := FALSE;
+
+    --
+    -- Sets if default logger outpu shows failed packages/methods, scripts/cases/blocks only
+    --
+    -- %argument a_value_in
+    -- %argument a_set_as_default if true then the a_value_in is stored in config table PETE_CONFIG and becomes sesssion default
+    --
+    PROCEDURE set_show_failures_only
+    (
+        a_value_in       IN BOOLEAN DEFAULT g_SHOW_FAILURES_ONLY_DEFAULT,
+        a_set_as_default IN BOOLEAN DEFAULT FALSE
+    );
+
+    --
+    -- returns current settings of show_failures_only system parameter
+    --
+    FUNCTION get_show_failures_only RETURN BOOLEAN;
 
     --
     -- Test package prefix
