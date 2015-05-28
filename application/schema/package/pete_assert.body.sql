@@ -239,7 +239,7 @@ CREATE OR REPLACE PACKAGE BODY pete_assert IS
         this(a_expected_in = a_actual_in OR
              (a_expected_in IS NULL AND a_actual_in IS NULL),
              nvl(a_comment_in,
-                 a_expected_in || ' expected to be equal to ' || a_actual_in),
+                 a_actual_in || ' is expected to be equal to ' || a_expected_in),
              to_char(a_expected_in),
              to_char(a_actual_in));
     END eq;
@@ -257,7 +257,7 @@ CREATE OR REPLACE PACKAGE BODY pete_assert IS
         this(a_expected_in = a_actual_in OR
              (a_expected_in IS NULL AND a_actual_in IS NULL),
              nvl(a_comment_in,
-                 a_expected_in || ' expected to be equal to ' || a_actual_in),
+                 a_actual_in || ' is expected to be equal to ' || a_expected_in),
              a_expected_in,
              a_actual_in);
     END eq;
@@ -275,7 +275,7 @@ CREATE OR REPLACE PACKAGE BODY pete_assert IS
         this(a_expected_in = a_actual_in OR
              (a_expected_in IS NULL AND a_actual_in IS NULL),
              nvl(a_comment_in,
-                 a_expected_in || ' expected to be equal to ' || a_actual_in),
+                 a_actual_in || ' is expected to be equal to ' || a_expected_in),
              to_char(a_expected_in, pete_config.get_date_format),
              to_char(a_actual_in, pete_config.get_date_format));
     END eq;
@@ -291,8 +291,8 @@ CREATE OR REPLACE PACKAGE BODY pete_assert IS
         this(a_expected_in = a_actual_in OR
              (a_expected_in IS NULL AND a_actual_in IS NULL),
              nvl(a_comment_in,
-                 bool2char(a_expected_in) || ' expected to be equal to ' ||
-                 bool2char(a_actual_in)),
+                 bool2char(a_actual_in) || ' is expected to be equal to ' ||
+                 bool2char(a_expected_in)),
              bool2char(a_expected_in),
              bool2char(a_actual_in));
     END;
@@ -312,8 +312,8 @@ CREATE OR REPLACE PACKAGE BODY pete_assert IS
         THEN
             this(FALSE,
                  nvl(a_comment_in,
-                     a_expected_in.extract('/')
-                     .getclobval() || ' expected to be equal to ' || a_actual_in.extract('/')
+                     a_actual_in.extract('/')
+                     .getclobval() || ' is expected to be equal to ' || a_expected_in.extract('/')
                      .getclobval()),
                  '<doesnt show actual content at the momement>',
                  '<todo>'); --todo: implement xml diff
@@ -322,8 +322,8 @@ CREATE OR REPLACE PACKAGE BODY pete_assert IS
                  (a_expected_in.extract('/')
                  .getclobval() = a_actual_in.extract('/').getclobval()),
                  nvl(a_comment_in,
-                     a_expected_in.extract('/')
-                     .getclobval() || ' expected to be equal to ' || a_actual_in.extract('/')
+                     a_actual_in.extract('/')
+                     .getclobval() || ' is expected to be equal to ' || a_expected_in.extract('/')
                      .getclobval()),
                  '<doesnt show actual content at the momement>',
                  '<todo>'); --todo: implement xml diff
