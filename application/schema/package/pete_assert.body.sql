@@ -161,7 +161,7 @@ CREATE OR REPLACE PACKAGE BODY pete_assert IS
         this(a_value_in IS NULL,
              nvl(a_comment_in, a_value_in || ' is expected to be null.'),
              gc_null,
-             to_char(a_value_in, pete_confgig.get_date_format));
+             to_char(a_value_in, pete_config.get_date_format));
     END is_null;
 
     -- 
@@ -202,7 +202,7 @@ CREATE OR REPLACE PACKAGE BODY pete_assert IS
         this(a_value_in IS NOT NULL,
              nvl(a_comment_in, a_value_in || ' is expected to be not null.'),
              gc_not_null,
-             to_char(a_value_in, pete_confgig.get_date_format));
+             to_char(a_value_in, pete_config.get_date_format));
     END is_not_null;
 
     --
@@ -276,8 +276,8 @@ CREATE OR REPLACE PACKAGE BODY pete_assert IS
              (a_expected_in IS NULL AND a_actual_in IS NULL),
              nvl(a_comment_in,
                  a_expected_in || ' expected to be equal to ' || a_actual_in),
-             to_char(a_expected_in, pete_confgig.get_date_format),
-             to_char(a_actual_in, pete_confgig.get_date_format));
+             to_char(a_expected_in, pete_config.get_date_format),
+             to_char(a_actual_in, pete_config.get_date_format));
     END eq;
 
     --------------------------------------------------------------------------------
