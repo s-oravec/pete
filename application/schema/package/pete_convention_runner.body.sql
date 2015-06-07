@@ -120,6 +120,7 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
         l_sql        VARCHAR2(500);
         l_run_log_id INTEGER;
         l_result     pete_core.typ_is_success := TRUE;
+        l_dummy varchar2(93);
     BEGIN
         l_run_log_id := pete_core.begin_test(a_object_name_in       => a_package_name_in || '.' ||
                                                                        a_method_name_in,
@@ -127,6 +128,9 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
                                              a_description_in       => a_description_in,
                                              a_parent_run_log_id_in => a_parent_run_log_id_in);
         --
+  
+        l_dummy := dbms_assert.SQL_OBJECT_NAME(a_package_name_in);
+
         l_sql := 'begin ' || a_package_name_in || '.' || a_method_name_in ||
                  ';end;';
         pete_logger.trace('L_SQL>' || l_sql);
