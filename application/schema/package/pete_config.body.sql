@@ -1,20 +1,22 @@
 CREATE OR REPLACE PACKAGE BODY pete_config AS
 
-    g_show_asserts        NUMBER;
-    g_show_hook_methods   BOOLEAN;
-    g_show_failures_only  BOOLEAN;
-    g_test_package_prefix VARCHAR2(30);
-    g_date_format         VARCHAR2(30);
+    g_show_asserts              NUMBER;
+    g_show_hook_methods         BOOLEAN;
+    g_show_failures_only        BOOLEAN;
+    g_skip_if_before_hook_fails BOOLEAN;
+    g_test_package_prefix       VARCHAR2(30);
+    g_date_format               VARCHAR2(30);
 
     C_TRUE  VARCHAR2(10) := 'TRUE';
     C_FALSE VARCHAR2(10) := 'FALSE';
 
     --config table keys
-    SHOW_ASSERTS        VARCHAR2(30) := 'SHOW_ASSERTS';
-    SHOW_HOOK_METHODS   VARCHAR2(30) := 'SHOW_HOOK_METHODS';
-    SHOW_FAILURES_ONLY  VARCHAR2(30) := 'SHOW_FAILURES_ONLY';
-    TEST_PACKAGE_PREFIX VARCHAR2(30) := 'TEST_PACKAGE_PREFIX';
-    DATE_FORMAT         VARCHAR2(30) := 'DATE_FORMAT';
+    SHOW_ASSERTS              VARCHAR2(30) := 'SHOW_ASSERTS';
+    SHOW_HOOK_METHODS         VARCHAR2(30) := 'SHOW_HOOK_METHODS';
+    SHOW_FAILURES_ONLY        VARCHAR2(30) := 'SHOW_FAILURES_ONLY';
+    SKIP_IF_BEFORE_HOOK_FAILS VARCHAR2(30) := 'SKIP_IF_BEFORE_HOOK_FAILS';
+    TEST_PACKAGE_PREFIX       VARCHAR2(30) := 'TEST_PACKAGE_PREFIX';
+    DATE_FORMAT               VARCHAR2(30) := 'DATE_FORMAT';
 
     -- reads value from config table
     --------------------------------------------------------------------------------
@@ -158,6 +160,27 @@ CREATE OR REPLACE PACKAGE BODY pete_config AS
     END;
 
     --------------------------------------------------------------------------------
+    PROCEDURE set_skip_if_before_hook_fails
+    (
+        a_value_in       IN BOOLEAN DEFAULT g_SKIP_IF_BFR_HOOK_FAILS_DFLT,
+        a_set_as_default IN BOOLEAN DEFAULT FALSE
+    ) IS
+    
+    BEGIN
+        g_skip_if_before_hook_fails := a_value_in;
+        IF (a_set_as_default)
+        THEN
+            set_boolean_param(SKIP_IF_BEFORE_HOOK_FAILS, a_value_in);
+        END IF;
+    END;
+
+    --------------------------------------------------------------------------------
+    FUNCTION get_skip_if_before_hook_fails RETURN BOOLEAN IS
+    BEGIN
+        RETURN g_skip_if_before_hook_fails;
+    END;
+
+    --------------------------------------------------------------------------------
     PROCEDURE set_test_package_prefix
     (
         a_value_in       IN VARCHAR2 DEFAULT g_TEST_PACKAGE_PREFIX_DEFAULT,
@@ -209,6 +232,11 @@ CREATE OR REPLACE PACKAGE BODY pete_config AS
         --show failures only
         g_show_failures_only := get_boolean_param(a_key_in           => SHOW_FAILURES_ONLY,
                                                   a_default_value_in => g_SHOW_FAILURES_ONLY_DEFAULT);
+    
+        --show failures only
+        g_skip_if_before_hook_fails := get_boolean_param(a_key_in           => SKIP_IF_BEFORE_HOOK_FAILS,
+                                                         a_default_value_in => g_SKIP_IF_BFR_HOOK_FAILS_DFLT);
+    
         --test package prefix
         g_test_package_prefix := get_param(a_key_in           => TEST_PACKAGE_PREFIX,
                                            a_default_value_in => g_TEST_PACKAGE_PREFIX_DEFAULT);

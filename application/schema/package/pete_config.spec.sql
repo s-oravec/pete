@@ -75,6 +75,30 @@ CREATE OR REPLACE PACKAGE pete_config AS
     FUNCTION get_show_failures_only RETURN BOOLEAN;
 
     --
+    -- Skip test if before hook fails
+    -- - skip all methods if before_all method fails
+    -- - skip next method if before_each method fails
+    --------------------------------------------------------------------------------
+    g_SKIP_IF_BFR_HOOK_FAILS_DFLT CONSTANT BOOLEAN := FALSE;
+
+    --
+    -- Sets if test methods are skipped after before hook method fails
+    --
+    -- %argument a_value_in
+    -- %argument a_set_as_default if true then the a_value_in is stored in config table PETE_CONFIG and becomes sesssion default
+    --
+    PROCEDURE set_skip_if_before_hook_fails
+    (
+        a_value_in       IN BOOLEAN DEFAULT g_SKIP_IF_BFR_HOOK_FAILS_DFLT,
+        a_set_as_default IN BOOLEAN DEFAULT FALSE
+    );
+
+    --
+    -- returns current settings of skip_if_before_hook_fails system parameter
+    --
+    FUNCTION get_skip_if_before_hook_fails RETURN BOOLEAN;
+
+    --
     -- Test package prefix
     --------------------------------------------------------------------------------
     --

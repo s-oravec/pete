@@ -14,6 +14,14 @@ module.exports = function(grunt) {
                     spawn: false
                 },
             },
+            tests: {
+                files: ['test/**/*.sql'],
+                tasks: ['loadConfig', 'test'],
+                options: {
+                    reload: true,
+                    spawn: false
+                }
+            }
         },
 
         shell: {
@@ -45,6 +53,8 @@ module.exports = function(grunt) {
     });
 
     grunt.registerTask('ci', ['loadConfig', 'reinstall', 'test', 'watch']);
+
+    grunt.registerTask('ct', ['loadConfig', 'watch']);
 
     grunt.registerTask('test', ['loadConfig', 'shell:runPeteUserScript:test']);
 

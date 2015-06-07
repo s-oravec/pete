@@ -146,6 +146,9 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
         l_method_only_regexp VARCHAR2(255) := get_method_name_only_regexp;
         l_method_skip_regexp VARCHAR2(255) := get_method_name_skip_regexp;
         --
+        l_before_all_result  BOOLEAN := TRUE;
+        l_before_each_result BOOLEAN := TRUE;
+        --
     BEGIN
         --
         pete_logger.trace('RUN_PACKAGE: ' || 'a_package_name_in:' ||
@@ -163,10 +166,10 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
         <<test>>
         BEGIN
             --
-            l_result := run_hook_method(a_package_name_in      => a_package_name_in,
-                                        a_hook_method_name_in  => 'BEFORE_ALL',
-                                        a_parent_run_log_id_in => l_run_log_id) AND
-                        l_result;
+            l_before_all_result := run_hook_method(a_package_name_in      => a_package_name_in,
+                                                   a_hook_method_name_in  => 'BEFORE_ALL',
+                                                   a_parent_run_log_id_in => l_run_log_id);
+            l_result            := l_before_all_result AND l_result;
             --
             <<tested_methods_loop>>
             FOR r_method IN
@@ -207,22 +210,39 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
                 )
                 -- NoFormat End
             LOOP
-                pete_logger.trace('spustim metodu ' || r_method.procedure_name);
-                l_result := run_hook_method(a_package_name_in      => a_package_name_in,
-                                            a_hook_method_name_in  => 'BEFORE_EACH',
-                                            a_parent_run_log_id_in => l_run_log_id) AND
-                            l_result;
-                --
-                l_result := run_method(a_package_name_in      => a_package_name_in,
-                                       a_method_name_in       => r_method.procedure_name,
-                                       a_object_type_in       => pete_core.g_OBJECT_TYPE_METHOD,
-                                       a_parent_run_log_id_in => l_run_log_id) AND
-                            l_result;
-                --
-                l_result := run_hook_method(a_package_name_in      => a_package_name_in,
-                                            a_hook_method_name_in  => 'AFTER_EACH',
-                                            a_parent_run_log_id_in => l_run_log_id) AND
-                            l_result;
+                IF l_before_all_result --before_all succeeded
+                   OR NOT pete_config.get_skip_if_before_hook_fails --continue if before_all failed
+                THEN
+                    pete_logger.trace('run method ' || r_method.procedure_name ||
+                                      ' - before_each hook');
+                    l_before_each_result := run_hook_method(a_package_name_in      => a_package_name_in,
+                                                            a_hook_method_name_in  => 'BEFORE_EACH',
+                                                            a_parent_run_log_id_in => l_run_log_id);
+                    l_result             := l_before_each_result AND l_result;
+                    --
+                    IF l_before_each_result --before_each succeeded
+                       OR NOT pete_config.get_skip_if_before_hook_fails --continue if before_each failed
+                    THEN
+                        pete_logger.trace('run method ' ||
+                                          r_method.procedure_name);
+                        l_result := run_method(a_package_name_in      => a_package_name_in,
+                                               a_method_name_in       => r_method.procedure_name,
+                                               a_object_type_in       => pete_core.g_OBJECT_TYPE_METHOD,
+                                               a_parent_run_log_id_in => l_run_log_id) AND
+                                    l_result;
+                    ELSE
+                        pete_logger.trace('method ' || r_method.procedure_name ||
+                                          ' skipped - as before_each failed');
+                    
+                    END IF;
+                    --
+                    pete_logger.trace('run method ' || r_method.procedure_name ||
+                                      ' - after_each hook');
+                    l_result := run_hook_method(a_package_name_in      => a_package_name_in,
+                                                a_hook_method_name_in  => 'AFTER_EACH',
+                                                a_parent_run_log_id_in => l_run_log_id) AND
+                                l_result;
+                END IF;
             END LOOP tested_methods_loop;
             --
             l_result := run_hook_method(a_package_name_in      => a_package_name_in,
