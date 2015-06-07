@@ -24,6 +24,8 @@ CREATE OR REPLACE PACKAGE ut_pete_convention_runner AS
 
     PROCEDURE package_method_skip(d IN VARCHAR2 DEFAULT 'Methods with XX prefix should by skipped when running package');
 
+    PROCEDURE unknown_package(d IN VARCHAR2 DEFAULT 'Explicitly called package which is not found should throw');
+
     PROCEDURE after_each;
 
 END ut_pete_convention_runner;
@@ -180,6 +182,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         -- NoFormat End
         l_result pete_core.typ_is_success;
     BEGIN
+
         --log
         pete_logger.log_method_description(d);
         --prepare
@@ -442,6 +445,20 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         END IF;
         --
     END;
+
+    PROCEDURE unknown_package(d IN VARCHAR2 DEFAULT 'Explicitly called package which is not found should throw') IS
+        l_result pete_core.typ_is_success;
+    BEGIN
+        pete_logger.log_method_description(d);
+        --prepare
+    
+        --test
+        l_result := pete_convention_runner.run_package(a_package_name_in      => 'Non_exIsting_package',
+                                                       a_parent_run_log_id_in => pete_core.get_last_run_log_id);
+        --assert
+        pete_assert.this(a_value_in   => NOT l_result,
+                         a_comment_in => 'Expecting result to be FAILURE');
+    END unknown_package;
 
 END ut_pete_convention_runner;
 /

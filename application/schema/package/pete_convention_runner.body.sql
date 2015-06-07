@@ -36,6 +36,28 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
     END;
 
     --------------------------------------------------------------------------------
+    -- returns true if package exists. Case sensitive
+    FUNCTION package_exists(a_package_name_in IN user_procedures.object_name%TYPE)
+        RETURN BOOLEAN IS
+        l_dummy NUMBER;
+    BEGIN
+        pete_logger.trace('PACKAGE_HAS_METHOD: ' || 'a_package_name_in:' ||
+                          NVL(a_package_name_in, 'NULL'));
+        SELECT NULL
+          INTO l_dummy
+          FROM user_objects uo
+         WHERE uo.OBJECT_TYPE = 'PACKAGE'
+           AND uo.OBJECT_NAME = a_package_name_in;
+    
+        pete_logger.trace('returns true');
+        RETURN TRUE;
+    EXCEPTION
+        WHEN no_data_found THEN
+            pete_logger.trace('returns false');
+            RETURN FALSE;
+    END;
+
+    --------------------------------------------------------------------------------
     FUNCTION package_has_method
     (
         a_package_name_in IN user_procedures.object_name%TYPE,
@@ -160,80 +182,87 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
                                              a_description_in       => a_description_in,
                                              a_parent_run_log_id_in => a_parent_run_log_id_in);
         pete_logger.trace('l_run_log_id ' || l_run_log_id);
-        <<test>>
-        BEGIN
-            --
-            l_result := run_hook_method(a_package_name_in      => a_package_name_in,
-                                        a_hook_method_name_in  => 'BEFORE_ALL',
-                                        a_parent_run_log_id_in => l_run_log_id) AND
-                        l_result;
-            --
-            <<tested_methods_loop>>
-            FOR r_method IN
-                -- NoFormat Start
-                (
-                WITH convention_runner_procedures AS
-                 (SELECT /*+ materialize */
-                         procedure_name,
-                         subprogram_id,
-                         SUM(CASE WHEN regexp_like(procedure_name, l_method_only_regexp) THEN 1 ELSE 0 END) over() AS oo_method
-                    FROM user_procedures up
-                   WHERE object_name = a_package_name_in
-                     --ignore hooks
-                     AND procedure_name NOT IN ('BEFORE_ALL', 'BEFORE_EACH', 'AFTER_ALL', 'AFTER_EACH')
-                     --a_method_name_like_in filter
-                     AND (a_method_name_like_in IS NULL OR procedure_NAME LIKE a_method_name_like_in)
-                     AND procedure_name IS NOT NULL                     
-                     --skipped methods
-                     AND not regexp_like(procedure_name, l_method_skip_regexp)
-                        -- it is not a function or a procedure with out/in_out arguments
-                        -- or a procedure in argument without default value
-                     AND NOT EXISTS
-                   (SELECT 1
-                      FROM user_arguments ua
-                     WHERE ua.object_name = up.procedure_name
-                       AND ua.package_name = up.object_name
-                       AND ( --function result or out, in/out argument in procedure
-                            (ua.in_out IN ('OUT', 'IN/OUT')) OR
-                           --procedure argument without default value 
-                            (ua.argument_name IS NOT NULL AND ua.defaulted = 'N')))
-                 )
-                SELECT procedure_name
-                  FROM convention_runner_procedures
-                 WHERE (oo_method = 0) --no oo method in packge
-                    OR --some oo methods
-                       (oo_method > 0 AND regexp_like(procedure_name, l_method_only_regexp))
-                 ORDER BY subprogram_id
-                )
-                -- NoFormat End
-            LOOP
-                pete_logger.trace('spustim metodu ' || r_method.procedure_name);
+        IF (package_exists(a_package_name_in))
+        THEN
+            <<test>>
+            BEGIN
+                --
                 l_result := run_hook_method(a_package_name_in      => a_package_name_in,
-                                            a_hook_method_name_in  => 'BEFORE_EACH',
+                                            a_hook_method_name_in  => 'BEFORE_ALL',
                                             a_parent_run_log_id_in => l_run_log_id) AND
                             l_result;
                 --
-                l_result := run_method(a_package_name_in      => a_package_name_in,
-                                       a_method_name_in       => r_method.procedure_name,
-                                       a_object_type_in       => pete_core.g_OBJECT_TYPE_METHOD,
-                                       a_parent_run_log_id_in => l_run_log_id) AND
-                            l_result;
+                <<tested_methods_loop>>
+                FOR r_method IN
+                    -- NoFormat Start
+                    (
+                    WITH convention_runner_procedures AS
+                     (SELECT /*+ materialize */
+                             procedure_name,
+                             subprogram_id,
+                             SUM(CASE WHEN regexp_like(procedure_name, l_method_only_regexp) THEN 1 ELSE 0 END) over() AS oo_method
+                        FROM user_procedures up
+                       WHERE object_name = a_package_name_in
+                         --ignore hooks
+                         AND procedure_name NOT IN ('BEFORE_ALL', 'BEFORE_EACH', 'AFTER_ALL', 'AFTER_EACH')
+                         --a_method_name_like_in filter
+                         AND (a_method_name_like_in IS NULL OR procedure_NAME LIKE a_method_name_like_in)
+                         AND procedure_name IS NOT NULL                     
+                         --skipped methods
+                         AND not regexp_like(procedure_name, l_method_skip_regexp)
+                            -- it is not a function or a procedure with out/in_out arguments
+                            -- or a procedure in argument without default value
+                         AND NOT EXISTS
+                       (SELECT 1
+                          FROM user_arguments ua
+                         WHERE ua.object_name = up.procedure_name
+                           AND ua.package_name = up.object_name
+                           AND ( --function result or out, in/out argument in procedure
+                                (ua.in_out IN ('OUT', 'IN/OUT')) OR
+                               --procedure argument without default value 
+                                (ua.argument_name IS NOT NULL AND ua.defaulted = 'N')))
+                     )
+                    SELECT procedure_name
+                      FROM convention_runner_procedures
+                     WHERE (oo_method = 0) --no oo method in packge
+                        OR --some oo methods
+                           (oo_method > 0 AND regexp_like(procedure_name, l_method_only_regexp))
+                     ORDER BY subprogram_id
+                    )
+                    -- NoFormat End
+                LOOP
+                    pete_logger.trace('spustim metodu ' ||
+                                      r_method.procedure_name);
+                    l_result := run_hook_method(a_package_name_in      => a_package_name_in,
+                                                a_hook_method_name_in  => 'BEFORE_EACH',
+                                                a_parent_run_log_id_in => l_run_log_id) AND
+                                l_result;
+                    --
+                    l_result := run_method(a_package_name_in      => a_package_name_in,
+                                           a_method_name_in       => r_method.procedure_name,
+                                           a_object_type_in       => pete_core.g_OBJECT_TYPE_METHOD,
+                                           a_parent_run_log_id_in => l_run_log_id) AND
+                                l_result;
+                    --
+                    l_result := run_hook_method(a_package_name_in      => a_package_name_in,
+                                                a_hook_method_name_in  => 'AFTER_EACH',
+                                                a_parent_run_log_id_in => l_run_log_id) AND
+                                l_result;
+                END LOOP tested_methods_loop;
                 --
                 l_result := run_hook_method(a_package_name_in      => a_package_name_in,
-                                            a_hook_method_name_in  => 'AFTER_EACH',
+                                            a_hook_method_name_in  => 'AFTER_ALL',
                                             a_parent_run_log_id_in => l_run_log_id) AND
                             l_result;
-            END LOOP tested_methods_loop;
-            --
-            l_result := run_hook_method(a_package_name_in      => a_package_name_in,
-                                        a_hook_method_name_in  => 'AFTER_ALL',
-                                        a_parent_run_log_id_in => l_run_log_id) AND
-                        l_result;
-        EXCEPTION
-            WHEN OTHERS THEN
-                --TODO log error
-                l_result := FALSE;
-        END test;
+            EXCEPTION
+                WHEN OTHERS THEN
+                    --TODO log error
+                    l_result := FALSE;
+            END test;
+        ELSE
+            pete_logger.trace('unknown package  ' || a_package_name_in);
+            l_result := FALSE;
+        END IF;
     
         pete_logger.trace('l_result ' || CASE WHEN l_result THEN 'TRUE' ELSE
                           'FALSE' END);
