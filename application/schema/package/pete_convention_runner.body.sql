@@ -41,7 +41,7 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
         RETURN BOOLEAN IS
         l_dummy NUMBER;
     BEGIN
-        pete_logger.trace('PACKAGE_HAS_METHOD: ' || 'a_package_name_in:' ||
+        pete_logger.trace('PACKAGE_EXISTS: ' || 'a_package_name_in:' ||
                           NVL(a_package_name_in, 'NULL'));
         SELECT NULL
           INTO l_dummy
