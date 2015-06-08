@@ -53,7 +53,8 @@ CREATE OR REPLACE PACKAGE pete AS
     -- %argument a_method_name_mask_in Runs only tests of a given mask in a given package. Must be used with argument a_package_in
     -- %argument a_script_name_in Runs a test script of a given name
     -- %argument a_case_name_in Runs a test case of a given name
-    -- %argument a_style_conventional If true
+    -- %argument a_style_conventional_in If true then specified suite is conventional
+    -- %argument a_parent_run_log_id_in Specify parent run_log_id for recursive execution - used for testing of Pete
     --
     -- %throws ge_ambiguous_input 
     -- %throws ge_conflicting_input 
@@ -75,14 +76,15 @@ CREATE OR REPLACE PACKAGE pete AS
     PRAGMA EXCEPTION_INIT(ge_ambiguous_input, -20001);
     -- Thrown if more conflicting arguments are set
     ge_conflicting_input EXCEPTION;
-    gc_CONFLICTING_INPUT CONSTANT PLS_INTEGER := -20001;
-    PRAGMA EXCEPTION_INIT(ge_ambiguous_input, -20002);
+    gc_CONFLICTING_INPUT CONSTANT PLS_INTEGER := -20002;
+    PRAGMA EXCEPTION_INIT(ge_conflicting_input, -20002);
 
     --
     -- Runs a suite
     --
     -- %argument a_suite_name_in 
     -- %argument a_style_conventional
+    -- %argument a_parent_run_log_id_in Specify parent run_log_id for recursive execution - used for testing of Pete
     --
     -- %throws ge_ambiguous_input If the input can't be clearly interpreted
     --
@@ -97,6 +99,7 @@ CREATE OR REPLACE PACKAGE pete AS
     -- Runs a script identified by name
     --
     -- %argument a_script_name_in name of the script to be run
+    -- %argument a_parent_run_log_id_in Specify parent run_log_id for recursive execution - used for testing of Pete
     --
     PROCEDURE run_test_script
     (
@@ -108,6 +111,7 @@ CREATE OR REPLACE PACKAGE pete AS
     -- Runs a script identified by name
     --
     -- %argument a_script_name_in name of the script to be run
+    -- %argument a_parent_run_log_id_in Specify parent run_log_id for recursive execution - used for testing of Pete
     --
     PROCEDURE run_test_case
     (
@@ -121,8 +125,7 @@ CREATE OR REPLACE PACKAGE pete AS
     --
     -- %argument a_package_in 
     -- %argument a_method_name_like_in 
-    -- %argument a_is_test_package_in 
-    -- %argument a_prefix_in 
+    -- %argument a_parent_run_log_id_in Specify parent run_log_id for recursive execution - used for testing of Pete
     --
     PROCEDURE run_test_package
     (
@@ -135,10 +138,14 @@ CREATE OR REPLACE PACKAGE pete AS
     -- Runs all availaible tests. That means all configured scripts from table pete_scripts and all
     -- test packages conforming convention.
     --
+    -- %argument a_parent_run_log_id_in Specify parent run_log_id for recursive execution - used for testing of Pete
+    --
     PROCEDURE run_all_tests(a_parent_run_log_id_in IN INTEGER DEFAULT NULL);
 
     --
-    -- core --------------------------------------------------------------------------------
+    -- init Pete with suppressed log to DBMS_OUTPUT
+    --
+    -- %argument a_log_to_dbms_output_in - true - log to DBMS_OUTPUT | false - supress logging to DBMS_OUTPUT
     --
     PROCEDURE init(a_log_to_dbms_output_in IN BOOLEAN DEFAULT TRUE);
 

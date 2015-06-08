@@ -5,7 +5,8 @@ CREATE OR REPLACE PACKAGE pete_assert AS
     --
 
     --
-    -- Basic assert procedure. Every other procedure transform it's arguments and calls this one
+    -- Basic assert procedure. Every other procedure transforms it's arguments and calls this one
+    --
     -- %argument a_value_in value, that is expected to be true
     -- %argument a_comment_in comment in case of failing assert
     --
@@ -66,7 +67,8 @@ CREATE OR REPLACE PACKAGE pete_assert AS
     PROCEDURE fail(a_comment_in IN VARCHAR2 DEFAULT NULL);
 
     --
-    -- Tests equality of the input arguments. Nulls are considered equal
+    -- Group of assert procedures for testing equality of input arguments
+    -- Nulls are considered equal
     --
     PROCEDURE eq
     (
@@ -75,9 +77,6 @@ CREATE OR REPLACE PACKAGE pete_assert AS
         a_comment_in  VARCHAR2 DEFAULT NULL
     );
 
-    --
-    -- Tests equality of the input arguments. Nulls are considered equal
-    --
     PROCEDURE eq
     (
         a_expected_in VARCHAR2,
@@ -85,9 +84,6 @@ CREATE OR REPLACE PACKAGE pete_assert AS
         a_comment_in  VARCHAR2 DEFAULT NULL
     );
 
-    --
-    -- Tests equality of the input arguments. Nulls are considered equal
-    --
     PROCEDURE eq
     (
         a_expected_in DATE,
@@ -95,9 +91,6 @@ CREATE OR REPLACE PACKAGE pete_assert AS
         a_comment_in  VARCHAR2 DEFAULT NULL
     );
 
-    --
-    -- Tests equality of the input arguments. Nulls are considered equal
-    --
     PROCEDURE eq
     (
         a_expected_in BOOLEAN,
@@ -105,9 +98,6 @@ CREATE OR REPLACE PACKAGE pete_assert AS
         a_comment_in  VARCHAR2 DEFAULT NULL
     );
 
-    --
-    -- Tests equality of the input arguments. Nulls are considered equal
-    --
     PROCEDURE eq
     (
         a_expected_in sys.xmltype,

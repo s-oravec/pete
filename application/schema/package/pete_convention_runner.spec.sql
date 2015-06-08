@@ -2,15 +2,16 @@ CREATE OR REPLACE PACKAGE pete_convention_runner AS
 
     --
     -- Convention over Configuration test runner
-    -- TODO: change this
-    -- do not call these methods directly - use pete package instead
+    -- do not call these methods directly - use Pete package instead
     --
 
     --
     -- Tests suite
-    -- runs all UT% packages defined in users schema
+    -- runs all UT% packages defined in user's schema
     --
     -- %argument a_suite_name_in test suite name = USER
+    -- %argument a_description_in test suite description
+    -- %argument a_parent_run_log_id_in Specify parent run_log_id for recursive execution - used for testing of Pete
     --
     -- %return true - success, false - failure
     --
@@ -26,7 +27,8 @@ CREATE OR REPLACE PACKAGE pete_convention_runner AS
     --
     -- %argument a_package_in package name 
     -- %argument a_method_like_in filter for methods being run - if null, all methods would be run
-    -- %argument a_description_in description
+    -- %argument a_description_in test suite description
+    -- %argument a_parent_run_log_id_in Specify parent run_log_id for recursive execution - used for testing of Pete
     --
     -- %return true - success, false - failure
     --
@@ -44,7 +46,8 @@ CREATE OR REPLACE PACKAGE pete_convention_runner AS
     -- %argument a_package_in package name 
     -- %argument a_method_name_in method name
     -- %argument a_object_type_in method type (METHOD|HOOK)
-    -- %argument a_description_in description
+    -- %argument a_description_in test suite description
+    -- %argument a_parent_run_log_id_in Specify parent run_log_id for recursive execution - used for testing of Pete
     --
     -- %return true - success, false - failure
     --

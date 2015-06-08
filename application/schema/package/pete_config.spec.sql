@@ -1,12 +1,15 @@
 CREATE OR REPLACE PACKAGE pete_config AS
 
     --
-    -- Pete config API package
+    -- Pete configuration API package
+    -- setters and getters for accessing Pete configuration
+    -- Use a_set_as_default = TRUE to store setting permanently in PETE_CONFIGURATION table
     --
 
     --
-    -- Show asserts
+    -- Show asserts in output log
     --------------------------------------------------------------------------------
+    --
     g_ASSERTS_ALL    CONSTANT NUMBER := 0;
     g_ASSERTS_FAILED CONSTANT NUMBER := 1;
     g_ASSERTS_NONE   CONSTANT NUMBER := 2;
@@ -17,7 +20,7 @@ CREATE OR REPLACE PACKAGE pete_config AS
     -- Sets what type of asserts show at output
     -- 
     -- %argument a_value_in
-    -- %argument a_set_as_default if true then the a_value_in is stored in config table PETE_CONFIG and becomes sesssion default
+    -- %argument a_set_as_default if true then the a_value_in is stored in config table PETE_CONFIGURATION and becomes sesssion default
     --
     PROCEDURE set_show_asserts
     (
@@ -31,15 +34,16 @@ CREATE OR REPLACE PACKAGE pete_config AS
     FUNCTION get_show_asserts RETURN NUMBER;
 
     --
-    -- Show hook methods
+    -- Show hook methods in output log
     --------------------------------------------------------------------------------
+    --
     g_SHOW_HOOK_METHODS_DEFAULT CONSTANT BOOLEAN := FALSE;
 
     --
     -- Sets if default logger output shows hook methods
     --
     -- %argument a_value_in
-    -- %argument a_set_as_default if true then the a_value_in is stored in config table PETE_CONFIG and becomes sesssion default
+    -- %argument a_set_as_default if true then the a_value_in is stored in config table PETE_CONFIGURATION and becomes sesssion default
     --
     PROCEDURE set_show_hook_methods
     (
@@ -53,15 +57,16 @@ CREATE OR REPLACE PACKAGE pete_config AS
     FUNCTION get_show_hook_methods RETURN BOOLEAN;
 
     --
-    -- Show failed packages/methods, scripts/cases/blocks only
+    -- Show failed packages/methods, scripts/cases/blocks only in output log
     --------------------------------------------------------------------------------
+    --
     g_SHOW_FAILURES_ONLY_DEFAULT CONSTANT BOOLEAN := FALSE;
 
     --
     -- Sets if default logger outpu shows failed packages/methods, scripts/cases/blocks only
     --
     -- %argument a_value_in
-    -- %argument a_set_as_default if true then the a_value_in is stored in config table PETE_CONFIG and becomes sesssion default
+    -- %argument a_set_as_default if true then the a_value_in is stored in config table PETE_CONFIGURATION and becomes sesssion default
     --
     PROCEDURE set_show_failures_only
     (
@@ -79,13 +84,14 @@ CREATE OR REPLACE PACKAGE pete_config AS
     -- - skip all methods if before_all method fails
     -- - skip next method if before_each method fails
     --------------------------------------------------------------------------------
+    --
     g_SKIP_IF_BFR_HOOK_FAILS_DFLT CONSTANT BOOLEAN := FALSE;
 
     --
     -- Sets if test methods are skipped after before hook method fails
     --
     -- %argument a_value_in
-    -- %argument a_set_as_default if true then the a_value_in is stored in config table PETE_CONFIG and becomes sesssion default
+    -- %argument a_set_as_default if true then the a_value_in is stored in config table PETE_CONFIGURATION and becomes sesssion default
     --
     PROCEDURE set_skip_if_before_hook_fails
     (
@@ -102,14 +108,13 @@ CREATE OR REPLACE PACKAGE pete_config AS
     -- Test package prefix
     --------------------------------------------------------------------------------
     --
-
     g_TEST_PACKAGE_PREFIX_DEFAULT CONSTANT VARCHAR2(30) := 'UT_';
 
     --
     -- Sets prefix for test packages
     --
     -- %argument a_value_in
-    -- %argument a_set_as_default if true then the a_value_in is stored in config table PETE_CONFIG and becomes sesssion default
+    -- %argument a_set_as_default if true then the a_value_in is stored in config table PETE_CONFIGURATION and becomes sesssion default
     --
     PROCEDURE set_test_package_prefix
     (
@@ -126,14 +131,13 @@ CREATE OR REPLACE PACKAGE pete_config AS
     -- Date format
     --------------------------------------------------------------------------------
     --
-
     g_DATE_FORMAT_DEFAULT CONSTANT VARCHAR2(30) := 'yyyy-mm-dd hh24:mi:ss';
 
     --
     -- Sets prefix for test packages
     --
     -- %argument a_value_in
-    -- %argument a_set_as_default if true then the a_value_in is stored in config table PETE_CONFIG and becomes sesssion default
+    -- %argument a_set_as_default if true then the a_value_in is stored in config table PETE_CONFIGURATION and becomes sesssion default
     --
     PROCEDURE set_date_format
     (

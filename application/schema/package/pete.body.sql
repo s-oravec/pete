@@ -1,7 +1,5 @@
 CREATE OR REPLACE PACKAGE BODY pete AS
 
-    g_result pete_core.typ_is_success := TRUE;
-
     --------------------------------------------------------------------------------
     PROCEDURE init(a_log_to_dbms_output_in IN BOOLEAN DEFAULT TRUE) IS
     BEGIN
@@ -19,7 +17,6 @@ CREATE OR REPLACE PACKAGE BODY pete AS
         a_parent_run_log_id_in IN INTEGER DEFAULT NULL
     ) RETURN pete_run_log.id%TYPE IS
     BEGIN
-        g_result := TRUE;
         RETURN pete_core.begin_test(a_object_name_in       => 'Pete:' ||
                                                               a_object_type_in || ':' ||
                                                               a_object_name_in,
@@ -33,12 +30,13 @@ CREATE OR REPLACE PACKAGE BODY pete AS
     --------------------------------------------------------------------------------
     PROCEDURE end_test
     (
+        a_result_in     IN pete_core.typ_is_success,
         a_run_log_id_in IN pete_run_log.id%TYPE,
         a_output_log_in IN BOOLEAN
     ) IS
     BEGIN
         pete_core.end_test(a_run_log_id_in => a_run_log_id_in,
-                           a_is_succes_in  => g_result);
+                           a_is_succes_in  => a_result_in);
         IF a_output_log_in
         THEN
             pete_logger.output_log(a_run_log_id_in => a_run_log_id_in);
@@ -134,6 +132,7 @@ CREATE OR REPLACE PACKAGE BODY pete AS
         l_style_conventional BOOLEAN := nvl(a_style_conventional_in, TRUE);
         l_suite_name         VARCHAR2(255) := nvl(a_suite_name_in, USER);
         l_run_log_id         pete_run_log.id%TYPE;
+        l_result             pete_core.typ_is_success;
     BEGIN
         pete_logger.trace('RUN_TEST_SUITE: ' || 'a_suite_name_in:' ||
                           NVL(a_suite_name_in, 'NULL') || ', ' ||
@@ -148,14 +147,16 @@ CREATE OR REPLACE PACKAGE BODY pete AS
         --
         CASE l_style_conventional
             WHEN TRUE THEN
-                g_result := pete_convention_runner.run_suite(a_suite_name_in        => l_suite_name,
+                l_result := pete_convention_runner.run_suite(a_suite_name_in        => l_suite_name,
                                                              a_parent_run_log_id_in => l_run_log_id);
             WHEN FALSE THEN
-                g_result := pete_configuration_runner.run_suite(a_suite_name_in        => l_suite_name,
+                l_result := pete_configuration_runner.run_suite(a_suite_name_in        => l_suite_name,
                                                                 a_parent_run_log_id_in => l_run_log_id);
         END CASE;
         --
-        end_test(a_run_log_id_in => l_run_log_id,
+        --do not output log if recursive call
+        end_test(a_result_in     => l_result,
+                 a_run_log_id_in => l_run_log_id,
                  a_output_log_in => a_parent_run_log_id_in IS NULL);
         --
     END run_test_suite;
@@ -167,6 +168,7 @@ CREATE OR REPLACE PACKAGE BODY pete AS
         a_parent_run_log_id_in IN INTEGER DEFAULT NULL
     ) IS
         l_run_log_id pete_run_log.id%TYPE;
+        l_result     pete_core.typ_is_success;
     BEGIN
         pete_logger.trace('RUN_TEST_SCRIPT: ' || 'a_script_name_in:' ||
                           NVL(a_script_name_in, 'NULL'));
@@ -180,10 +182,12 @@ CREATE OR REPLACE PACKAGE BODY pete AS
                                    a_parent_run_log_id_in => a_parent_run_log_id_in);
     
         --
-        g_result := pete_configuration_runner.run_script(a_script_name_in       => a_script_name_in,
+        l_result := pete_configuration_runner.run_script(a_script_name_in       => a_script_name_in,
                                                          a_parent_run_log_id_in => l_run_log_id);
         --
-        end_test(a_run_log_id_in => l_run_log_id,
+        --do not output log if recursive call
+        end_test(a_result_in     => l_result,
+                 a_run_log_id_in => l_run_log_id,
                  a_output_log_in => a_parent_run_log_id_in IS NULL);
         --
     END run_test_script;
@@ -195,6 +199,7 @@ CREATE OR REPLACE PACKAGE BODY pete AS
         a_parent_run_log_id_in IN INTEGER DEFAULT NULL
     ) IS
         l_run_log_id pete_run_log.id%TYPE;
+        l_result     pete_core.typ_is_success;
     BEGIN
         pete_logger.trace('RUN_TEST_CASE: ' || 'a_case_name_in:' ||
                           NVL(a_case_name_in, 'NULL'));
@@ -208,10 +213,12 @@ CREATE OR REPLACE PACKAGE BODY pete AS
                                    a_parent_run_log_id_in => a_parent_run_log_id_in);
     
         --
-        g_result := pete_configuration_runner.run_case(a_case_name_in         => a_case_name_in,
+        l_result := pete_configuration_runner.run_case(a_case_name_in         => a_case_name_in,
                                                        a_parent_run_log_id_in => l_run_log_id);
         --
-        end_test(a_run_log_id_in => l_run_log_id,
+        --do not output log if recursive call
+        end_test(a_result_in     => l_result,
+                 a_run_log_id_in => l_run_log_id,
                  a_output_log_in => a_parent_run_log_id_in IS NULL);
         --
     END run_test_case;
@@ -224,6 +231,7 @@ CREATE OR REPLACE PACKAGE BODY pete AS
         a_parent_run_log_id_in IN INTEGER DEFAULT NULL
     ) IS
         l_run_log_id pete_run_log.id%TYPE;
+        l_result     pete_core.typ_is_success;
     BEGIN
         pete_logger.trace('RUN_TEST_PACKAGE: ' || 'a_package_name_in:' ||
                           NVL(a_package_name_in, 'NULL') || ', ' ||
@@ -238,12 +246,14 @@ CREATE OR REPLACE PACKAGE BODY pete AS
                                    a_object_type_in       => pete_core.g_OBJECT_TYPE_PACKAGE,
                                    a_parent_run_log_id_in => a_parent_run_log_id_in);
         --
-        g_result := pete_convention_runner.run_package(a_package_name_in      => a_package_name_in,
+        l_result := pete_convention_runner.run_package(a_package_name_in      => a_package_name_in,
                                                        a_method_name_like_in  => a_method_name_like_in,
                                                        a_parent_run_log_id_in => l_run_log_id);
     
         --
-        end_test(a_run_log_id_in => l_run_log_id,
+        --do not output log if recursive call
+        end_test(a_result_in     => l_result,
+                 a_run_log_id_in => l_run_log_id,
                  a_output_log_in => a_parent_run_log_id_in IS NULL);
         --
     END run_test_package;
@@ -251,6 +261,7 @@ CREATE OR REPLACE PACKAGE BODY pete AS
     --------------------------------------------------------------------------------
     PROCEDURE run_all_tests(a_parent_run_log_id_in IN INTEGER DEFAULT NULL) IS
         l_run_log_id pete_run_log.id%TYPE;
+        l_result     pete_core.typ_is_success;
     BEGIN
         pete_logger.trace('RUN_ALL_TESTS: ');
         --
@@ -259,14 +270,15 @@ CREATE OR REPLACE PACKAGE BODY pete AS
                                    a_parent_run_log_id_in => a_parent_run_log_id_in);
         --
         --1. run all Configuration scripts
-        g_result := pete_configuration_runner.run_all_test_scripts AND g_result;
+        l_result := pete_configuration_runner.run_all_test_scripts AND l_result;
         --2. run user Conventional suite
-        --TODO: fix test result
-        g_result := pete_convention_runner.run_suite(a_suite_name_in        => USER,
+        l_result := pete_convention_runner.run_suite(a_suite_name_in        => USER,
                                                      a_parent_run_log_id_in => l_run_log_id) AND
-                    g_result;
+                    l_result;
         --
-        end_test(a_run_log_id_in => l_run_log_id,
+        --do not output log if recursive call
+        end_test(a_result_in     => l_result,
+                 a_run_log_id_in => l_run_log_id,
                  a_output_log_in => a_parent_run_log_id_in IS NULL);
         --
     END run_all_tests;

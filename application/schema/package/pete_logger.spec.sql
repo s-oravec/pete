@@ -3,14 +3,18 @@ CREATE OR REPLACE PACKAGE pete_logger AS
     --
     -- Pete logging package
     -- - used by convention and configuration runners
-    --- use log_method method in implementation of test packages for Convention style test packages
+    -- - use log_method method in implementation of test packages for Convention style test packages
     --
+
+    -- TODO: split into pete_logger_public - granted to PUBLIC - to encapsulate Pete as a module
+    -- TODO: and pete_logger_private - implementation of methods used by Pete runners implementation
 
     --------------------------------------------------------------------------------
     -- logging methods
     --------------------------------------------------------------------------------
 
     --
+    -- TODO: private
     --------------------------------------------------------------------------------      
     PROCEDURE log_start
     (
@@ -22,6 +26,7 @@ CREATE OR REPLACE PACKAGE pete_logger AS
     );
 
     --
+    -- TODO: public
     -- update method description - defined on method
     --
     -- %argument a_description_in method description
@@ -30,7 +35,8 @@ CREATE OR REPLACE PACKAGE pete_logger AS
     PROCEDURE log_method_description(a_description_in IN pete_core.typ_description);
 
     --
-    --------------------------------------------------------------------------------      
+    -- TODO: private
+    --------------------------------------------------------------------------------
     PROCEDURE log_end
     (
         a_run_log_id_in      IN pete_run_log.id%TYPE,
@@ -43,6 +49,7 @@ CREATE OR REPLACE PACKAGE pete_logger AS
     );
 
     --------------------------------------------------------------------------------
+    -- TODO: public
     -- formatting methods
     --------------------------------------------------------------------------------
     PROCEDURE output_log(a_run_log_id_in IN pete_run_log.id%TYPE);
@@ -51,15 +58,18 @@ CREATE OR REPLACE PACKAGE pete_logger AS
         RETURN petet_log_tab
         PIPELINED;
 
+    -- TODO: private
     FUNCTION get_output_run_log_id RETURN pete_run_log.id%TYPE;
 
     --
+    -- TODO: public
     -- inits a logger
     -- 
     --------------------------------------------------------------------------------  
     PROCEDURE init(a_log_to_dbms_output_in IN BOOLEAN DEFAULT TRUE);
 
     --
+    -- TODO: private
     -- logs assert result
     -- 
     PROCEDURE log_assert
@@ -73,12 +83,14 @@ CREATE OR REPLACE PACKAGE pete_logger AS
     --------------------------------------------------------------------------------
 
     --
-    -- wrapper for trace log 
+    -- TODO: private
+    -- wrapper for trace log
     --
     --------------------------------------------------------------------------------  
     PROCEDURE trace(a_trace_message_in VARCHAR2);
 
     --
+    -- TODO: private
     -- trace log settings
     --
     --------------------------------------------------------------------------------  

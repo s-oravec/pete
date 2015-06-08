@@ -1,22 +1,25 @@
 CREATE OR REPLACE PACKAGE BODY pete_config AS
 
-    g_show_asserts              NUMBER;
-    g_show_hook_methods         BOOLEAN;
-    g_show_failures_only        BOOLEAN;
-    g_skip_if_before_hook_fails BOOLEAN;
-    g_test_package_prefix       VARCHAR2(30);
-    g_date_format               VARCHAR2(30);
-
     C_TRUE  VARCHAR2(10) := 'TRUE';
     C_FALSE VARCHAR2(10) := 'FALSE';
 
-    --config table keys
-    SHOW_ASSERTS              VARCHAR2(30) := 'SHOW_ASSERTS';
-    SHOW_HOOK_METHODS         VARCHAR2(30) := 'SHOW_HOOK_METHODS';
-    SHOW_FAILURES_ONLY        VARCHAR2(30) := 'SHOW_FAILURES_ONLY';
-    SKIP_IF_BEFORE_HOOK_FAILS VARCHAR2(30) := 'SKIP_IF_BEFORE_HOOK_FAILS';
-    TEST_PACKAGE_PREFIX       VARCHAR2(30) := 'TEST_PACKAGE_PREFIX';
-    DATE_FORMAT               VARCHAR2(30) := 'DATE_FORMAT';
+    SHOW_ASSERTS   VARCHAR2(30) := 'SHOW_ASSERTS';
+    g_show_asserts NUMBER;
+
+    SHOW_HOOK_METHODS   VARCHAR2(30) := 'SHOW_HOOK_METHODS';
+    g_show_hook_methods BOOLEAN;
+
+    SHOW_FAILURES_ONLY   VARCHAR2(30) := 'SHOW_FAILURES_ONLY';
+    g_show_failures_only BOOLEAN;
+
+    SKIP_IF_BEFORE_HOOK_FAILS   VARCHAR2(30) := 'SKIP_IF_BEFORE_HOOK_FAILS';
+    g_skip_if_before_hook_fails BOOLEAN;
+
+    TEST_PACKAGE_PREFIX   VARCHAR2(30) := 'TEST_PACKAGE_PREFIX';
+    g_test_package_prefix VARCHAR2(30);
+
+    DATE_FORMAT   VARCHAR2(30) := 'DATE_FORMAT';
+    g_date_format VARCHAR2(30);
 
     -- reads value from config table
     --------------------------------------------------------------------------------

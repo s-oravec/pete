@@ -5,7 +5,7 @@ CREATE OR REPLACE PACKAGE BODY pete_assert IS
 
     --
     -- converts a boolean value to a string representation - 'TRUE', 'FALSE', 'NULL'
-    --
+    --------------------------------------------------------------------------------
     FUNCTION bool2char(a_bool_in IN BOOLEAN) RETURN VARCHAR2 IS
     BEGIN
         IF (a_bool_in)
@@ -27,7 +27,6 @@ CREATE OR REPLACE PACKAGE BODY pete_assert IS
         l_from_pos NUMBER;
         --TODO: use precompiler directives here to get package name or set as literal during installation      
         lc_ASSERT_PACKAGE CONSTANT VARCHAR2(30) := USER || '.PETE_ASSERT';
-        --l_result VARCHAR2(1000);
     BEGIN
         --
         l_stack := dbms_utility.format_call_stack;
@@ -46,7 +45,7 @@ CREATE OR REPLACE PACKAGE BODY pete_assert IS
 
     --
     --TODO: review: what is use for this?
-    --reviewed- it was used to display package and linenumber of an assert - to locate it easily. This feature was killed during the refactoring
+    --TODO: reviewed: it was used to display package and linenumber of an assert - to locate it easily. This feature was killed during the refactoring
     --------------------------------------------------------------------------------
     PROCEDURE get_assert_caller_info
     (
@@ -113,7 +112,6 @@ CREATE OR REPLACE PACKAGE BODY pete_assert IS
     (
         a_value_in   IN BOOLEAN,
         a_comment_in IN VARCHAR2 DEFAULT NULL
-        
     ) IS
     BEGIN
         this(a_value_in    => a_value_in,
@@ -227,7 +225,8 @@ CREATE OR REPLACE PACKAGE BODY pete_assert IS
     END fail;
 
     --
-    -- Tests equality of the input arguments. Nulls are considered equal
+    -- Group of assert procedures for testing equality of input arguments
+    -- Nulls are considered equal
     --------------------------------------------------------------------------------
     PROCEDURE eq
     (
@@ -244,8 +243,6 @@ CREATE OR REPLACE PACKAGE BODY pete_assert IS
              to_char(a_actual_in));
     END eq;
 
-    --
-    -- Tests equality of the input arguments. Nulls are considered equal
     --------------------------------------------------------------------------------
     PROCEDURE eq
     (
@@ -262,8 +259,6 @@ CREATE OR REPLACE PACKAGE BODY pete_assert IS
              a_actual_in);
     END eq;
 
-    --
-    -- Tests equality of the input arguments. Nulls are considered equal
     --------------------------------------------------------------------------------
     PROCEDURE eq
     (
@@ -297,8 +292,6 @@ CREATE OR REPLACE PACKAGE BODY pete_assert IS
              bool2char(a_actual_in));
     END;
 
-    --
-    -- Tests equality of the input arguments. Nulls are considered equal
     --------------------------------------------------------------------------------
     PROCEDURE eq
     (
