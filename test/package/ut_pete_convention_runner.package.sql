@@ -32,6 +32,8 @@ CREATE OR REPLACE PACKAGE ut_pete_convention_runner AS
 
     PROCEDURE cntnn_if_not_skip_on_hook_fail(d IN VARCHAR2 DEFAULT 'Continue with next method if "before each" hook fails and "skip test if before hook fails" option is not set');
 
+    PROCEDURE unknown_package(d IN VARCHAR2 DEFAULT 'Explicitly called package which is not found should throw');
+
     PROCEDURE xxafter_each;
 
 END ut_pete_convention_runner;
@@ -200,6 +202,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         -- NoFormat End
         l_result pete_core.typ_is_success;
     BEGIN
+    
         --log
         pete_logger.log_method_description(d);
         --prepare
@@ -497,6 +500,9 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         --set config
         pete_config.set_skip_if_before_hook_fails(a_value_in => TRUE);
         --run test
+        pete_assert.eq(a_expected_in => gc_NOT_CALLED,
+                       a_actual_in   => g_call_log);
+
         l_result := pete_convention_runner.run_package(a_package_name_in      => 'UT_PETE_TEST_CNV_RUNNER',
                                                        a_parent_run_log_id_in => pete_core.get_last_run_log_id);
         --assert
@@ -671,6 +677,20 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         pete_assert.this(a_value_in   => has_been_called('CALLED2'),
                          a_comment_in => 'Method should be called after before_each succeeds');
     END;
+
+    PROCEDURE unknown_package(d IN VARCHAR2 DEFAULT 'Explicitly called package which is not found should throw') IS
+        l_result pete_core.typ_is_success;
+    BEGIN
+        pete_logger.log_method_description(d);
+        --prepare
+    
+        --test
+        l_result := pete_convention_runner.run_package(a_package_name_in      => 'Non_exIsting_package',
+                                                       a_parent_run_log_id_in => pete_core.get_last_run_log_id);
+        --assert
+        pete_assert.this(a_value_in   => NOT l_result,
+                         a_comment_in => 'Expecting result to be FAILURE');
+    END unknown_package;
 
 END ut_pete_convention_runner;
 /

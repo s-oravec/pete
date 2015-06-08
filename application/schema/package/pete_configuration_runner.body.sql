@@ -136,9 +136,12 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
                                            WHEN a_block_instance_in_case_in.package IS NOT NULL THEN
                                             a_block_instance_in_case_in.package || '.'
                                        END || a_block_instance_in_case_in.method;
-            l_plsql_block           := REPLACE(l_plsql_block_template,
-                                               '#StoredProcedureName#',
-                                               l_stored_procedure_name);
+        
+            l_stored_procedure_name := dbms_assert.SQL_OBJECT_NAME(l_stored_procedure_name);
+        
+            l_plsql_block := REPLACE(l_plsql_block_template,
+                                     '#StoredProcedureName#',
+                                     l_stored_procedure_name);
         ELSE
             l_plsql_block := a_block_instance_in_case_in.anonymous_block;
         END IF;
