@@ -45,7 +45,7 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
         FOR ii IN (SELECT NULL
                      FROM user_objects uo
                     WHERE object_type = 'PACKAGE'
-                      AND object_name = a_package_name_in)
+                      AND upper(object_name) = upper(a_package_name_in))
         LOOP
             pete_logger.trace('returns true');
             RETURN TRUE;
@@ -68,8 +68,8 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
                           'a_method_name_in:' || NVL(a_method_name_in, 'NULL'));
         FOR ii IN (SELECT 1
                      FROM user_procedures
-                    WHERE object_name = a_package_name_in
-                      AND procedure_name = a_method_name_in)
+                    WHERE upper(object_name) = upper(a_package_name_in)
+                      AND upper(procedure_name) = upper(a_method_name_in))
         LOOP
             pete_logger.trace('returns true');
             RETURN TRUE;
@@ -206,23 +206,23 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
                          (SELECT /*+ materialize */
                                  procedure_name,
                                  subprogram_id,
-                                 SUM(CASE WHEN regexp_like(procedure_name, l_method_only_regexp) THEN 1 ELSE 0 END) over() AS oo_method
+                                 SUM(CASE WHEN regexp_like(upper(procedure_name), upper(l_method_only_regexp)) THEN 1 ELSE 0 END) over() AS oo_method
                             FROM user_procedures up
-                           WHERE object_name = a_package_name_in
+                           WHERE object_name = upper(a_package_name_in)
                              --ignore hooks
                              AND procedure_name NOT IN ('BEFORE_ALL', 'BEFORE_EACH', 'AFTER_ALL', 'AFTER_EACH')
                              --a_method_name_like_in filter
-                             AND (a_method_name_like_in IS NULL OR procedure_NAME LIKE a_method_name_like_in)
+                             AND (a_method_name_like_in IS NULL OR upper(procedure_NAME) LIKE upper(a_method_name_like_in))
                              AND procedure_name IS NOT NULL                     
                              --skipped methods
-                             AND not regexp_like(procedure_name, l_method_skip_regexp)
+                             AND not regexp_like(upper(procedure_name), upper(l_method_skip_regexp))
                                 -- it is not a function or a procedure with out/in_out arguments
                                 -- or a procedure in argument without default value
                              AND NOT EXISTS
                            (SELECT 1
                               FROM user_arguments ua
-                             WHERE ua.object_name = up.procedure_name
-                               AND ua.package_name = up.object_name
+                             WHERE upper(ua.object_name) = upper(up.procedure_name)
+                               AND upper(ua.package_name) = (up.object_name)
                                AND ( --function result or out, in/out argument in procedure
                                     (ua.in_out IN ('OUT', 'IN/OUT')) OR
                                    --procedure argument without default value 
@@ -232,7 +232,7 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
                           FROM convention_runner_procedures
                          WHERE (oo_method = 0) --no oo method in packge
                             OR --some oo methods
-                               (oo_method > 0 AND regexp_like(procedure_name, l_method_only_regexp))
+                               (oo_method > 0 AND regexp_like(upper(procedure_name), upper(l_method_only_regexp)))
                          ORDER BY subprogram_id
                         )
                         -- NoFormat End

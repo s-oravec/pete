@@ -34,6 +34,10 @@ CREATE OR REPLACE PACKAGE ut_pete_convention_runner AS
 
     PROCEDURE unknown_package(d IN VARCHAR2 DEFAULT 'Explicitly called package which is not found should throw');
 
+    PROCEDURE caseInSensitiVe(d IN VARCHAR2 DEFAULT 'Calls should work case insensitive');
+
+    PROCEDURE unknown_method(d IN VARCHAR2 DEFAULT 'Explicitly called method which is not found should throw');
+
     PROCEDURE xxafter_each;
 
 END ut_pete_convention_runner;
@@ -76,14 +80,19 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
     --------------------------------------------------------------------------------  
     PROCEDURE log_call(a_value_in IN VARCHAR2) IS
     BEGIN
+        pete_Logger.trace('log_call: a_value_in ' || a_value_in);
         g_call_log := a_value_in;
         gtab_call_log(a_value_in) := 1;
     END;
 
     --------------------------------------------------------------------------------
     FUNCTION has_been_called(a_value_in IN VARCHAR2) RETURN BOOLEAN IS
+      l_result boolean;
     BEGIN
-        RETURN gtab_call_log.exists(a_value_in);
+        pete_Logger.trace('has_been_called : a_value_in ' || a_value_in);
+        l_result := gtab_call_log.exists(a_value_in);
+        pete_logger.trace('returns ' || case l_result when true then 'TRUE' when false then 'FALSE' else null end);
+        RETURN l_result;
     END;
 
     --------------------------------------------------------------------------------
@@ -502,7 +511,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         --run test
         pete_assert.eq(a_expected_in => gc_NOT_CALLED,
                        a_actual_in   => g_call_log);
-
+    
         l_result := pete_convention_runner.run_package(a_package_name_in      => 'UT_PETE_TEST_CNV_RUNNER',
                                                        a_parent_run_log_id_in => pete_core.get_last_run_log_id);
         --assert
@@ -691,6 +700,40 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         pete_assert.this(a_value_in   => NOT l_result,
                          a_comment_in => 'Expecting result to be FAILURE');
     END unknown_package;
+
+    PROCEDURE caseInSensitiVe(d IN VARCHAR2 DEFAULT 'Calls should work case insensitive') IS
+        l_package_spec VARCHAR2(32767) := 'CREATE OR REPLACE PACKAGE ut_pete_test_cnv_runner AS' ||
+                                          chr(10) || '    PROCEDURE method;' ||
+                                          chr(10) || 'END;';
+    
+        l_package_body VARCHAR2(32767) := 'CREATE OR REPLACE PACKAGE BODY ut_pete_test_cnv_runner AS' ||
+                                          chr(10) || '    PROCEDURE method IS' ||
+                                          chr(10) || '    BEGIN' || chr(10) ||
+                                          '        pete_logger.log_method_description(''This method should be called even if case is mismatched'');' ||
+                                          chr(10) ||
+                                          '        ut_pete_convention_runner.log_call(''CALLED1'');' ||
+                                          chr(10) || '    END;' || chr(10) ||
+                                          'END;'; --
+        -- NoFormat End
+        l_result pete_core.typ_is_success;
+    BEGIN
+        --log
+        pete_logger.log_method_description(d);
+        --prepare
+        EXECUTE IMMEDIATE l_package_spec;
+        EXECUTE IMMEDIATE l_package_body;
+        --run test
+        l_result := pete_convention_runner.run_package(a_package_name_in      => 'UT_PETE_TEST_CNV_Runner',
+                                                       a_parent_run_log_id_in => pete_core.get_last_run_log_id);
+        --assert
+        pete_assert.this(a_value_in   => has_been_called('CALLED1'),
+                         a_comment_in => 'Method should be called even if case is mismatched');
+    END;
+
+    PROCEDURE unknown_method(d IN VARCHAR2 DEFAULT 'Explicitly called method which is not found should throw') IS
+    BEGIN
+        raise_application_error(-20000, 'not impl');
+    END;
 
 END ut_pete_convention_runner;
 /
