@@ -168,6 +168,7 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
         l_before_all_result  BOOLEAN := TRUE;
         l_before_each_result BOOLEAN := TRUE;
         --
+        l_something_run boolean := false;
     BEGIN
         --
         pete_logger.trace('RUN_PACKAGE: ' || 'a_package_name_in:' ||
@@ -187,17 +188,17 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
         THEN
             <<test>>
             BEGIN
-                --
+                pete_logger.trace('package exists');
                 l_before_all_result := run_hook_method(a_package_name_in      => a_package_name_in,
                                                        a_hook_method_name_in  => 'BEFORE_ALL',
                                                        a_parent_run_log_id_in => l_run_log_id);
                 l_result            := l_before_all_result AND l_result;
-                --
+                pete_logger.trace('l_result' || case when l_result then 'TRUE' when not l_result then 'FALSE' else 'NULL' end);
                 IF (l_before_all_result --before_all succeeded
                    OR NOT pete_config.get_skip_if_before_hook_fails --continue if before_all failed
                    )
                 THEN
-                    --
+                    pete_logger.trace('looping over methods');
                     <<tested_methods_loop>>
                     FOR r_method IN
                         -- NoFormat Start
@@ -245,6 +246,8 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
                                                                 a_parent_run_log_id_in => l_run_log_id);
                         l_result             := l_before_each_result AND
                                                 l_result;
+                        pete_logger.trace('l_result' || case when l_result then 'TRUE' when not l_result then 'FALSE' else 'NULL' end);
+
                         --
                         IF l_before_each_result --before_each succeeded
                            OR NOT pete_config.get_skip_if_before_hook_fails --continue if before_each failed
@@ -256,6 +259,7 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
                                                    a_object_type_in       => pete_core.g_OBJECT_TYPE_METHOD,
                                                    a_parent_run_log_id_in => l_run_log_id) AND
                                         l_result;
+                            l_something_run := true;
                         ELSE
                             pete_logger.trace('method ' ||
                                               r_method.procedure_name ||
@@ -276,13 +280,19 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
             EXCEPTION
                 WHEN OTHERS THEN
                     --TODO log error
+                    pete_logger.trace('ERROR>' || sqlerrm);
                     l_result := FALSE;
             END test;
         ELSE
             pete_logger.trace('unknown package  ' || a_package_name_in);
             l_result := FALSE;
         END IF;
-    
+
+        if (not l_something_run and a_method_name_like_in is not null) then 
+            pete_logger.trace('nothing executed, even if I wanted -> failure');
+            l_result := false;
+        end if;
+
         pete_logger.trace('l_result ' || CASE WHEN l_result THEN 'TRUE' ELSE
                           'FALSE' END);
     

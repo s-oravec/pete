@@ -36,7 +36,7 @@ CREATE OR REPLACE PACKAGE ut_pete_convention_runner AS
 
     PROCEDURE caseInSensitiVe(d IN VARCHAR2 DEFAULT 'Calls should work case insensitive');
 
-    PROCEDURE unknown_method(d IN VARCHAR2 DEFAULT 'Explicitly called method which is not found should throw');
+    PROCEDURE unknown_method(d IN VARCHAR2 DEFAULT 'Explicitly called method which is not found should fail');
 
     PROCEDURE xxafter_each;
 
@@ -726,13 +726,39 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         l_result := pete_convention_runner.run_package(a_package_name_in      => 'UT_PETE_TEST_CNV_Runner',
                                                        a_parent_run_log_id_in => pete_core.get_last_run_log_id);
         --assert
-        pete_assert.this(a_value_in   => has_been_called('CALLED1'),
+        pete_assert.this(a_value_in   => has_been_called('CALLED1') and l_result,
                          a_comment_in => 'Method should be called even if case is mismatched');
     END;
 
-    PROCEDURE unknown_method(d IN VARCHAR2 DEFAULT 'Explicitly called method which is not found should throw') IS
+    PROCEDURE unknown_method(d IN VARCHAR2 DEFAULT 'Explicitly called method which is not found should fail') IS
+        l_package_spec VARCHAR2(32767) := 'CREATE OR REPLACE PACKAGE ut_pete_test_cnv_runner AS' ||
+                                          chr(10) || '    PROCEDURE method;' ||
+                                          chr(10) || 'END;';
+    
+        l_package_body VARCHAR2(32767) := 'CREATE OR REPLACE PACKAGE BODY ut_pete_test_cnv_runner AS' ||
+                                          chr(10) || '    PROCEDURE method IS' ||
+                                          chr(10) || '    BEGIN' || chr(10) ||
+                                          '        pete_logger.log_method_description(''This method should be called even if case is mismatched'');' ||
+                                          chr(10) ||
+                                          '        ut_pete_convention_runner.log_call(''CALLED1'');' ||
+                                          chr(10) || '    END;' || chr(10) ||
+                                          'END;'; --
+        -- NoFormat End
+        l_result pete_core.typ_is_success;
+--        l_exception boolean;
     BEGIN
-        raise_application_error(-20000, 'not impl');
+        --log
+        pete_logger.log_method_description(d);
+        --prepare
+        EXECUTE IMMEDIATE l_package_spec;
+        EXECUTE IMMEDIATE l_package_body;
+        --run test
+            l_result := pete_convention_runner.run_package(a_package_name_in      => 'UT_PETE_TEST_CNV_Runner',
+                                                           a_method_name_like_in => 'non_existing_method',
+                                                           a_parent_run_log_id_in => pete_core.get_last_run_log_id);
+        --assert
+        pete_assert.this(a_value_in   => not l_result,
+                         a_comment_in => 'Non existing method call should fail');
     END;
 
 END ut_pete_convention_runner;
