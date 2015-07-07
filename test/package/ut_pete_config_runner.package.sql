@@ -2,7 +2,8 @@ CREATE OR REPLACE PACKAGE ut_pete_config_runner AS
 
     description pete_core.typ_description := 'pete_configuration_runner package tests';
 
-    -- run_configruation - test case
+    PROCEDURE before_each;
+
     PROCEDURE run_test_case(d VARCHAR2 := 'simple test case should succeed');
 
     PROCEDURE input_argument_succeeds(d VARCHAR2 := 'Test case succeed with defined input arguments');
@@ -11,8 +12,9 @@ CREATE OR REPLACE PACKAGE ut_pete_config_runner AS
 
     PROCEDURE unexpected_result_fails(d VARCHAR2 := 'PLSQL block in test case should fail when returns unexpected result');
 
-    -- hook methods
-    PROCEDURE before_each;
+    PROCEDURE stop_on_failure_stops_bic(d varchar2 := 'Block in Case with stop_on_failure = "Y" stops Case execution');
+
+    PROCEDURE stop_on_failure_stops_cis(d varchar2 := 'Case in Script with stop_on_failure = "Y" stops Script execution');
 
     PROCEDURE after_each;
 
@@ -35,6 +37,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_config_runner AS
 
     g_result pete_core.typ_is_success;
 
+    --------------------------------------------------------------------------------
     PROCEDURE before_each IS
         PRAGMA AUTONOMOUS_TRANSACTION;
     BEGIN
@@ -60,6 +63,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_config_runner AS
         COMMIT;
     END;
 
+    --------------------------------------------------------------------------------
     PROCEDURE helper_insert_input(a_xml_in IN xmltype) IS
         PRAGMA AUTONOMOUS_TRANSACTION;
     BEGIN
@@ -79,6 +83,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_config_runner AS
         COMMIT;
     END;
 
+    --------------------------------------------------------------------------------
     PROCEDURE helper_insert_output(a_xml_in IN xmltype) IS
         PRAGMA AUTONOMOUS_TRANSACTION;
     BEGIN
@@ -97,6 +102,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_config_runner AS
         COMMIT;
     END;
 
+    --------------------------------------------------------------------------------
     PROCEDURE helper_delete_input IS
         PRAGMA AUTONOMOUS_TRANSACTION;
     BEGIN
@@ -111,6 +117,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_config_runner AS
         --
     END;
 
+    --------------------------------------------------------------------------------
     PROCEDURE helper_delete_output IS
         PRAGMA AUTONOMOUS_TRANSACTION;
     BEGIN
@@ -125,6 +132,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_config_runner AS
         --
     END;
 
+    --------------------------------------------------------------------------------
     PROCEDURE run_test_case(d VARCHAR2) IS
     BEGIN
         --log
@@ -134,6 +142,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_config_runner AS
         --
     END;
 
+    --------------------------------------------------------------------------------
     PROCEDURE input_argument_succeeds(d VARCHAR2) IS
         l_xml xmltype := xmltype.createxml('<message>Hello world!</message>');
     BEGIN
@@ -149,6 +158,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_config_runner AS
         --
     END;
 
+    --------------------------------------------------------------------------------
     PROCEDURE expected_result_succeeds(d VARCHAR2) IS
         l_xml xmltype := xmltype.createxml('<message>Hello world!</message>');
     BEGIN
@@ -166,6 +176,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_config_runner AS
         --
     END;
 
+    --------------------------------------------------------------------------------
     PROCEDURE unexpected_result_fails(d VARCHAR2) IS
         l_xml1 xmltype := xmltype.createxml('<message>Hello world!</message>');
         l_xml2 xmltype := xmltype.createxml('<message>Hello mooon!</message>');
@@ -185,6 +196,28 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_config_runner AS
         --
     END;
 
+
+    --------------------------------------------------------------------------------
+    PROCEDURE stop_on_failure_stops_bic(d varchar2 ) is
+    BEGIN
+        --log
+        pete_logger.log_method_description(d);
+        --test
+        pete_assert.pass('TODO: implement test');
+        --
+    END;
+
+    --------------------------------------------------------------------------------
+    PROCEDURE stop_on_failure_stops_cis(d varchar2 ) is
+    BEGIN
+        --log
+        pete_logger.log_method_description(d);
+        --test
+        pete_assert.pass('TODO: implement test');
+        --
+    END;
+
+    --------------------------------------------------------------------------------
     PROCEDURE after_each IS
         PRAGMA AUTONOMOUS_TRANSACTION;
     BEGIN

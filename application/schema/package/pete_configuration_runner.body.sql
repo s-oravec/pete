@@ -1,5 +1,8 @@
 CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
 
+    g_YES CONSTANT VARCHAR2(1) := 'Y';
+    g_NO  CONSTANT VARCHAR2(1) := 'N';
+
     -- Cursor used to find PLSQL block in test case
     -- NoFormat Start
     CURSOR gcur_test_case_instance(p_test_case_id NUMBER) IS
@@ -13,6 +16,7 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
                  blk.anonymous_block,
                  bic.description,
                  bic.block_order,
+                 bic.stop_on_failure,
                  bic.run_modifier,
                  inarg.value AS input,
                  er.value AS expected_output,
@@ -34,7 +38,8 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
                anonymous_block,
                description,
                input,
-               expected_output
+               expected_output,
+               stop_on_failure
           FROM plsql_blocks
          WHERE -- no ONLY run modifiers
                (overall_block_only = 0)
@@ -50,6 +55,7 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
          (SELECT /*+ materialize */
           DISTINCT tc.*,
                    cis.case_order,
+                   cis.stop_on_failure,
                    cis.run_modifier,
                    SUM(CASE WHEN cis.run_modifier = 'ONLY' THEN 1 ELSE 0 END) OVER() AS overall_case_only,
                    SUM(CASE WHEN bic.run_modifier = 'ONLY' THEN 1 ELSE 0 END) OVER() AS overall_block_only,
@@ -63,7 +69,7 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
              AND (bic.run_modifier != 'SKIP' OR bic.run_modifier IS NULL)
              AND tc.id = cis.test_case_id
            ORDER BY cis.case_order)
-        SELECT id, NAME, description
+        SELECT id, NAME, description, stop_on_failure
           FROM test_cases
          WHERE --no ONLY run modifiers
                (overall_case_only = 0 AND overall_block_only = 0)
@@ -92,7 +98,11 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
              AND bic.test_case_id = cis.test_case_id
              AND (bic.run_modifier != 'SKIP' OR bic.run_modifier IS NULL)
          )
-        SELECT id, NAME, run_modifier, DESCRIPTION
+        SELECT id, 
+               name, 
+               stop_on_failure,
+               run_modifier, 
+               description               
           FROM test_scripts
          WHERE --no ONLY run modifiers
                (overall_script_only = 0 AND overall_case_only = 0 AND overall_block_only = 0)
@@ -188,7 +198,7 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
     -------------------------------------------------------------------------------------------------------------------------------
     FUNCTION run_case
     (
-        a_test_case_in         IN pete_test_case%ROWTYPE,
+        a_test_case_in         IN gcur_test_case_in_test_script%ROWTYPE,
         a_parent_run_log_id_in IN pete_run_log.parent_id%TYPE DEFAULT NULL
     ) RETURN pete_core.typ_is_success IS
         l_run_log_id pete_run_log.id%TYPE;
@@ -206,6 +216,14 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
             l_result := run_block(a_block_instance_in_case_in => plblock_instance_in_test_case,
                                   a_parent_run_log_id_in      => l_run_log_id) AND
                         l_result;
+            --
+            IF plblock_instance_in_test_case.stop_on_failure = g_YES
+               AND NOT l_result
+            THEN
+                pete_logger.trace('RUN_CASE: stopping on failure');
+                raise_application_error(-20000, 'Stopping on failure');
+            END IF;
+            --
         END LOOP plblock_instances_in_test_case;
     
         pete_core.end_test(a_run_log_id_in => l_run_log_id,
@@ -221,14 +239,16 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
         a_case_name_in         IN pete_core.typ_object_name,
         a_parent_run_log_id_in IN pete_run_log.parent_id%TYPE DEFAULT NULL
     ) RETURN pete_core.typ_is_success IS
-        lrec_test_case pete_test_case%ROWTYPE;
+        lrec_test_case gcur_test_case_in_test_script%ROWTYPE;
     BEGIN
-        SELECT *
+        SELECT pete_test_case.*, g_NO AS stop_on_failure
           INTO lrec_test_case
           FROM pete_test_case
          WHERE NAME = a_case_name_in;
+        --
         RETURN run_case(a_test_case_in         => lrec_test_case,
                         a_parent_run_log_id_in => a_parent_run_log_id_in);
+        --
     END run_case;
 
     -------------------------------------------------------------------------------------------------------------------------------
@@ -251,8 +271,16 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
             l_result := run_case(a_test_case_in         => test_case_in_test_script,
                                  a_parent_run_log_id_in => l_run_log_id) AND
                         l_result;
+            --
+            IF test_case_in_test_script.stop_on_failure = g_YES
+               AND NOT l_result
+            THEN
+                pete_logger.trace('RUN_SCRIPT: stopping on failure');
+                raise_application_error(-20000, 'Stopping on failure');
+            END IF;
+            --
         END LOOP test_cases_in_test_script;
-    
+        --
         pete_core.end_test(a_run_log_id_in => l_run_log_id,
                            a_is_succes_in  => l_result);
         --
@@ -272,23 +300,33 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
           INTO lrec_test_script
           FROM pete_test_script
          WHERE NAME = a_script_name_in;
+        -- 
         RETURN run_script(a_test_script_in       => lrec_test_script,
                           a_parent_run_log_id_in => a_parent_run_log_id_in);
+        --
     END run_script;
 
     -------------------------------------------------------------------------------------------------------------------------------
-    FUNCTION run_all_test_scripts RETURN pete_core.typ_is_success IS
+    FUNCTION run_all_test_scripts(a_parent_run_log_id_in IN pete_run_log.parent_id%TYPE DEFAULT NULL)
+        RETURN pete_core.typ_is_success IS
         l_result pete_core.typ_is_success := TRUE;
     BEGIN
         <<test_scripts_in_configuration>>
         FOR test_script IN gcur_test_scripts
         LOOP
-            l_result := run_script(a_test_script_in => test_script) AND
+            l_result := run_script(a_test_script_in       => test_script,
+                                   a_parent_run_log_id_in => a_parent_run_log_id_in) AND
                         l_result;
+            IF test_script.stop_on_failure = g_YES
+               AND NOT l_result
+            THEN
+                pete_logger.trace('RUN_ALL_TEST_SCRIPTS: stopping on failure');
+                raise_application_error(-20000, 'Stopping on failure');
+            END IF;
         END LOOP test_scripts_in_configuration;
-    
+        --
         RETURN l_result;
-    
+        --
     END run_all_test_scripts;
 
     --------------------------------------------------------------------------------

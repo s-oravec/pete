@@ -43,7 +43,8 @@ CREATE OR REPLACE PACKAGE pete_configuration_runner IS
     --
     -- Run all test scripts
     --
-    FUNCTION run_all_test_scripts RETURN pete_core.typ_is_success;
+    FUNCTION run_all_test_scripts(a_parent_run_log_id_in IN pete_run_log.parent_id%TYPE DEFAULT NULL)
+        RETURN pete_core.typ_is_success;
 
 END pete_configuration_runner;
 /

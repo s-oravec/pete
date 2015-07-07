@@ -377,7 +377,7 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
             -- NoFormat End
         LOOP
             --
-            pete_logger.trace('spoustena package ' ||
+            pete_logger.trace('run package ' ||
                               lrec_test_package.object_name);
             l_result := run_hook_method(a_package_name_in      => a_suite_name_in ||
                                                                   '.PETE_BEFORE_EACH',

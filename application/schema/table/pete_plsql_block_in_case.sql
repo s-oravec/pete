@@ -6,6 +6,7 @@ create table PETE_PLSQL_BLOCK_IN_CASE
   input_argument_id  INTEGER,
   expected_result_id INTEGER,
   block_order        INTEGER,
+  stop_on_failure    VARCHAR2(1) default 'N' not null,
   run_modifier       VARCHAR2(30),
   description        VARCHAR2(4000)
 )
@@ -25,6 +26,8 @@ comment on column PETE_PLSQL_BLOCK_IN_CASE.expected_result_id
   is 'Expected result identifier';
 comment on column PETE_PLSQL_BLOCK_IN_CASE.block_order
   is 'Block order in Test case';
+comment on column PETE_PLSQL_BLOCK_IN_CASE.stop_on_failure
+  is 'Stops test execution on error';
 comment on column PETE_PLSQL_BLOCK_IN_CASE.run_modifier
   is 'Run modifier - ONLY - only this PLSQL block in Test Case is executed; SKIP - this PLSQL block in Test Case will be skipped';
 comment on column PETE_PLSQL_BLOCK_IN_CASE.description
@@ -51,4 +54,8 @@ alter table PETE_PLSQL_BLOCK_IN_CASE
 alter table PETE_PLSQL_BLOCK_IN_CASE
   add constraint PETE_PLSQL_BLOCK_IN_CASE_CHK01
   check (run_modifier is null or run_modifier in ('ONLY','SKIP')
+  );
+alter table PETE_PLSQL_BLOCK_IN_CASE
+  add constraint PETE_PLSQL_BLOCK_IN_CASE_CHK02
+  check (run_modifier is null or stop_on_failure in ('Y','N')
   );
