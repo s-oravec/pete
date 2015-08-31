@@ -38,6 +38,8 @@ CREATE OR REPLACE PACKAGE ut_pete_convention_runner AS
 
     PROCEDURE unknown_method(d IN VARCHAR2 DEFAULT 'Explicitly called method which is not found should fail');
 
+    PROCEDURE ooafter_all_is_always_called(d in varchar2 := 'After all is always called');
+
     PROCEDURE xxafter_each;
 
 END ut_pete_convention_runner;
@@ -687,6 +689,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
                          a_comment_in => 'Method should be called after before_each succeeds');
     END;
 
+    --------------------------------------------------------------------------------
     PROCEDURE unknown_package(d IN VARCHAR2 DEFAULT 'Explicitly called package which is not found should throw') IS
         l_result pete_core.typ_is_success;
     BEGIN
@@ -701,6 +704,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
                          a_comment_in => 'Expecting result to be FAILURE');
     END unknown_package;
 
+    --------------------------------------------------------------------------------
     PROCEDURE caseInSensitiVe(d IN VARCHAR2 DEFAULT 'Calls should work case insensitive') IS
         l_package_spec VARCHAR2(32767) := 'CREATE OR REPLACE PACKAGE ut_pete_test_cnv_runner AS' ||
                                           chr(10) || '    PROCEDURE method;' ||
@@ -730,6 +734,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
                          a_comment_in => 'Method should be called even if case is mismatched');
     END;
 
+    --------------------------------------------------------------------------------
     PROCEDURE unknown_method(d IN VARCHAR2 DEFAULT 'Explicitly called method which is not found should fail') IS
         l_package_spec VARCHAR2(32767) := 'CREATE OR REPLACE PACKAGE ut_pete_test_cnv_runner AS' ||
                                           chr(10) || '    PROCEDURE method;' ||
@@ -759,6 +764,39 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         --assert
         pete_assert.this(a_value_in   => not l_result,
                          a_comment_in => 'Non existing method call should fail');
+    END;
+
+    --------------------------------------------------------------------------------
+    PROCEDURE ooafter_all_is_always_called(d in varchar2 := 'After all is always called') is
+        -- NoFormat Start
+        l_package_spec VARCHAR2(32767) :=
+        'CREATE OR REPLACE PACKAGE ut_pete_test_cnv_runner AS' || chr(10) ||
+        '    PROCEDURE after_all;' || chr(10) ||
+        'END;';
+
+        l_package_body VARCHAR2(32767) :=
+        'CREATE OR REPLACE PACKAGE BODY ut_pete_test_cnv_runner AS' || chr(10) ||
+        '    PROCEDURE after_all IS' || chr(10) ||
+        '    BEGIN' || chr(10) ||
+        '        pete_logger.log_method_description(''This method should be called'');' || chr(10) ||
+        '        ut_pete_convention_runner.log_call(''CALLED'');' || chr(10) ||
+        '    END;' || chr(10) ||
+        'END;';
+        -- NoFormat End
+        l_result pete_core.typ_is_success;
+    BEGIN
+        --log
+        pete_logger.log_method_description(d);
+        --prepare
+        EXECUTE IMMEDIATE l_package_spec;
+        EXECUTE IMMEDIATE l_package_body;
+        --test and assert
+        l_result := pete_convention_runner.run_package(a_package_name_in      => 'UT_PETE_TEST_CNV_RUNNER',
+                                                       a_parent_run_log_id_in => pete_core.get_last_run_log_id);
+        --assert
+        pete_assert.this(a_value_in   => l_result,
+                         a_comment_in => 'Expecting result to be SUCCESS');
+        pete_assert.eq(a_expected_in => gc_CALLED, a_actual_in => g_call_log);
     END;
 
 END ut_pete_convention_runner;

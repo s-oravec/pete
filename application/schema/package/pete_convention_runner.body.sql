@@ -283,6 +283,12 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
                     pete_logger.trace('ERROR>' || sqlerrm);
                     l_result := FALSE;
             END test;
+
+            --after all hook
+            l_result := l_result and run_hook_method(a_package_name_in      => a_package_name_in,
+                                                     a_hook_method_name_in  => 'AFTER_ALL',
+                                                     a_parent_run_log_id_in => l_run_log_id);
+
         ELSE
             pete_logger.trace('unknown package  ' || a_package_name_in);
             l_result := FALSE;
