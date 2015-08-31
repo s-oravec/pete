@@ -38,9 +38,9 @@ CREATE OR REPLACE PACKAGE ut_pete_convention_runner AS
 
     PROCEDURE unknown_method(d IN VARCHAR2 DEFAULT 'Explicitly called method which is not found should fail');
 
-    PROCEDURE ooafter_all_is_always_called(d in varchar2 := 'After all is always called');
+    PROCEDURE after_all_is_always_called(d in varchar2 := 'After all is always called');
 
-    PROCEDURE xxafter_each;
+    PROCEDURE after_each;
 
 END ut_pete_convention_runner;
 /
@@ -63,7 +63,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
     END;
 
     --------------------------------------------------------------------------------  
-    PROCEDURE xxafter_each IS
+    PROCEDURE after_each IS
     BEGIN
         BEGIN
             EXECUTE IMMEDIATE 'drop package ut_oopete_test_cnv_runner';
@@ -767,7 +767,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
     END;
 
     --------------------------------------------------------------------------------
-    PROCEDURE ooafter_all_is_always_called(d in varchar2 := 'After all is always called') is
+    PROCEDURE after_all_is_always_called(d in varchar2 := 'After all is always called') is
         -- NoFormat Start
         l_package_spec VARCHAR2(32767) :=
         'CREATE OR REPLACE PACKAGE ut_pete_test_cnv_runner AS' || chr(10) ||
