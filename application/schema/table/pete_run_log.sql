@@ -5,10 +5,10 @@ create table PETE_RUN_LOG
   parent_id          INTEGER,
   plsql_block_id     INTEGER,
   test_case_id       INTEGER,
-  test_script_id     integer,
+  test_script_id     INTEGER,
   object_type        VARCHAR2(30) not null,
   object_name        VARCHAR2(92) not null, 
-  result             VARCHAR2(10), -- SUCCESS, FAILURE, RUNNING
+  result             INTEGER,
   description        VARCHAR2(4000),
   test_begin         TIMESTAMP(6),
   test_end           TIMESTAMP(6),
@@ -23,3 +23,5 @@ create table PETE_RUN_LOG
 alter table PETE_RUN_LOG
   add constraint PETE_RUN_LOG_PK primary key (id)
 ;
+
+--TODO: Comments

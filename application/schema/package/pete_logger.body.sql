@@ -117,7 +117,7 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
         --
         trace('LOG_END: ' || 'a_run_log_id_in:' ||
               NVL(to_char(a_run_log_id_in), 'NULL') || ', ' || 'a_result_in:' ||
-              NVL(a_result_in, 'NULL') || ', ' || 'a_error_code_in:' ||
+              NVL(to_char(a_result_in), 'NULL') || ', ' || 'a_error_code_in:' ||
               NVL(to_char(a_error_code_in), 'NULL') || ', ' ||
               'a_error_stack_in:' || NVL(a_error_stack_in, 'NULL') || ', ' ||
               'a_error_backtrace_in:' || NVL(a_error_backtrace_in, 'NULL'));
@@ -132,6 +132,7 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
          WHERE id = a_run_log_id_in;
         --
         COMMIT;
+        --
     END;
 
     --------------------------------------------------------------------------------
@@ -158,7 +159,6 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
         PRAGMA AUTONOMOUS_TRANSACTION;
         lrec_pete_run_log pete_run_log%ROWTYPE;
     BEGIN
-    
         --
         lrec_pete_run_log.id          := petes_run_log.nextval;
         lrec_pete_run_log.parent_id   := g_parent_run_log_id_in;
@@ -177,6 +177,7 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
         INSERT INTO pete_run_log VALUES lrec_pete_run_log;
         --
         COMMIT;
+        --
     END log_assert;
 
     --
@@ -248,10 +249,10 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
     END;
 
     --------------------------------------------------------------------------------
-    PROCEDURE print_top_level_result(a_result_in IN BOOLEAN) IS
+    PROCEDURE print_top_level_result(a_result_in IN pete_core.typ_execution_result) IS
     BEGIN
         dbms_output.put_line('.');
-        IF a_result_in
+        IF a_result_in = pete_core.g_SUCCESS
         THEN
             dbms_output.put_line('.   SSSS   U     U   CCC     CCC   EEEEEEE   SSSS     SSSS   ');
             dbms_output.put_line('.  S    S  U     U  C   C   C   C  E        S    S   S    S  ');
@@ -277,7 +278,7 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
 
     --------------------------------------------------------------------------------
     PROCEDURE output_log(a_run_log_id_in IN pete_run_log.id%TYPE) IS
-        l_top_level_result BOOLEAN;
+        l_top_level_result pete_core.typ_execution_result;
     BEGIN
         trace('OUTPUT_LOG: ' || 'a_run_log_id_in:' ||
               NVL(to_char(a_run_log_id_in), 'NULL'));
@@ -288,14 +289,9 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
             --first record in the view is the top level one
             IF (l_top_level_result IS NULL)
             THEN
-                IF (log_line.result = pete_core.g_SUCCESS)
-                THEN
-                    l_top_level_result := TRUE;
-                ELSE
-                    l_top_level_result := FALSE;
-                END IF;
+                l_top_level_result := log_line.result;
             END IF;
-
+        
             IF (do_output(a_log_line_in => log_line))
             THEN
                 --TODO: move to petev_output_run_log

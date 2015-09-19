@@ -34,33 +34,30 @@ CREATE OR REPLACE PACKAGE BODY pete_core AS
     --------------------------------------------------------------------------------
     PROCEDURE end_test
     (
-        a_run_log_id_in IN pete_run_log.id%TYPE,
-        a_is_succes_in  IN typ_execution_result_int DEFAULT g_SUCCESS_INT,
-        a_xml_in_in     IN pete_run_log.xml_in%TYPE DEFAULT NULL,
-        a_xml_out_in    IN pete_run_log.xml_out%TYPE DEFAULT NULL,
-        a_error_code_in IN pete_run_log.error_code%TYPE DEFAULT NULL
+        a_run_log_id_in       IN pete_run_log.id%TYPE,
+        a_execution_result_in IN typ_execution_result DEFAULT g_SUCCESS,
+        a_xml_in_in           IN pete_run_log.xml_in%TYPE DEFAULT NULL,
+        a_xml_out_in          IN pete_run_log.xml_out%TYPE DEFAULT NULL,
+        a_error_code_in       IN pete_run_log.error_code%TYPE DEFAULT NULL
     ) IS
     BEGIN
         --
     
         pete_logger.log_end(a_run_log_id_in      => a_run_log_id_in,
-                            a_result_in          => CASE
-                                                        WHEN a_is_succes_in = g_SUCCESS_INT THEN
-                                                         pete_core.g_SUCCESS
-                                                        ELSE
-                                                         pete_core.g_FAILURE
-                                                    END,
+                            a_result_in          => a_execution_result_in,
                             a_xml_in_in          => a_xml_in_in,
                             a_xml_out_in         => a_xml_out_in,
                             a_error_code_in      => a_error_code_in,
                             a_error_stack_in     => CASE
-                                                        WHEN NOT a_is_succes_in = g_SUCCESS_INT THEN
+                                                        WHEN NOT a_execution_result_in =
+                                                              g_SUCCESS THEN
                                                          dbms_utility.format_error_stack
                                                         ELSE
                                                          NULL
                                                     END,
                             a_error_backtrace_in => CASE
-                                                        WHEN NOT a_is_succes_in = g_SUCCESS_INT THEN
+                                                        WHEN NOT a_execution_result_in =
+                                                              g_SUCCESS THEN
                                                          dbms_utility.format_error_backtrace
                                                         ELSE
                                                          NULL

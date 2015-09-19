@@ -20,7 +20,7 @@ CREATE OR REPLACE PACKAGE pete_convention_runner AS
         a_suite_name_in        IN pete_core.typ_object_name DEFAULT USER,
         a_description_in       IN pete_core.typ_description DEFAULT NULL,
         a_parent_run_log_id_in IN pete_run_log.parent_id%TYPE DEFAULT NULL
-    ) RETURN pete_core.typ_execution_result_int;
+    ) RETURN pete_core.typ_execution_result;
 
     --
     -- Tests one package
@@ -38,7 +38,7 @@ CREATE OR REPLACE PACKAGE pete_convention_runner AS
         a_method_name_like_in  IN pete_core.typ_object_name DEFAULT NULL,
         a_description_in       IN pete_core.typ_description DEFAULT NULL,
         a_parent_run_log_id_in IN pete_run_log.parent_id%TYPE DEFAULT NULL
-    ) RETURN pete_core.typ_execution_result_int;
+    ) RETURN pete_core.typ_execution_result;
 
     --
     -- Tests one method
@@ -58,7 +58,7 @@ CREATE OR REPLACE PACKAGE pete_convention_runner AS
         a_object_type_in       IN pete_core.typ_object_type,
         a_description_in       IN pete_core.typ_description DEFAULT NULL,
         a_parent_run_log_id_in IN pete_run_log.parent_id%TYPE DEFAULT NULL
-    ) RETURN pete_core.typ_execution_result_int;
+    ) RETURN pete_core.typ_execution_result;
 
 END;
 /

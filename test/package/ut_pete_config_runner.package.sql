@@ -35,7 +35,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_config_runner AS
     g_input_argument_id           pete_input_argument.id%TYPE;
     g_expected_result_id          pete_expected_result.id%TYPE;
 
-    g_result pete_core.typ_execution_result_int;
+    g_result pete_core.typ_execution_result;
 
     --------------------------------------------------------------------------------
     PROCEDURE before_each IS
@@ -189,7 +189,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_config_runner AS
         --
         pete_assert.this(NOT pete_configuration_runner.run_case(a_case_name_in         => 'test',
                                                                 a_parent_run_log_id_in => pete_core.get_last_run_log_id) =
-                          pete_core.g_SUCCESS_INT);
+                          pete_core.g_SUCCESS);
         --
         helper_delete_input;
         helper_delete_output;

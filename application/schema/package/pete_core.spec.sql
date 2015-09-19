@@ -9,36 +9,30 @@ CREATE OR REPLACE PACKAGE pete_core AS
     SUBTYPE typ_object_type IS pete_run_log.object_type%TYPE;
     -- testing object type constants
     -- top level object
-    g_OBJECT_TYPE_PETE    CONSTANT typ_object_type := 'PETE';
+    g_OBJECT_TYPE_PETE CONSTANT typ_object_type := 'PETE';
     -- test suite
-    g_OBJECT_TYPE_SUITE   CONSTANT typ_object_type := 'SUITE';
+    g_OBJECT_TYPE_SUITE CONSTANT typ_object_type := 'SUITE';
     -- test script
-    g_OBJECT_TYPE_SCRIPT  CONSTANT typ_object_type := 'SCRIPT';
+    g_OBJECT_TYPE_SCRIPT CONSTANT typ_object_type := 'SCRIPT';
     -- test case
-    g_OBJECT_TYPE_CASE    CONSTANT typ_object_type := 'CASE';
+    g_OBJECT_TYPE_CASE CONSTANT typ_object_type := 'CASE';
     -- PL/SQL block
-    g_OBJECT_TYPE_BLOCK   CONSTANT typ_object_type := 'BLOCK';
+    g_OBJECT_TYPE_BLOCK CONSTANT typ_object_type := 'BLOCK';
     -- Oracle DB schema
-    g_OBJECT_TYPE_SCHEMA  CONSTANT typ_object_type := 'SCHEMA';
+    g_OBJECT_TYPE_SCHEMA CONSTANT typ_object_type := 'SCHEMA';
     -- PL/SQL package
     g_OBJECT_TYPE_PACKAGE CONSTANT typ_object_type := 'PACKAGE';
     -- PL/SQL pacakge method
-    g_OBJECT_TYPE_METHOD  CONSTANT typ_object_type := 'METHOD';
+    g_OBJECT_TYPE_METHOD CONSTANT typ_object_type := 'METHOD';
     -- Assert
-    g_OBJECT_TYPE_ASSERT  CONSTANT typ_object_type := 'ASSERT';
+    g_OBJECT_TYPE_ASSERT CONSTANT typ_object_type := 'ASSERT';
     -- PL/SQL package hook method
-    g_OBJECT_TYPE_HOOK    CONSTANT typ_object_type := 'HOOK';
+    g_OBJECT_TYPE_HOOK CONSTANT typ_object_type := 'HOOK';
 
     -- execution result subtype
-    SUBTYPE typ_execution_result IS pete_run_log.result%TYPE;
-    -- execution result constants
-    g_SUCCESS CONSTANT typ_execution_result := 'SUCCESS';
-    g_FAILURE CONSTANT typ_execution_result := 'FAILURE';
-
-    -- is execution result success?
-    SUBTYPE typ_execution_result_int IS pls_integer;
-    g_SUCCESS_INT CONSTANT typ_execution_result_int := 0;
-    g_FAILURE_INT CONSTANT typ_execution_result_int := 1;
+    SUBTYPE typ_execution_result IS PLS_INTEGER;
+    g_SUCCESS CONSTANT typ_execution_result := 0;
+    g_FAILURE CONSTANT typ_execution_result := 1;
 
     -- object name
     SUBTYPE typ_object_name IS pete_run_log.object_name%TYPE;
@@ -65,7 +59,6 @@ CREATE OR REPLACE PACKAGE pete_core AS
         a_description_in       IN typ_description DEFAULT NULL
     ) RETURN pete_run_log.id%TYPE;
 
-
     --
     -- Core end test implementation
     -- updates record for test run with result and detailed info
@@ -78,11 +71,11 @@ CREATE OR REPLACE PACKAGE pete_core AS
     --
     PROCEDURE end_test
     (
-        a_run_log_id_in IN pete_run_log.id%TYPE,
-        a_is_succes_in  IN typ_execution_result_int DEFAULT g_SUCCESS_INT,
-        a_xml_in_in     IN pete_run_log.xml_in%TYPE DEFAULT NULL,
-        a_xml_out_in    IN pete_run_log.xml_out%TYPE DEFAULT NULL,
-        a_error_code_in IN pete_run_log.error_code%TYPE DEFAULT NULL
+        a_run_log_id_in       IN pete_run_log.id%TYPE,
+        a_execution_result_in IN typ_execution_result DEFAULT g_SUCCESS,
+        a_xml_in_in           IN pete_run_log.xml_in%TYPE DEFAULT NULL,
+        a_xml_out_in          IN pete_run_log.xml_out%TYPE DEFAULT NULL,
+        a_error_code_in       IN pete_run_log.error_code%TYPE DEFAULT NULL
     );
 
     --
