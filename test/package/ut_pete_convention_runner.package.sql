@@ -38,7 +38,7 @@ CREATE OR REPLACE PACKAGE ut_pete_convention_runner AS
 
     PROCEDURE unknown_method(d IN VARCHAR2 DEFAULT 'Explicitly called method which is not found should fail');
 
-    PROCEDURE after_all_is_always_called(d in varchar2 := 'After all is always called');
+    PROCEDURE after_all_is_always_called(d IN VARCHAR2 := 'After all is always called');
 
     PROCEDURE after_each;
 
@@ -89,11 +89,12 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
 
     --------------------------------------------------------------------------------
     FUNCTION has_been_called(a_value_in IN VARCHAR2) RETURN BOOLEAN IS
-      l_result boolean;
+        l_result BOOLEAN;
     BEGIN
         pete_Logger.trace('has_been_called : a_value_in ' || a_value_in);
         l_result := gtab_call_log.exists(a_value_in);
-        pete_logger.trace('returns ' || case l_result when true then 'TRUE' when false then 'FALSE' else null end);
+        pete_logger.trace('returns ' || CASE l_result WHEN TRUE THEN 'TRUE' WHEN
+                          FALSE THEN 'FALSE' ELSE NULL END);
         RETURN l_result;
     END;
 
@@ -114,7 +115,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         '    END;' || chr(10) ||
         'END;';
         -- NoFormat End
-        l_result pete_core.typ_is_success;
+        l_result pete_core.typ_execution_result_int;
     BEGIN
         --log
         pete_logger.log_method_description(d);
@@ -125,7 +126,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         l_result := pete_convention_runner.run_package(a_package_name_in      => 'UT_PETE_TEST_CNV_RUNNER',
                                                        a_parent_run_log_id_in => pete_core.get_last_run_log_id);
         --assert
-        pete_assert.this(a_value_in   => l_result,
+        pete_assert.this(a_value_in   => l_result = pete_core.g_SUCCESS_INT,
                          a_comment_in => 'Expecting result to be SUCCESS');
         pete_assert.eq(a_expected_in => gc_CALLED, a_actual_in => g_call_log);
     END;
@@ -147,7 +148,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         '    END;' || chr(10) ||
         'END;';
         -- NoFormat End
-        l_result pete_core.typ_is_success;
+        l_result pete_core.typ_execution_result_int;
     BEGIN
         --log
         pete_logger.log_method_description(d);
@@ -158,7 +159,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         l_result := pete_convention_runner.run_package(a_package_name_in      => 'UT_PETE_TEST_CNV_RUNNER',
                                                        a_parent_run_log_id_in => pete_core.get_last_run_log_id);
         --assert
-        pete_assert.this(a_value_in   => l_result,
+        pete_assert.this(a_value_in   => l_result = pete_core.g_SUCCESS_INT,
                          a_comment_in => 'Expecting result to be SUCCESS');
         pete_assert.eq(a_expected_in => gc_CALLED, a_actual_in => g_call_log);
     END;
@@ -179,7 +180,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         '    END;' || chr(10) ||
         'END;';
         -- NoFormat End
-        l_result pete_core.typ_is_success;
+        l_result pete_core.typ_execution_result_int;
     BEGIN
         --log
         pete_logger.log_method_description(d);
@@ -190,7 +191,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         l_result := pete_convention_runner.run_package(a_package_name_in      => 'UT_PETE_TEST_CNV_RUNNER',
                                                        a_parent_run_log_id_in => pete_core.get_last_run_log_id);
         --assert
-        pete_assert.this(a_value_in   => l_result,
+        pete_assert.this(a_value_in   => l_result = pete_core.g_SUCCESS_INT,
                          a_comment_in => 'Expecting result to be SUCCESS');
     END;
 
@@ -211,7 +212,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         '    END;' || chr(10) ||
         'END;'; --
         -- NoFormat End
-        l_result pete_core.typ_is_success;
+        l_result pete_core.typ_execution_result_int;
     BEGIN
     
         --log
@@ -223,7 +224,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         l_result := pete_convention_runner.run_package(a_package_name_in      => 'UT_PETE_TEST_CNV_RUNNER',
                                                        a_parent_run_log_id_in => pete_core.get_last_run_log_id);
         --assert
-        pete_assert.this(a_value_in   => l_result,
+        pete_assert.this(a_value_in   => l_result = pete_core.g_SUCCESS_INT,
                          a_comment_in => 'Expecting result to be SUCCESS');
     END;
 
@@ -258,7 +259,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         '    END;' || chr(10) ||
         'END;';
         -- NoFormat End
-        l_result pete_core.typ_is_success;
+        l_result pete_core.typ_execution_result_int;
     BEGIN
         --log
         pete_logger.log_method_description(d);
@@ -275,7 +276,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
                                                                     a_parent_run_log_id_in => pete_core.get_last_run_log_id);
         
             --assert
-            pete_assert.this(a_value_in   => l_result,
+            pete_assert.this(a_value_in   => l_result = pete_core.g_SUCCESS_INT,
                              a_comment_in => 'Expecting result to be SUCCESS');
             pete_assert.eq(a_expected_in => gc_CALLED,
                            a_actual_in   => g_call_log);
@@ -309,7 +310,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         '    END;' || chr(10) ||
         'END;'; --
         -- NoFormat End
-        l_result pete_core.typ_is_success;
+        l_result pete_core.typ_execution_result_int;
     BEGIN
         --log
         pete_logger.log_method_description(d);
@@ -323,7 +324,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
             l_result            := pete_convention_runner.run_suite(a_suite_name_in        => USER,
                                                                     a_parent_run_log_id_in => pete_core.get_last_run_log_id);
             --assert
-            pete_assert.this(a_value_in   => l_result,
+            pete_assert.this(a_value_in   => l_result = pete_core.g_SUCCESS_INT,
                              a_comment_in => 'Expecting result to be SUCCESS');
             pete_assert.eq(a_expected_in => gc_CALLED,
                            a_actual_in   => g_call_log);
@@ -357,7 +358,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         '    END;' || chr(10) ||
         'END;'; --
         -- NoFormat End
-        l_result pete_core.typ_is_success;
+        l_result pete_core.typ_execution_result_int;
     BEGIN
         --log
         pete_logger.log_method_description(d);
@@ -371,7 +372,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
             l_result            := pete_convention_runner.run_package(a_package_name_in      => 'UT_PETE_TEST_CNV_RUNNER',
                                                                       a_parent_run_log_id_in => pete_core.get_last_run_log_id);
             --assert
-            pete_assert.this(a_value_in   => l_result,
+            pete_assert.this(a_value_in   => l_result = pete_core.g_SUCCESS_INT,
                              a_comment_in => 'Expecting result to be SUCCESS');
             pete_assert.eq(a_expected_in => gc_CALLED,
                            a_actual_in   => g_call_log);
@@ -405,7 +406,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         '    END;' || chr(10) ||
         'END;'; --
         -- NoFormat End
-        l_result pete_core.typ_is_success;
+        l_result pete_core.typ_execution_result_int;
     BEGIN
         --log
         pete_logger.log_method_description(d);
@@ -419,7 +420,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
             l_result            := pete_convention_runner.run_suite(a_suite_name_in        => USER,
                                                                     a_parent_run_log_id_in => pete_core.get_last_run_log_id);
             --assert
-            pete_assert.this(a_value_in   => l_result,
+            pete_assert.this(a_value_in   => l_result = pete_core.g_SUCCESS_INT,
                              a_comment_in => 'Expecting result to be SUCCESS');
             pete_assert.eq(a_expected_in => gc_CALLED,
                            a_actual_in   => g_call_log);
@@ -453,7 +454,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         '    END;' || chr(10) ||
         'END;'; --
         -- NoFormat End
-        l_result pete_core.typ_is_success;
+        l_result pete_core.typ_execution_result_int;
     BEGIN
         --log
         pete_logger.log_method_description(d);
@@ -467,7 +468,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
             l_result            := pete_convention_runner.run_package(a_package_name_in      => 'UT_PETE_TEST_CNV_RUNNER',
                                                                       a_parent_run_log_id_in => pete_core.get_last_run_log_id);
             --assert
-            pete_assert.this(a_value_in   => l_result,
+            pete_assert.this(a_value_in   => l_result = pete_core.g_SUCCESS_INT,
                              a_comment_in => 'Expecting result to be SUCCESS');
             pete_assert.eq(a_expected_in => gc_CALLED,
                            a_actual_in   => g_call_log);
@@ -501,7 +502,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         '    END;' || chr(10) ||
         'END;'; --
         -- NoFormat End
-        l_result pete_core.typ_is_success;
+        l_result pete_core.typ_execution_result_int;
     BEGIN
         --log
         pete_logger.log_method_description(d);
@@ -517,7 +518,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         l_result := pete_convention_runner.run_package(a_package_name_in      => 'UT_PETE_TEST_CNV_RUNNER',
                                                        a_parent_run_log_id_in => pete_core.get_last_run_log_id);
         --assert
-        pete_assert.eq(a_expected_in => FALSE,
+        pete_assert.eq(a_expected_in => pete_core.g_FAILURE_INT,
                        a_actual_in   => l_result,
                        a_comment_in  => 'Expecting result to be FAILURE');
         pete_assert.eq(a_expected_in => gc_NOT_CALLED,
@@ -564,7 +565,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         '    END;' || chr(10) ||
         'END;'; --
         -- NoFormat End
-        l_result pete_core.typ_is_success;
+        l_result pete_core.typ_execution_result_int;
     BEGIN
         --log
         pete_logger.log_method_description(d);
@@ -577,7 +578,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         l_result := pete_convention_runner.run_package(a_package_name_in      => 'UT_PETE_TEST_CNV_RUNNER',
                                                        a_parent_run_log_id_in => pete_core.get_last_run_log_id);
         --assert
-        pete_assert.eq(a_expected_in => FALSE,
+        pete_assert.eq(a_expected_in => pete_core.g_FAILURE_INT,
                        a_actual_in   => l_result,
                        a_comment_in  => 'Expecting result to be FAILURE');
         pete_assert.this(a_value_in   => NOT has_been_called('CALLED1'),
@@ -609,7 +610,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         '    END;' || chr(10) ||
         'END;'; --
         -- NoFormat End
-        l_result pete_core.typ_is_success;
+        l_result pete_core.typ_execution_result_int;
     BEGIN
         --log
         pete_logger.log_method_description(d);
@@ -622,7 +623,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         l_result := pete_convention_runner.run_package(a_package_name_in      => 'UT_PETE_TEST_CNV_RUNNER',
                                                        a_parent_run_log_id_in => pete_core.get_last_run_log_id);
         --assert
-        pete_assert.eq(a_expected_in => FALSE,
+        pete_assert.eq(a_expected_in => pete_core.g_FAILURE_INT,
                        a_actual_in   => l_result,
                        a_comment_in  => 'Expecting result to be FAILURE');
         pete_assert.eq(a_expected_in => gc_CALLED, a_actual_in => g_call_log);
@@ -667,7 +668,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         '    END;' || chr(10) ||
         'END;'; --
         -- NoFormat End
-        l_result pete_core.typ_is_success;
+        l_result pete_core.typ_execution_result_int;
     BEGIN
         --log
         pete_logger.log_method_description(d);
@@ -680,7 +681,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         l_result := pete_convention_runner.run_package(a_package_name_in      => 'UT_PETE_TEST_CNV_RUNNER',
                                                        a_parent_run_log_id_in => pete_core.get_last_run_log_id);
         --assert
-        pete_assert.eq(a_expected_in => FALSE,
+        pete_assert.eq(a_expected_in => pete_core.g_FAILURE_INT,
                        a_actual_in   => l_result,
                        a_comment_in  => 'Expecting result to be FAILURE');
         pete_assert.this(a_value_in   => has_been_called('CALLED1'),
@@ -691,7 +692,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
 
     --------------------------------------------------------------------------------
     PROCEDURE unknown_package(d IN VARCHAR2 DEFAULT 'Explicitly called package which is not found should throw') IS
-        l_result pete_core.typ_is_success;
+        l_result pete_core.typ_execution_result_int;
     BEGIN
         pete_logger.log_method_description(d);
         --prepare
@@ -700,7 +701,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         l_result := pete_convention_runner.run_package(a_package_name_in      => 'Non_exIsting_package',
                                                        a_parent_run_log_id_in => pete_core.get_last_run_log_id);
         --assert
-        pete_assert.this(a_value_in   => NOT l_result,
+        pete_assert.this(a_value_in   => NOT l_result = pete_core.g_SUCCESS_INT,
                          a_comment_in => 'Expecting result to be FAILURE');
     END unknown_package;
 
@@ -719,7 +720,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
                                           chr(10) || '    END;' || chr(10) ||
                                           'END;'; --
         -- NoFormat End
-        l_result pete_core.typ_is_success;
+        l_result pete_core.typ_execution_result_int;
     BEGIN
         --log
         pete_logger.log_method_description(d);
@@ -730,7 +731,8 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         l_result := pete_convention_runner.run_package(a_package_name_in      => 'UT_PETE_TEST_CNV_Runner',
                                                        a_parent_run_log_id_in => pete_core.get_last_run_log_id);
         --assert
-        pete_assert.this(a_value_in   => has_been_called('CALLED1') and l_result,
+        pete_assert.this(a_value_in   => has_been_called('CALLED1') AND
+                                         l_result = pete_core.g_SUCCESS_INT,
                          a_comment_in => 'Method should be called even if case is mismatched');
     END;
 
@@ -749,8 +751,8 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
                                           chr(10) || '    END;' || chr(10) ||
                                           'END;'; --
         -- NoFormat End
-        l_result pete_core.typ_is_success;
---        l_exception boolean;
+        l_result pete_core.typ_execution_result_int;
+        --        l_exception boolean;
     BEGIN
         --log
         pete_logger.log_method_description(d);
@@ -758,22 +760,22 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         EXECUTE IMMEDIATE l_package_spec;
         EXECUTE IMMEDIATE l_package_body;
         --run test
-            l_result := pete_convention_runner.run_package(a_package_name_in      => 'UT_PETE_TEST_CNV_Runner',
-                                                           a_method_name_like_in => 'non_existing_method',
-                                                           a_parent_run_log_id_in => pete_core.get_last_run_log_id);
+        l_result := pete_convention_runner.run_package(a_package_name_in      => 'UT_PETE_TEST_CNV_Runner',
+                                                       a_method_name_like_in  => 'non_existing_method',
+                                                       a_parent_run_log_id_in => pete_core.get_last_run_log_id);
         --assert
-        pete_assert.this(a_value_in   => not l_result,
+        pete_assert.this(a_value_in   => NOT l_result = pete_core.g_SUCCESS_INT,
                          a_comment_in => 'Non existing method call should fail');
     END;
 
     --------------------------------------------------------------------------------
-    PROCEDURE after_all_is_always_called(d in varchar2 := 'After all is always called') is
+    PROCEDURE after_all_is_always_called(d IN VARCHAR2 := 'After all is always called') IS
         -- NoFormat Start
         l_package_spec VARCHAR2(32767) :=
         'CREATE OR REPLACE PACKAGE ut_pete_test_cnv_runner AS' || chr(10) ||
         '    PROCEDURE after_all;' || chr(10) ||
         'END;';
-
+        
         l_package_body VARCHAR2(32767) :=
         'CREATE OR REPLACE PACKAGE BODY ut_pete_test_cnv_runner AS' || chr(10) ||
         '    PROCEDURE after_all IS' || chr(10) ||
@@ -783,7 +785,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         '    END;' || chr(10) ||
         'END;';
         -- NoFormat End
-        l_result pete_core.typ_is_success;
+        l_result pete_core.typ_execution_result_int;
     BEGIN
         --log
         pete_logger.log_method_description(d);
@@ -794,7 +796,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         l_result := pete_convention_runner.run_package(a_package_name_in      => 'UT_PETE_TEST_CNV_RUNNER',
                                                        a_parent_run_log_id_in => pete_core.get_last_run_log_id);
         --assert
-        pete_assert.this(a_value_in   => l_result,
+        pete_assert.this(a_value_in   => l_result = pete_core.g_SUCCESS_INT,
                          a_comment_in => 'Expecting result to be SUCCESS');
         pete_assert.eq(a_expected_in => gc_CALLED, a_actual_in => g_call_log);
     END;

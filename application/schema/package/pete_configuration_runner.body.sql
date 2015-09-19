@@ -115,7 +115,7 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
     (
         a_block_instance_in_case_in IN gcur_test_case_instance%ROWTYPE,
         a_parent_run_log_id_in      IN pete_run_log.parent_id%TYPE DEFAULT NULL
-    ) RETURN pete_core.typ_is_success IS
+    ) RETURN pete_core.typ_execution_result_int IS
         --
     
         l_plsql_block_template  VARCHAR2(32767) --
@@ -129,7 +129,7 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
         l_xml_out xmltype;
         --
         l_run_log_id pete_run_log.id%TYPE;
-        l_result     pete_core.typ_is_success := TRUE;
+        l_result     pete_core.typ_execution_result_int := pete_core.g_SUCCESS_INT;
     BEGIN
         -- create anonymous plsql block
         pete_logger.trace('RUN_BLOCK: ' || 'a_parent_run_log_id_in:' ||
@@ -177,11 +177,11 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
             pete_core.end_test(a_run_log_id_in => l_run_log_id,
                                a_xml_in_in     => a_block_instance_in_case_in.input,
                                a_xml_out_in    => l_xml_out);
-            l_result := TRUE;
+            l_result := pete_core.g_SUCCESS_INT;
             --
         EXCEPTION
             WHEN OTHERS THEN
-                l_result := FALSE;
+                l_result := pete_core.g_FAILURE_INT;
                 pete_core.end_test(a_run_log_id_in => l_run_log_id,
                                    a_is_succes_in  => l_result,
                                    a_xml_in_in     => a_block_instance_in_case_in.input,
@@ -189,8 +189,7 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
                                    a_error_code_in => SQLCODE);
         END;
     
-        pete_logger.trace('l_result ' || CASE WHEN l_result THEN 'TRUE' ELSE
-                          'FALSE' END);
+        pete_logger.trace('l_result ' || l_result);
         RETURN l_result;
     
     END run_block;
@@ -200,9 +199,9 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
     (
         a_test_case_in         IN gcur_test_case_in_test_script%ROWTYPE,
         a_parent_run_log_id_in IN pete_run_log.parent_id%TYPE DEFAULT NULL
-    ) RETURN pete_core.typ_is_success IS
+    ) RETURN pete_core.typ_execution_result_int IS
         l_run_log_id pete_run_log.id%TYPE;
-        l_result     pete_core.typ_is_success := TRUE;
+        l_result     pete_core.typ_execution_result_int := pete_core.g_SUCCESS_INT;
     BEGIN
         l_run_log_id := pete_core.begin_test(a_object_name_in       => a_test_case_in.name,
                                              a_object_type_in       => pete_core.g_OBJECT_TYPE_CASE,
@@ -213,12 +212,12 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
         <<plblock_instances_in_test_case>>
         FOR plblock_instance_in_test_case IN gcur_test_case_instance(p_test_case_id => a_test_case_in.id)
         LOOP
-            l_result := run_block(a_block_instance_in_case_in => plblock_instance_in_test_case,
-                                  a_parent_run_log_id_in      => l_run_log_id) AND
-                        l_result;
+            l_result := abs(run_block(a_block_instance_in_case_in => plblock_instance_in_test_case,
+                                      a_parent_run_log_id_in      => l_run_log_id)) +
+                        abs(l_result);
             --
             IF plblock_instance_in_test_case.stop_on_failure = g_YES
-               AND NOT l_result
+               AND NOT l_result = pete_core.g_SUCCESS_INT
             THEN
                 pete_logger.trace('RUN_CASE: stopping on failure');
                 raise_application_error(-20000, 'Stopping on failure');
@@ -238,7 +237,7 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
     (
         a_case_name_in         IN pete_core.typ_object_name,
         a_parent_run_log_id_in IN pete_run_log.parent_id%TYPE DEFAULT NULL
-    ) RETURN pete_core.typ_is_success IS
+    ) RETURN pete_core.typ_execution_result_int IS
         lrec_test_case gcur_test_case_in_test_script%ROWTYPE;
     BEGIN
         SELECT pete_test_case.*, g_NO AS stop_on_failure
@@ -256,8 +255,8 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
     (
         a_test_script_in       IN pete_test_script%ROWTYPE,
         a_parent_run_log_id_in IN pete_run_log.parent_id%TYPE DEFAULT NULL
-    ) RETURN pete_core.typ_is_success IS
-        l_result     pete_core.typ_is_success := TRUE;
+    ) RETURN pete_core.typ_execution_result_int IS
+        l_result     pete_core.typ_execution_result_int := pete_core.g_SUCCESS_INT;
         l_run_log_id pete_run_log.id%TYPE;
     BEGIN
         l_run_log_id := pete_core.begin_test(a_object_name_in       => a_test_script_in.name,
@@ -268,12 +267,12 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
         <<test_cases_in_test_script>>
         FOR test_case_in_test_script IN gcur_test_case_in_test_script(p_test_cript_id => a_test_script_in.id)
         LOOP
-            l_result := run_case(a_test_case_in         => test_case_in_test_script,
-                                 a_parent_run_log_id_in => l_run_log_id) AND
-                        l_result;
+            l_result := abs(run_case(a_test_case_in         => test_case_in_test_script,
+                                     a_parent_run_log_id_in => l_run_log_id)) +
+                        abs(l_result);
             --
             IF test_case_in_test_script.stop_on_failure = g_YES
-               AND NOT l_result
+               AND NOT l_result = pete_core.g_SUCCESS_INT
             THEN
                 pete_logger.trace('RUN_SCRIPT: stopping on failure');
                 raise_application_error(-20000, 'Stopping on failure');
@@ -293,7 +292,7 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
     (
         a_script_name_in       IN pete_core.typ_object_name,
         a_parent_run_log_id_in IN pete_run_log.parent_id%TYPE DEFAULT NULL
-    ) RETURN pete_core.typ_is_success IS
+    ) RETURN pete_core.typ_execution_result_int IS
         lrec_test_script pete_test_script%ROWTYPE;
     BEGIN
         SELECT *
@@ -308,17 +307,17 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
 
     -------------------------------------------------------------------------------------------------------------------------------
     FUNCTION run_all_test_scripts(a_parent_run_log_id_in IN pete_run_log.parent_id%TYPE DEFAULT NULL)
-        RETURN pete_core.typ_is_success IS
-        l_result pete_core.typ_is_success := TRUE;
+        RETURN pete_core.typ_execution_result_int IS
+        l_result pete_core.typ_execution_result_int := pete_core.g_SUCCESS_INT;
     BEGIN
         <<test_scripts_in_configuration>>
         FOR test_script IN gcur_test_scripts
         LOOP
-            l_result := run_script(a_test_script_in       => test_script,
-                                   a_parent_run_log_id_in => a_parent_run_log_id_in) AND
-                        l_result;
+            l_result := abs(run_script(a_test_script_in       => test_script,
+                                       a_parent_run_log_id_in => a_parent_run_log_id_in)) +
+                        abs(l_result);
             IF test_script.stop_on_failure = g_YES
-               AND NOT l_result
+               AND NOT l_result = pete_core.g_SUCCESS_INT
             THEN
                 pete_logger.trace('RUN_ALL_TEST_SCRIPTS: stopping on failure');
                 raise_application_error(-20000, 'Stopping on failure');
@@ -334,11 +333,11 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
     (
         a_suite_name_in        IN pete_core.typ_object_name,
         a_parent_run_log_id_in IN pete_run_log.parent_id%TYPE DEFAULT NULL
-    ) RETURN pete_core.typ_is_success IS
+    ) RETURN pete_core.typ_execution_result_int IS
     BEGIN
         raise_application_error(-20000,
                                 'Not implemented - [pete_configuration_runner.run_suite]');
-        RETURN FALSE;
+        RETURN pete_core.g_FAILURE_INT;
     END run_suite;
 
 END pete_configuration_runner;

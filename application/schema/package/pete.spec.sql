@@ -70,6 +70,17 @@ CREATE OR REPLACE PACKAGE pete AS
         a_parent_run_log_id_in  IN INTEGER DEFAULT NULL
     );
 
+    FUNCTION run
+    (
+        a_suite_name_in         IN VARCHAR2 DEFAULT NULL,
+        a_package_name_in       IN VARCHAR2 DEFAULT NULL,
+        a_method_name_in        IN VARCHAR2 DEFAULT NULL,
+        a_script_name_in        IN VARCHAR2 DEFAULT NULL,
+        a_case_name_in          IN VARCHAR2 DEFAULT NULL,
+        a_style_conventional_in IN BOOLEAN DEFAULT NULL,
+        a_parent_run_log_id_in  IN INTEGER DEFAULT NULL
+    ) RETURN pete_core.typ_execution_result_int;
+
     -- Thrown if the input can't be clearly interpreted
     ge_ambiguous_input EXCEPTION;
     gc_AMBIGUOUS_INPUT CONSTANT PLS_INTEGER := -20001;
@@ -96,6 +107,24 @@ CREATE OR REPLACE PACKAGE pete AS
     );
 
     --
+    -- Runs a suite
+    --
+    -- %argument a_suite_name_in
+    -- %argument a_style_conventional
+    -- %argument a_parent_run_log_id_in Specify parent run_log_id for recursive execution - used for testing of Pete
+    --
+    -- %returns pete_core.typ_execution_result_int execution result
+    --
+    -- %throws ge_ambiguous_input If the input can't be clearly interpreted
+    --
+    FUNCTION run_test_suite
+    (
+        a_suite_name_in         IN VARCHAR2 DEFAULT NULL,
+        a_style_conventional_in IN BOOLEAN DEFAULT TRUE,
+        a_parent_run_log_id_in  IN INTEGER DEFAULT NULL
+    ) RETURN pete_core.typ_execution_result_int;
+
+    --
     -- Runs a script identified by name
     --
     -- %argument a_script_name_in name of the script to be run
@@ -113,11 +142,39 @@ CREATE OR REPLACE PACKAGE pete AS
     -- %argument a_script_name_in name of the script to be run
     -- %argument a_parent_run_log_id_in Specify parent run_log_id for recursive execution - used for testing of Pete
     --
+    -- %returns pete_core.typ_execution_result_int execution result
+    --
+    FUNCTION run_test_script
+    (
+        a_script_name_in       IN VARCHAR2,
+        a_parent_run_log_id_in IN INTEGER DEFAULT NULL
+    ) RETURN pete_core.typ_execution_result_int;
+
+    --
+    -- Runs a script identified by name
+    --
+    -- %argument a_script_name_in name of the script to be run
+    -- %argument a_parent_run_log_id_in Specify parent run_log_id for recursive execution - used for testing of Pete
+    --
     PROCEDURE run_test_case
     (
         a_case_name_in         IN VARCHAR2,
         a_parent_run_log_id_in IN INTEGER DEFAULT NULL
     );
+
+    --
+    -- Runs a script identified by name
+    --
+    -- %argument a_script_name_in name of the script to be run
+    -- %argument a_parent_run_log_id_in Specify parent run_log_id for recursive execution - used for testing of Pete
+    --
+    -- %returns pete_core.typ_execution_result_int execution result
+    --
+    FUNCTION run_test_case
+    (
+        a_case_name_in         IN VARCHAR2,
+        a_parent_run_log_id_in IN INTEGER DEFAULT NULL
+    ) RETURN pete_core.typ_execution_result_int;
 
     --
     -- Runs tests for a given package. Such tests are in a test package which can be derived from the given one.    
@@ -135,12 +192,40 @@ CREATE OR REPLACE PACKAGE pete AS
     );
 
     --
+    -- Runs tests for a given package. Such tests are in a test package which can be derived from the given one.    
+    -- throws tests not found if there are no tests to be run
+    --
+    -- %argument a_package_in 
+    -- %argument a_method_name_like_in 
+    -- %argument a_parent_run_log_id_in Specify parent run_log_id for recursive execution - used for testing of Pete
+    --
+    -- %returns pete_core.typ_execution_result_int execution result
+    --
+    FUNCTION run_test_package
+    (
+        a_package_name_in      IN VARCHAR2,
+        a_method_name_like_in  IN VARCHAR2 DEFAULT NULL,
+        a_parent_run_log_id_in IN INTEGER DEFAULT NULL
+    ) RETURN pete_core.typ_execution_result_int;
+
+    --
     -- Runs all availaible tests. That means all configured scripts from table pete_scripts and all
     -- test packages conforming convention.
     --
     -- %argument a_parent_run_log_id_in Specify parent run_log_id for recursive execution - used for testing of Pete
     --
     PROCEDURE run_all_tests(a_parent_run_log_id_in IN INTEGER DEFAULT NULL);
+
+    --
+    -- Runs all availaible tests. That means all configured scripts from table pete_scripts and all
+    -- test packages conforming convention.
+    --
+    -- %argument a_parent_run_log_id_in Specify parent run_log_id for recursive execution - used for testing of Pete
+    --
+    -- %returns pete_core.typ_execution_result_int execution result
+    --
+    FUNCTION run_all_tests(a_parent_run_log_id_in IN INTEGER DEFAULT NULL)
+        RETURN pete_core.typ_execution_result_int;
 
     --
     -- init Pete with suppressed log to DBMS_OUTPUT

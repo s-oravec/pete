@@ -12,9 +12,9 @@ CREATE OR REPLACE PACKAGE ut_pete_config_runner AS
 
     PROCEDURE unexpected_result_fails(d VARCHAR2 := 'PLSQL block in test case should fail when returns unexpected result');
 
-    PROCEDURE stop_on_failure_stops_bic(d varchar2 := 'Block in Case with stop_on_failure = "Y" stops Case execution');
+    PROCEDURE stop_on_failure_stops_bic(d VARCHAR2 := 'Block in Case with stop_on_failure = "Y" stops Case execution');
 
-    PROCEDURE stop_on_failure_stops_cis(d varchar2 := 'Case in Script with stop_on_failure = "Y" stops Script execution');
+    PROCEDURE stop_on_failure_stops_cis(d VARCHAR2 := 'Case in Script with stop_on_failure = "Y" stops Script execution');
 
     PROCEDURE after_each;
 
@@ -35,7 +35,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_config_runner AS
     g_input_argument_id           pete_input_argument.id%TYPE;
     g_expected_result_id          pete_expected_result.id%TYPE;
 
-    g_result pete_core.typ_is_success;
+    g_result pete_core.typ_execution_result_int;
 
     --------------------------------------------------------------------------------
     PROCEDURE before_each IS
@@ -187,18 +187,17 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_config_runner AS
         helper_insert_input(a_xml_in => l_xml1);
         helper_insert_output(a_xml_in => l_xml2);
         --
-        pete_assert.this(NOT
-                          pete_configuration_runner.run_case(a_case_name_in         => 'test',
-                                                             a_parent_run_log_id_in => pete_core.get_last_run_log_id));
+        pete_assert.this(NOT pete_configuration_runner.run_case(a_case_name_in         => 'test',
+                                                                a_parent_run_log_id_in => pete_core.get_last_run_log_id) =
+                          pete_core.g_SUCCESS_INT);
         --
         helper_delete_input;
         helper_delete_output;
         --
     END;
 
-
     --------------------------------------------------------------------------------
-    PROCEDURE stop_on_failure_stops_bic(d varchar2 ) is
+    PROCEDURE stop_on_failure_stops_bic(d VARCHAR2) IS
     BEGIN
         --log
         pete_logger.log_method_description(d);
@@ -208,7 +207,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_config_runner AS
     END;
 
     --------------------------------------------------------------------------------
-    PROCEDURE stop_on_failure_stops_cis(d varchar2 ) is
+    PROCEDURE stop_on_failure_stops_cis(d VARCHAR2) IS
     BEGIN
         --log
         pete_logger.log_method_description(d);

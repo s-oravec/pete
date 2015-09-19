@@ -86,7 +86,7 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
         a_package_name_in      IN user_procedures.object_name%TYPE,
         a_hook_method_name_in  IN user_procedures.procedure_name%TYPE,
         a_parent_run_log_id_in IN pete_run_log.parent_id%TYPE
-    ) RETURN pete_core.typ_is_success IS
+    ) RETURN pete_core.typ_execution_result_int IS
     BEGIN
         pete_logger.trace('RUN_HOOK_METHOD: ' || 'a_package_name_in:' ||
                           NVL(a_package_name_in, 'NULL') || ', ' ||
@@ -105,7 +105,7 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
                               a_parent_run_log_id_in => a_parent_run_log_id_in);
         ELSE
             pete_logger.trace('doesn''t have hook method, do nothing');
-            RETURN TRUE;
+            RETURN pete_core.g_SUCCESS_INT;
         END IF;
     END;
 
@@ -117,10 +117,10 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
         a_object_type_in       IN pete_core.typ_object_type,
         a_description_in       IN pete_core.typ_description DEFAULT NULL,
         a_parent_run_log_id_in IN pete_run_log.parent_id%TYPE DEFAULT NULL
-    ) RETURN pete_core.typ_is_success IS
+    ) RETURN pete_core.typ_execution_result_int IS
         l_sql        VARCHAR2(500);
         l_run_log_id INTEGER;
-        l_result     pete_core.typ_is_success := TRUE;
+        l_result     pete_core.typ_execution_result_int := pete_core.g_SUCCESS_INT;
         l_dummy      VARCHAR2(93);
     BEGIN
         l_run_log_id := pete_core.begin_test(a_object_name_in       => a_package_name_in || '.' ||
@@ -142,11 +142,11 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
         --
     EXCEPTION
         WHEN OTHERS THEN
+            l_result := pete_core.g_FAILURE_INT;
             pete_core.end_test(a_run_log_id_in => l_run_log_id,
-                               a_is_succes_in  => FALSE,
+                               a_is_succes_in  => l_result,
                                a_error_code_in => SQLCODE);
             --
-            l_result := FALSE;
             RETURN l_result;
             --
     END run_method;
@@ -158,17 +158,17 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
         a_method_name_like_in  IN pete_core.typ_object_name DEFAULT NULL,
         a_description_in       IN pete_core.typ_description DEFAULT NULL,
         a_parent_run_log_id_in IN pete_run_log.parent_id%TYPE DEFAULT NULL
-    ) RETURN pete_core.typ_is_success IS
-        l_result     BOOLEAN := TRUE;
+    ) RETURN pete_core.typ_execution_result_int IS
+        l_result     pete_core.typ_execution_result_int := pete_core.g_SUCCESS_INT;
         l_run_log_id INTEGER;
         --
         l_method_only_regexp VARCHAR2(255) := get_method_name_only_regexp;
         l_method_skip_regexp VARCHAR2(255) := get_method_name_skip_regexp;
         --
-        l_before_all_result  BOOLEAN := TRUE;
-        l_before_each_result BOOLEAN := TRUE;
+        l_before_all_result  pete_core.typ_execution_result_int := pete_core.g_SUCCESS_INT;
+        l_before_each_result pete_core.typ_execution_result_int := pete_core.g_SUCCESS_INT;
         --
-        l_something_run boolean := false;
+        l_something_run BOOLEAN := FALSE;
     BEGIN
         --
         pete_logger.trace('RUN_PACKAGE: ' || 'a_package_name_in:' ||
@@ -192,9 +192,9 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
                 l_before_all_result := run_hook_method(a_package_name_in      => a_package_name_in,
                                                        a_hook_method_name_in  => 'BEFORE_ALL',
                                                        a_parent_run_log_id_in => l_run_log_id);
-                l_result            := l_before_all_result AND l_result;
-                pete_logger.trace('l_result' || case when l_result then 'TRUE' when not l_result then 'FALSE' else 'NULL' end);
-                IF (l_before_all_result --before_all succeeded
+                l_result            := abs(l_before_all_result) + abs(l_result);
+                pete_logger.trace('l_result: ' || l_result);
+                IF (l_before_all_result = pete_core.g_SUCCESS_INT --before_all succeeded
                    OR NOT pete_config.get_skip_if_before_hook_fails --continue if before_all failed
                    )
                 THEN
@@ -244,22 +244,21 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
                         l_before_each_result := run_hook_method(a_package_name_in      => a_package_name_in,
                                                                 a_hook_method_name_in  => 'BEFORE_EACH',
                                                                 a_parent_run_log_id_in => l_run_log_id);
-                        l_result             := l_before_each_result AND
-                                                l_result;
-                        pete_logger.trace('l_result' || case when l_result then 'TRUE' when not l_result then 'FALSE' else 'NULL' end);
-
+                        l_result             := abs(l_before_each_result) +
+                                                abs(l_result);
+                        pete_logger.trace('l_result: ' || l_result);
                         --
-                        IF l_before_each_result --before_each succeeded
+                        IF l_before_each_result = pete_core.g_SUCCESS_INT --before_each succeeded
                            OR NOT pete_config.get_skip_if_before_hook_fails --continue if before_each failed
                         THEN
                             pete_logger.trace('run method ' ||
                                               r_method.procedure_name);
-                            l_result := run_method(a_package_name_in      => a_package_name_in,
-                                                   a_method_name_in       => r_method.procedure_name,
-                                                   a_object_type_in       => pete_core.g_OBJECT_TYPE_METHOD,
-                                                   a_parent_run_log_id_in => l_run_log_id) AND
-                                        l_result;
-                            l_something_run := true;
+                            l_result        := abs(run_method(a_package_name_in      => a_package_name_in,
+                                                              a_method_name_in       => r_method.procedure_name,
+                                                              a_object_type_in       => pete_core.g_OBJECT_TYPE_METHOD,
+                                                              a_parent_run_log_id_in => l_run_log_id)) +
+                                               abs(l_result);
+                            l_something_run := TRUE;
                         ELSE
                             pete_logger.trace('method ' ||
                                               r_method.procedure_name ||
@@ -269,10 +268,10 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
                         pete_logger.trace('run method ' ||
                                           r_method.procedure_name ||
                                           ' - after_each hook');
-                        l_result := run_hook_method(a_package_name_in      => a_package_name_in,
-                                                    a_hook_method_name_in  => 'AFTER_EACH',
-                                                    a_parent_run_log_id_in => l_run_log_id) AND
-                                    l_result;
+                        l_result := abs(run_hook_method(a_package_name_in      => a_package_name_in,
+                                                        a_hook_method_name_in  => 'AFTER_EACH',
+                                                        a_parent_run_log_id_in => l_run_log_id)) +
+                                    abs(l_result);
                     END LOOP tested_methods_loop;
                 ELSE
                     pete_logger.trace('before_all failed - skipping all tests');
@@ -280,27 +279,28 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
             EXCEPTION
                 WHEN OTHERS THEN
                     --TODO log error
-                    pete_logger.trace('ERROR>' || sqlerrm);
-                    l_result := FALSE;
+                    pete_logger.trace('ERROR>' || SQLERRM);
+                    l_result := pete_core.g_FAILURE_INT;
             END test;
-
+        
             --after all hook
-            l_result := l_result and run_hook_method(a_package_name_in      => a_package_name_in,
-                                                     a_hook_method_name_in  => 'AFTER_ALL',
-                                                     a_parent_run_log_id_in => l_run_log_id);
-
+            l_result := abs(l_result) +
+                        abs(run_hook_method(a_package_name_in      => a_package_name_in,
+                                            a_hook_method_name_in  => 'AFTER_ALL',
+                                            a_parent_run_log_id_in => l_run_log_id));
+        
         ELSE
             pete_logger.trace('unknown package  ' || a_package_name_in);
-            l_result := FALSE;
+            l_result := pete_core.g_FAILURE_INT;
         END IF;
-
-        if (not l_something_run and a_method_name_like_in is not null) then 
+    
+        IF (NOT l_something_run AND a_method_name_like_in IS NOT NULL)
+        THEN
             pete_logger.trace('nothing executed, even if I wanted -> failure');
-            l_result := false;
-        end if;
-
-        pete_logger.trace('l_result ' || CASE WHEN l_result THEN 'TRUE' ELSE
-                          'FALSE' END);
+            l_result := pete_core.g_FAILURE_INT;
+        END IF;
+    
+        pete_logger.trace('l_result: ' || l_result);
     
         pete_core.end_test(a_run_log_id_in => l_run_log_id,
                            a_is_succes_in  => l_result);
@@ -315,8 +315,8 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
         a_suite_name_in        IN pete_core.typ_object_name DEFAULT USER,
         a_description_in       IN pete_core.typ_description DEFAULT NULL,
         a_parent_run_log_id_in IN pete_run_log.parent_id%TYPE DEFAULT NULL
-    ) RETURN pete_core.typ_is_success IS
-        l_result     pete_core.typ_is_success := TRUE;
+    ) RETURN pete_core.typ_execution_result_int IS
+        l_result     pete_core.typ_execution_result_int := pete_core.g_SUCCESS_INT;
         l_run_log_id INTEGER;
         --
         l_tst_pkg_only_regexp VARCHAR2(255) := get_tst_pkg_only_regexp;
@@ -338,11 +338,11 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
                                              a_parent_run_log_id_in => a_parent_run_log_id_in);
         pete_logger.trace('l_run_log_id ' || l_run_log_id);
         --
-        l_result := run_hook_method(a_package_name_in      => a_suite_name_in ||
-                                                              '.PETE_BEFORE_ALL',
-                                    a_hook_method_name_in  => 'RUN',
-                                    a_parent_run_log_id_in => l_run_log_id) AND
-                    l_result;
+        l_result := abs(run_hook_method(a_package_name_in      => a_suite_name_in ||
+                                                                  '.PETE_BEFORE_ALL',
+                                        a_hook_method_name_in  => 'RUN',
+                                        a_parent_run_log_id_in => l_run_log_id)) +
+                    abs(l_result);
         --
         <<test_packages_loop>>
         FOR lrec_test_package IN
@@ -383,34 +383,32 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
             -- NoFormat End
         LOOP
             --
-            pete_logger.trace('run package ' ||
-                              lrec_test_package.object_name);
-            l_result := run_hook_method(a_package_name_in      => a_suite_name_in ||
-                                                                  '.PETE_BEFORE_EACH',
-                                        a_hook_method_name_in  => 'RUN',
-                                        a_parent_run_log_id_in => l_run_log_id) AND
-                        l_result;
+            pete_logger.trace('run package ' || lrec_test_package.object_name);
+            l_result := abs(run_hook_method(a_package_name_in      => a_suite_name_in ||
+                                                                      '.PETE_BEFORE_EACH',
+                                            a_hook_method_name_in  => 'RUN',
+                                            a_parent_run_log_id_in => l_run_log_id)) +
+                        abs(l_result);
             --
-            l_result := run_package(a_package_name_in      => lrec_test_package.object_name,
-                                    a_parent_run_log_id_in => l_run_log_id) AND
-                        l_result;
+            l_result := abs(run_package(a_package_name_in      => lrec_test_package.object_name,
+                                        a_parent_run_log_id_in => l_run_log_id)) +
+                        abs(l_result);
             --
-            l_result := run_hook_method(a_package_name_in      => a_suite_name_in ||
-                                                                  '.PETE_AFTER_EACH',
-                                        a_hook_method_name_in  => 'RUN',
-                                        a_parent_run_log_id_in => l_run_log_id) AND
-                        l_result;
+            l_result := abs(run_hook_method(a_package_name_in      => a_suite_name_in ||
+                                                                      '.PETE_AFTER_EACH',
+                                            a_hook_method_name_in  => 'RUN',
+                                            a_parent_run_log_id_in => l_run_log_id)) +
+                        abs(l_result);
             --
         END LOOP test_packages;
         --
-        l_result := run_hook_method(a_package_name_in      => a_suite_name_in ||
-                                                              '.PETE_AFTER_ALL',
-                                    a_hook_method_name_in  => 'RUN',
-                                    a_parent_run_log_id_in => l_run_log_id) AND
-                    l_result;
+        l_result := abs(run_hook_method(a_package_name_in      => a_suite_name_in ||
+                                                                  '.PETE_AFTER_ALL',
+                                        a_hook_method_name_in  => 'RUN',
+                                        a_parent_run_log_id_in => l_run_log_id)) +
+                    abs(l_result);
         --
-        pete_logger.trace('l_result ' || CASE WHEN l_result THEN 'TRUE' ELSE
-                          'FALSE' END);
+        pete_logger.trace('l_result: ' || l_result);
         pete_core.end_test(a_run_log_id_in => l_run_log_id,
                            a_is_succes_in  => l_result);
         --

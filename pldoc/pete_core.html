@@ -51,7 +51,7 @@ testing context subtype
 execution result subtype
 </TD></TR>
 <TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
-<A HREF="#typ_is_success">typ_is_success</A>&nbsp;&nbsp;
+<A HREF="#typ_execution_result_int">typ_execution_result_int</A>&nbsp;&nbsp;
 </TD><TD CLASS="DESC_TEXT" WIDTH=95%>
 
 </TD></TR>
@@ -254,12 +254,12 @@ g_FAILURE
 g_FAILURE CONSTANT <A HREF=#typ_execution_result>typ_execution_result</A> := 'FAILURE';
 </PRE>
 <HR>
-<A NAME="typ_is_success"></A>
+<A NAME="typ_execution_result_int"></A>
 <P CLASS="TYPE_TITLE">
-typ_is_success
+typ_execution_result_int
 </P>
 <PRE CLASS="DECL_TEXT">
-SUBTYPE typ_is_success IS BOOLEAN;
+SUBTYPE typ_execution_result_int IS BOOLEAN;
 </PRE>
 <HR>
 <A NAME="typ_object_name"></A>
@@ -311,7 +311,7 @@ PROCEDURE end_test
 (
     a_run_log_id_in    IN pete_run_log.run_log_id%TYPE,
     a_object_type_in   IN <A HREF=#typ_object_type>typ_object_type</A>,
-    a_is_succes_in     IN <A HREF=#typ_is_success>typ_is_success</A> DEFAULT TRUE,
+    a_is_succes_in     IN <A HREF=#typ_execution_result_int>typ_execution_result_int</A> DEFAULT TRUE,
     a_error_code_in    IN pete_run_log.error_code%TYPE DEFAULT NULL,
     a_error_message_in IN pete_run_log.error_message%TYPE DEFAULT NULL
 )

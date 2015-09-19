@@ -36,7 +36,9 @@ CREATE OR REPLACE PACKAGE pete_core AS
     g_FAILURE CONSTANT typ_execution_result := 'FAILURE';
 
     -- is execution result success?
-    SUBTYPE typ_is_success IS BOOLEAN;
+    SUBTYPE typ_execution_result_int IS pls_integer;
+    g_SUCCESS_INT CONSTANT typ_execution_result_int := 0;
+    g_FAILURE_INT CONSTANT typ_execution_result_int := 1;
 
     -- object name
     SUBTYPE typ_object_name IS pete_run_log.object_name%TYPE;
@@ -77,7 +79,7 @@ CREATE OR REPLACE PACKAGE pete_core AS
     PROCEDURE end_test
     (
         a_run_log_id_in IN pete_run_log.id%TYPE,
-        a_is_succes_in  IN typ_is_success DEFAULT TRUE,
+        a_is_succes_in  IN typ_execution_result_int DEFAULT g_SUCCESS_INT,
         a_xml_in_in     IN pete_run_log.xml_in%TYPE DEFAULT NULL,
         a_xml_out_in    IN pete_run_log.xml_out%TYPE DEFAULT NULL,
         a_error_code_in IN pete_run_log.error_code%TYPE DEFAULT NULL

@@ -51,7 +51,7 @@ FUNCTION <A HREF="pete_configuration_runner.html#run_suite">run_suite</A>
 (
     a_suite_name_in  IN <A HREF="pete_core.html#typ_object_name">pete_core.typ_object_name</A> DEFAULT USER,
     a_description_in IN <A HREF="pete_core.html#typ_description">pete_core.typ_description</A> DEFAULT NULL
-) RETURN <A HREF="pete_core.html#typ_is_success">pete_core.typ_is_success</A>
+) RETURN <A HREF="pete_core.html#typ_execution_result_int">pete_core.typ_execution_result_int</A>
 
 </PRE>
 <P CLASS="DESC_TEXT">
@@ -96,7 +96,7 @@ FUNCTION run_package
     a_package_name_in     IN <A HREF="pete_core.html#typ_object_name">pete_core.typ_object_name</A>,
     a_method_name_like_in IN <A HREF="pete_core.html#typ_object_name">pete_core.typ_object_name</A> DEFAULT NULL,
     a_description_in      IN <A HREF="pete_core.html#typ_description">pete_core.typ_description</A> DEFAULT NULL
-) RETURN <A HREF="pete_core.html#typ_is_success">pete_core.typ_is_success</A>
+) RETURN <A HREF="pete_core.html#typ_execution_result_int">pete_core.typ_execution_result_int</A>
 
 </PRE>
 <P CLASS="DESC_TEXT">
@@ -155,7 +155,7 @@ FUNCTION run_method
     a_package_name_in IN <A HREF="pete_core.html#typ_object_name">pete_core.typ_object_name</A>,
     a_method_name_in  IN <A HREF="pete_core.html#typ_object_name">pete_core.typ_object_name</A>,
     a_description_in  IN <A HREF="pete_core.html#typ_description">pete_core.typ_description</A> DEFAULT NULL
-) RETURN <A HREF="pete_core.html#typ_is_success">pete_core.typ_is_success</A>
+) RETURN <A HREF="pete_core.html#typ_execution_result_int">pete_core.typ_execution_result_int</A>
 
 </PRE>
 <P CLASS="DESC_TEXT">

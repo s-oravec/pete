@@ -43,7 +43,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_config AS
         '    END;' || chr(10) ||
         'END;'; --
         -- NoFormat End
-        l_result     pete_core.typ_is_success;
+        l_result     pete_core.typ_execution_result_int;
         l_run_log_id pete_run_log.id%TYPE;
         l_cnt        INTEGER;
         --
