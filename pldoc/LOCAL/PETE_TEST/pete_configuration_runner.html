@@ -1,0 +1,129 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+ <HEAD>
+ <LINK REL="STYLESHEET" TYPE="text/css" HREF="../../plsqldoc.css">
+ <TITLE>Package pete_configuration_runner</TITLE>
+ <META name="object" content="PACKAGE">
+ <META name="name" content="LOCAL PETE_TEST.pete_configuration_runner">
+ <META name="description" content="Package for running unit tests defined by configuration do not call these methods directly - use Pete package instead">
+</HEAD>
+<BODY>
+<TABLE WIDTH="100%"><TR>
+<TD><P ALIGN="LEFT"><STRONG><SMALL>PETE_TEST@LOCAL</SMALL></STRONG></TD>
+<TD><P ALIGN="RIGHT"><STRONG><SMALL><A HREF="../../index.html">index</A></SMALL></STRONG></TD>
+</TR></TABLE>
+<TABLE CLASS="MAIN_TABLE"><TR><TD CLASS="DESC_TEXT">
+<P CLASS="MAIN_TITLE">Package pete_configuration_runner</P>
+Package for running unit tests defined by configuration do not call these methods directly - use <A HREF="../../pete.html">Pete</A> package instead<br>
+
+<BR>
+</TD></TR></TABLE>
+<HR>
+<A NAME="Program units"></A>
+<TABLE CLASS="SUB_TABLE"><TR><TD CLASS="SUB_TITLE">
+Program units
+</TD></TR></TABLE>
+<TABLE CLASS="SUB_TABLE">
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#run_suite">run_suite</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+runs test suite
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#run_script">run_script</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+<A HREF="../../pete.html#run">Run</A> test script identified by test script name - <A HREF="PETE_TEST_SCRIPT.html">pete_test_script.name</A>
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#run_case">run_case</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+<A HREF="../../pete.html#run">Run</A> test case identified by test case name - <A HREF="PETE_TEST_CASE.html">pete_test_case.name</A>
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#run_all_test_scripts">run_all_test_scripts</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+<A HREF="../../pete.html#run">Run</A> all test scripts
+</TD></TR>
+</TABLE>
+<BR>
+<HR>
+<A NAME="run_suite"></A>
+<P CLASS="TYPE_TITLE">
+run_suite
+</P>
+<PRE CLASS="DECL_TEXT">
+FUNCTION <A HREF="../../pete_configuration_runner.html#run_suite">run_suite</A>
+(
+    a_suite_name_in        IN <A HREF="../../pete_core.html#typ_object_name">pete_core.typ_object_name</A>,
+    a_parent_run_log_id_in IN <A HREF="PETE_RUN_LOG.html">pete_run_log.parent_id</A>%TYPE DEFAULT NULL
+) RETURN <A HREF="../../pete_core.html#typ_execution_result">pete_core.typ_execution_result</A>
+
+</PRE>
+<P CLASS="DESC_TEXT">
+runs test suite<br>
+%argument a_suite_name_in suite name<br>
+%argument a_parent_run_log_id_in Specify parent run_log_id for recursive execution - used for testing of <A HREF="../../pete.html">Pete</A>
+
+<BR>
+</P>
+<HR>
+<A NAME="run_script"></A>
+<P CLASS="TYPE_TITLE">
+run_script
+</P>
+<PRE CLASS="DECL_TEXT">
+FUNCTION <A HREF="../../pete_configuration_runner.html#run_script">run_script</A>
+(
+    a_script_name_in       IN <A HREF="../../pete_core.html#typ_object_name">pete_core.typ_object_name</A>,
+    a_parent_run_log_id_in IN <A HREF="PETE_RUN_LOG.html">pete_run_log.parent_id</A>%TYPE DEFAULT NULL
+) RETURN <A HREF="../../pete_core.html#typ_execution_result">pete_core.typ_execution_result</A>
+
+</PRE>
+<P CLASS="DESC_TEXT">
+<A HREF="../../pete.html#run">Run</A> test script identified by test script name - <A HREF="PETE_TEST_SCRIPT.html">pete_test_script.name</A>
+&nbsp;<br>
+%argument p_name test script name - <A HREF="PETE_TEST_SCRIPT.html">pete_test_script.name</A>
+%argument a_parent_run_log_id_in Specify parent run_log_id for recursive execution - used for testing of <A HREF="../../pete.html">Pete</A>
+
+<BR>
+</P>
+<HR>
+<A NAME="run_case"></A>
+<P CLASS="TYPE_TITLE">
+run_case
+</P>
+<PRE CLASS="DECL_TEXT">
+FUNCTION <A HREF="../../pete_configuration_runner.html#run_case">run_case</A>
+(
+    a_case_name_in         IN <A HREF="../../pete_core.html#typ_object_name">pete_core.typ_object_name</A>,
+    a_parent_run_log_id_in IN <A HREF="PETE_RUN_LOG.html">pete_run_log.parent_id</A>%TYPE DEFAULT NULL
+) RETURN <A HREF="../../pete_core.html#typ_execution_result">pete_core.typ_execution_result</A>
+
+</PRE>
+<P CLASS="DESC_TEXT">
+<A HREF="../../pete.html#run">Run</A> test case identified by test case name - <A HREF="PETE_TEST_CASE.html">pete_test_case.name</A>
+&nbsp;<br>
+%argument p_name Test case name - <A HREF="PETE_TEST_CASE.html">pete_test_case.name</A>
+%argument a_parent_run_log_id_in Specify parent run_log_id for recursive execution - used for testing of <A HREF="../../pete.html">Pete</A>
+
+<BR>
+</P>
+<HR>
+<A NAME="run_all_test_scripts"></A>
+<P CLASS="TYPE_TITLE">
+run_all_test_scripts
+</P>
+<PRE CLASS="DECL_TEXT">
+FUNCTION <A HREF="../../pete_configuration_runner.html#run_all_test_scripts">run_all_test_scripts</A>(a_parent_run_log_id_in IN <A HREF="PETE_RUN_LOG.html">pete_run_log.parent_id</A>%TYPE DEFAULT NULL)
+    RETURN <A HREF="../../pete_core.html#typ_execution_result">pete_core.typ_execution_result</A>
+
+</PRE>
+<P CLASS="DESC_TEXT">
+<A HREF="../../pete.html#run">Run</A> all test scripts<br>
+
+<BR>
+</P>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+</BODY>
+</HTML>

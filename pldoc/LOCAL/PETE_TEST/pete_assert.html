@@ -1,0 +1,314 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+ <HEAD>
+ <LINK REL="STYLESHEET" TYPE="text/css" HREF="../../plsqldoc.css">
+ <TITLE>Package pete_assert</TITLE>
+ <META name="object" content="PACKAGE">
+ <META name="name" content="LOCAL PETE_TEST.pete_assert">
+ <META name="description" content="Pete assert package">
+</HEAD>
+<BODY>
+<TABLE WIDTH="100%"><TR>
+<TD><P ALIGN="LEFT"><STRONG><SMALL>PETE_TEST@LOCAL</SMALL></STRONG></TD>
+<TD><P ALIGN="RIGHT"><STRONG><SMALL><A HREF="../../index.html">index</A></SMALL></STRONG></TD>
+</TR></TABLE>
+<TABLE CLASS="MAIN_TABLE"><TR><TD CLASS="DESC_TEXT">
+<P CLASS="MAIN_TITLE">Package pete_assert</P>
+<A HREF="../../pete.html">Pete</A> assert package<br>
+
+<BR>
+</TD></TR></TABLE>
+<HR>
+<A NAME="Program units"></A>
+<TABLE CLASS="SUB_TABLE"><TR><TD CLASS="SUB_TITLE">
+Program units
+</TD></TR></TABLE>
+<TABLE CLASS="SUB_TABLE">
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#this">this</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+Basic assert procedure.
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#is_null">is_null</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+Group of assert procedure for testing null values
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#is_null2">is_null</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#is_null3">is_null</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#is_not_null">is_not_null</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+Group of assert procedure for testing null values
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#is_not_null2">is_not_null</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#is_not_null3">is_not_null</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#pass">pass</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+This assert procedure always succeeds.
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#fail">fail</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+This assert procedure always fails.
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#eq">eq</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+Group of assert procedures for testing equality of input arguments Nulls are considered equal
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#eq2">eq</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#eq3">eq</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#eq4">eq</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#eq5">eq</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+
+</TD></TR>
+</TABLE>
+<BR>
+<HR>
+<A NAME="this"></A>
+<P CLASS="TYPE_TITLE">
+this
+</P>
+<PRE CLASS="DECL_TEXT">
+PROCEDURE this
+(
+    a_value_in   IN BOOLEAN,
+    a_comment_in IN VARCHAR2 DEFAULT NULL
+)
+
+</PRE>
+<P CLASS="DESC_TEXT">
+Basic assert procedure. Every other procedure transforms it's arguments and calls this one<br>
+&nbsp;<br>
+%argument a_value_in value, that is expected to be true<br>
+%argument a_comment_in comment in case of failing assert<br>
+
+<BR>
+</P>
+<HR>
+<A NAME="is_null"></A>
+<P CLASS="TYPE_TITLE">
+is_null
+</P>
+<PRE CLASS="DECL_TEXT">
+PROCEDURE <A HREF="../../pete_assert.html#is_null">is_null</A>
+(
+    a_value_in   IN NUMBER,
+    a_comment_in IN VARCHAR2 DEFAULT NULL
+)
+
+</PRE>
+<P CLASS="DESC_TEXT">
+Group of assert procedure for testing null values<br>
+
+<BR>
+</P>
+<HR>
+<A NAME="is_null2"></A>
+<P CLASS="TYPE_TITLE">
+is_null
+</P>
+<PRE CLASS="DECL_TEXT">
+PROCEDURE <A HREF="../../pete_assert.html#is_null">is_null</A>
+(
+    a_value_in   IN VARCHAR2,
+    a_comment_in IN VARCHAR2 DEFAULT NULL
+)
+
+</PRE>
+<HR>
+<A NAME="is_null3"></A>
+<P CLASS="TYPE_TITLE">
+is_null
+</P>
+<PRE CLASS="DECL_TEXT">
+PROCEDURE <A HREF="../../pete_assert.html#is_null">is_null</A>
+(
+    a_value_in   IN DATE,
+    a_comment_in IN VARCHAR2 DEFAULT NULL
+)
+
+</PRE>
+<HR>
+<A NAME="is_not_null"></A>
+<P CLASS="TYPE_TITLE">
+is_not_null
+</P>
+<PRE CLASS="DECL_TEXT">
+PROCEDURE <A HREF="../../pete_assert.html#is_not_null">is_not_null</A>
+(
+    a_value_in   IN NUMBER,
+    a_comment_in IN VARCHAR2 DEFAULT NULL
+)
+
+</PRE>
+<P CLASS="DESC_TEXT">
+Group of assert procedure for testing null values<br>
+
+<BR>
+</P>
+<HR>
+<A NAME="is_not_null2"></A>
+<P CLASS="TYPE_TITLE">
+is_not_null
+</P>
+<PRE CLASS="DECL_TEXT">
+PROCEDURE <A HREF="../../pete_assert.html#is_not_null">is_not_null</A>
+(
+    a_value_in   IN VARCHAR2,
+    a_comment_in IN VARCHAR2 DEFAULT NULL
+)
+
+</PRE>
+<HR>
+<A NAME="is_not_null3"></A>
+<P CLASS="TYPE_TITLE">
+is_not_null
+</P>
+<PRE CLASS="DECL_TEXT">
+PROCEDURE <A HREF="../../pete_assert.html#is_not_null">is_not_null</A>
+(
+    a_value_in   IN DATE,
+    a_comment_in IN VARCHAR2 DEFAULT NULL
+)
+
+</PRE>
+<HR>
+<A NAME="pass"></A>
+<P CLASS="TYPE_TITLE">
+pass
+</P>
+<PRE CLASS="DECL_TEXT">
+PROCEDURE <A HREF="../../pete_assert.html#pass">pass</A>(a_comment_in IN VARCHAR2 DEFAULT NULL)
+
+</PRE>
+<P CLASS="DESC_TEXT">
+This assert procedure always succeeds. It's usefull to log, that something has happened if it is difficult to test it's value<br>
+
+<BR>
+</P>
+<HR>
+<A NAME="fail"></A>
+<P CLASS="TYPE_TITLE">
+fail
+</P>
+<PRE CLASS="DECL_TEXT">
+PROCEDURE <A HREF="../../pete_assert.html#fail">fail</A>(a_comment_in IN VARCHAR2 DEFAULT NULL)
+
+</PRE>
+<P CLASS="DESC_TEXT">
+This assert procedure always fails. It's usefull in a branch of code where the program should never enter. E.g. in an exception block<br>
+
+<BR>
+</P>
+<HR>
+<A NAME="eq"></A>
+<P CLASS="TYPE_TITLE">
+eq
+</P>
+<PRE CLASS="DECL_TEXT">
+PROCEDURE <A HREF="../../pete_assert.html#eq">eq</A>
+(
+    a_expected_in NUMBER,
+    a_actual_in   NUMBER,
+    a_comment_in  VARCHAR2 DEFAULT NULL
+)
+
+</PRE>
+<P CLASS="DESC_TEXT">
+Group of assert procedures for testing equality of input arguments Nulls are considered equal<br>
+
+<BR>
+</P>
+<HR>
+<A NAME="eq2"></A>
+<P CLASS="TYPE_TITLE">
+eq
+</P>
+<PRE CLASS="DECL_TEXT">
+PROCEDURE <A HREF="../../pete_assert.html#eq">eq</A>
+(
+    a_expected_in VARCHAR2,
+    a_actual_in   VARCHAR2,
+    a_comment_in  VARCHAR2 DEFAULT NULL
+)
+
+</PRE>
+<HR>
+<A NAME="eq3"></A>
+<P CLASS="TYPE_TITLE">
+eq
+</P>
+<PRE CLASS="DECL_TEXT">
+PROCEDURE <A HREF="../../pete_assert.html#eq">eq</A>
+(
+    a_expected_in DATE,
+    a_actual_in   DATE,
+    a_comment_in  VARCHAR2 DEFAULT NULL
+)
+
+</PRE>
+<HR>
+<A NAME="eq4"></A>
+<P CLASS="TYPE_TITLE">
+eq
+</P>
+<PRE CLASS="DECL_TEXT">
+PROCEDURE <A HREF="../../pete_assert.html#eq">eq</A>
+(
+    a_expected_in BOOLEAN,
+    a_actual_in   BOOLEAN,
+    a_comment_in  VARCHAR2 DEFAULT NULL
+)
+
+</PRE>
+<HR>
+<A NAME="eq5"></A>
+<P CLASS="TYPE_TITLE">
+eq
+</P>
+<PRE CLASS="DECL_TEXT">
+PROCEDURE <A HREF="../../pete_assert.html#eq">eq</A>
+(
+    a_expected_in sys.xmltype,
+    a_actual_in   sys.xmltype,
+    a_comment_in  VARCHAR2 DEFAULT NULL
+)
+
+</PRE>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+</BODY>
+</HTML>

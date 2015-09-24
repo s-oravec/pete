@@ -1,0 +1,240 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+ <HEAD>
+ <LINK REL="STYLESHEET" TYPE="text/css" HREF="../../plsqldoc.css">
+ <TITLE>Package pete_logger</TITLE>
+ <META name="object" content="PACKAGE">
+ <META name="name" content="LOCAL PETE_TEST.pete_logger">
+ <META name="description" content="Pete logging package - used by convention and configuration runners - use log_method method in implementation of test packages for Convention style test packages">
+</HEAD>
+<BODY>
+<TABLE WIDTH="100%"><TR>
+<TD><P ALIGN="LEFT"><STRONG><SMALL>PETE_TEST@LOCAL</SMALL></STRONG></TD>
+<TD><P ALIGN="RIGHT"><STRONG><SMALL><A HREF="../../index.html">index</A></SMALL></STRONG></TD>
+</TR></TABLE>
+<TABLE CLASS="MAIN_TABLE"><TR><TD CLASS="DESC_TEXT">
+<P CLASS="MAIN_TITLE">Package pete_logger</P>
+<A HREF="../../pete.html">Pete</A> logging package - used by convention and configuration runners - use log_method method in implementation of test packages for Convention style test packages<br>
+
+<BR>
+</TD></TR></TABLE>
+<HR>
+<A NAME="Program units"></A>
+<TABLE CLASS="SUB_TABLE"><TR><TD CLASS="SUB_TITLE">
+Program units
+</TD></TR></TABLE>
+<TABLE CLASS="SUB_TABLE">
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#log_start">log_start</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+TODO: private
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#log_method_description">log_method_description</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+TODO: public update method description - defined on method
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#log_end">log_end</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+TODO: private
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#output_log">output_log</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+TODO: public formatting methods
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#display_log">display_log</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#get_output_run_log_id">get_output_run_log_id</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+TODO: private
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#init">init</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+TODO: public inits a logger
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#log_assert">log_assert</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+TODO: private logs assert result
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#trace">trace</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+TODO: private wrapper for <A HREF="../../pete_logger.html#trace">trace</A> log
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#set_trace">set_trace</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+TODO: private <A HREF=#trace>trace</A> log settings
+</TD></TR>
+</TABLE>
+<BR>
+<HR>
+<A NAME="log_start"></A>
+<P CLASS="TYPE_TITLE">
+log_start
+</P>
+<PRE CLASS="DECL_TEXT">
+PROCEDURE <A HREF="../../pete_logger.html#log_start">log_start</A>
+(
+    a_run_log_id_in        IN <A HREF="PETE_RUN_LOG.html">pete_run_log.id</A>%TYPE,
+    a_parent_run_log_id_in IN <A HREF="PETE_RUN_LOG.html">pete_run_log.parent_id</A>%TYPE,
+    a_description_in       IN <A HREF="PETE_RUN_LOG.html">pete_run_log.description</A>%TYPE,
+    a_object_type_in       IN <A HREF="PETE_RUN_LOG.html">pete_run_log.object_type</A>%TYPE,
+    a_object_name_in       IN <A HREF="PETE_RUN_LOG.html">pete_run_log.object_name</A>%TYPE
+)
+
+</PRE>
+<P CLASS="DESC_TEXT">
+TODO: private<br>
+
+<BR>
+</P>
+<HR>
+<A NAME="log_method_description"></A>
+<P CLASS="TYPE_TITLE">
+log_method_description
+</P>
+<PRE CLASS="DECL_TEXT">
+PROCEDURE <A HREF="../../pete_logger.html#log_method_description">log_method_description</A>(a_description_in IN <A HREF="../../pete_core.html#typ_description">pete_core.typ_description</A>)
+
+</PRE>
+<P CLASS="DESC_TEXT">
+TODO: public update method description - defined on method<br>
+&nbsp;<br>
+%argument a_description_in method description<br>
+
+<BR>
+</P>
+<HR>
+<A NAME="log_end"></A>
+<P CLASS="TYPE_TITLE">
+log_end
+</P>
+<PRE CLASS="DECL_TEXT">
+PROCEDURE <A HREF="../../pete_logger.html#log_end">log_end</A>
+(
+    a_run_log_id_in      IN <A HREF="PETE_RUN_LOG.html">pete_run_log.id</A>%TYPE,
+    a_result_in          IN <A HREF="PETE_RUN_LOG.html">pete_run_log.result</A>%TYPE,
+    a_xml_in_in          IN <A HREF="PETE_RUN_LOG.html">pete_run_log.xml_in</A>%TYPE,
+    a_xml_out_in         IN <A HREF="PETE_RUN_LOG.html">pete_run_log.xml_out</A>%TYPE,
+    a_error_code_in      IN <A HREF="PETE_RUN_LOG.html">pete_run_log.error_code</A>%TYPE,
+    a_error_stack_in     IN <A HREF="PETE_RUN_LOG.html">pete_run_log.error_stack</A>%TYPE,
+    a_error_backtrace_in IN <A HREF="PETE_RUN_LOG.html">pete_run_log.error_backtrace</A>%TYPE
+)
+
+</PRE>
+<P CLASS="DESC_TEXT">
+TODO: private<br>
+
+<BR>
+</P>
+<HR>
+<A NAME="output_log"></A>
+<P CLASS="TYPE_TITLE">
+output_log
+</P>
+<PRE CLASS="DECL_TEXT">
+PROCEDURE output_log(a_run_log_id_in IN <A HREF="PETE_RUN_LOG.html">pete_run_log.id</A>%TYPE)
+
+</PRE>
+<P CLASS="DESC_TEXT">
+TODO: public formatting methods<br>
+
+<BR>
+</P>
+<HR>
+<A NAME="display_log"></A>
+<P CLASS="TYPE_TITLE">
+display_log
+</P>
+<PRE CLASS="DECL_TEXT">
+FUNCTION display_log(a_run_log_id_in IN <A HREF="PETE_RUN_LOG.html">pete_run_log.id</A>%TYPE)
+    RETURN petet_log_tab
+
+</PRE>
+<HR>
+<A NAME="get_output_run_log_id"></A>
+<P CLASS="TYPE_TITLE">
+get_output_run_log_id
+</P>
+<PRE CLASS="DECL_TEXT">
+FUNCTION get_output_run_log_id RETURN <A HREF="PETE_RUN_LOG.html">pete_run_log.id</A>%TYPE
+
+</PRE>
+<P CLASS="DESC_TEXT">
+TODO: private<br>
+
+<BR>
+</P>
+<HR>
+<A NAME="init"></A>
+<P CLASS="TYPE_TITLE">
+init
+</P>
+<PRE CLASS="DECL_TEXT">
+PROCEDURE <A HREF="../../pete.html#init">init</A>(a_log_to_dbms_output_in IN BOOLEAN DEFAULT TRUE)
+
+</PRE>
+<P CLASS="DESC_TEXT">
+TODO: public inits a logger<br>
+
+<BR>
+</P>
+<HR>
+<A NAME="log_assert"></A>
+<P CLASS="TYPE_TITLE">
+log_assert
+</P>
+<PRE CLASS="DECL_TEXT">
+PROCEDURE log_assert
+(
+    a_result_in  BOOLEAN,
+    a_comment_in VARCHAR2
+)
+
+</PRE>
+<P CLASS="DESC_TEXT">
+TODO: private logs assert result<br>
+
+<BR>
+</P>
+<HR>
+<A NAME="trace"></A>
+<P CLASS="TYPE_TITLE">
+trace
+</P>
+<PRE CLASS="DECL_TEXT">
+PROCEDURE <A HREF="../../pete_logger.html#trace">trace</A>(a_trace_message_in VARCHAR2)
+
+</PRE>
+<P CLASS="DESC_TEXT">
+TODO: private wrapper for <A HREF="../../pete_logger.html#trace">trace</A> log<br>
+
+<BR>
+</P>
+<HR>
+<A NAME="set_trace"></A>
+<P CLASS="TYPE_TITLE">
+set_trace
+</P>
+<PRE CLASS="DECL_TEXT">
+PROCEDURE <A HREF="../../pete_logger.html#set_trace">set_trace</A>(a_value_in IN BOOLEAN)
+
+</PRE>
+<P CLASS="DESC_TEXT">
+TODO: private <A HREF=#trace>trace</A> log settings<br>
+
+<BR>
+</P>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+</BODY>
+</HTML>

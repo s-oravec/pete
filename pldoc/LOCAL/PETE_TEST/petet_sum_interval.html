@@ -1,0 +1,158 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+ <HEAD>
+ <LINK REL="STYLESHEET" TYPE="text/css" HREF="../../plsqldoc.css">
+ <TITLE>Type petet_sum_interval</TITLE>
+ <META name="object" content="TYPE">
+ <META name="name" content="LOCAL PETE_TEST.petet_sum_interval">
+ <META name="description" content="type implements oracles data cartridge interface to compute sum of day to second interval values">
+</HEAD>
+<BODY>
+<TABLE WIDTH="100%"><TR>
+<TD><P ALIGN="LEFT"><STRONG><SMALL>PETE_TEST@LOCAL</SMALL></STRONG></TD>
+<TD><P ALIGN="RIGHT"><STRONG><SMALL><A HREF="../../index.html">index</A></SMALL></STRONG></TD>
+</TR></TABLE>
+<TABLE CLASS="MAIN_TABLE"><TR><TD CLASS="DESC_TEXT">
+<P CLASS="MAIN_TITLE">Type petet_sum_interval</P>
+type implements oracles data cartridge interface to compute sum of day to second interval values<br>
+
+<BR>
+</TD></TR></TABLE>
+<HR>
+<A NAME="Attributes"></A>
+<TABLE CLASS="SUB_TABLE"><TR><TD CLASS="SUB_TITLE">
+Attributes
+</TD></TR></TABLE>
+<TABLE CLASS="SUB_TABLE">
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#duration">duration</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+duration accumulator
+</TD></TR>
+</TABLE>
+<BR>
+<A NAME="Program units"></A>
+<TABLE CLASS="SUB_TABLE"><TR><TD CLASS="SUB_TITLE">
+Program units
+</TD></TR></TABLE>
+<TABLE CLASS="SUB_TABLE">
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#petet_sum_interval">petet_sum_interval</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#odciaggregateinitialize">odciaggregateinitialize</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#odciaggregateiterate">odciaggregateiterate</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#odciaggregatedelete">odciaggregatedelete</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#odciaggregateterminate">odciaggregateterminate</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#odciaggregatemerge">odciaggregatemerge</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+
+</TD></TR>
+</TABLE>
+<BR>
+<HR>
+<A NAME="duration"></A>
+<P CLASS="TYPE_TITLE">
+duration
+</P>
+<PRE CLASS="DECL_TEXT">
+duration interval day to second
+</PRE>
+<P CLASS="DESC_TEXT">
+duration accumulator<br>
+
+<BR>
+</P>
+<HR>
+<A NAME="petet_sum_interval"></A>
+<P CLASS="TYPE_TITLE">
+petet_sum_interval
+</P>
+<PRE CLASS="DECL_TEXT">
+FUNCTION petet_sum_interval RETURN SELF AS RESULT
+
+</PRE>
+<HR>
+<A NAME="odciaggregateinitialize"></A>
+<P CLASS="TYPE_TITLE">
+odciaggregateinitialize
+</P>
+<PRE CLASS="DECL_TEXT">
+FUNCTION odciaggregateinitialize(ctx IN OUT <A HREF=#petet_sum_interval>petet_sum_interval</A>) RETURN NUMBER
+
+</PRE>
+<HR>
+<A NAME="odciaggregateiterate"></A>
+<P CLASS="TYPE_TITLE">
+odciaggregateiterate
+</P>
+<PRE CLASS="DECL_TEXT">
+FUNCTION odciaggregateiterate
+(
+    SELF  IN OUT <A HREF=#petet_sum_interval>petet_sum_interval</A>,
+    VALUE IN INTERVAL DAY TO SECOND
+) RETURN NUMBER
+
+</PRE>
+<HR>
+<A NAME="odciaggregatedelete"></A>
+<P CLASS="TYPE_TITLE">
+odciaggregatedelete
+</P>
+<PRE CLASS="DECL_TEXT">
+FUNCTION odciaggregatedelete
+(
+    SELF  IN OUT <A HREF=#petet_sum_interval>petet_sum_interval</A>,
+    VALUE IN INTERVAL DAY TO SECOND
+) RETURN NUMBER
+
+</PRE>
+<HR>
+<A NAME="odciaggregateterminate"></A>
+<P CLASS="TYPE_TITLE">
+odciaggregateterminate
+</P>
+<PRE CLASS="DECL_TEXT">
+FUNCTION odciaggregateterminate
+(
+    SELF        IN <A HREF=#petet_sum_interval>petet_sum_interval</A>,
+    returnvalue OUT INTERVAL DAY TO SECOND,
+    flags       IN NUMBER
+) RETURN NUMBER
+
+</PRE>
+<HR>
+<A NAME="odciaggregatemerge"></A>
+<P CLASS="TYPE_TITLE">
+odciaggregatemerge
+</P>
+<PRE CLASS="DECL_TEXT">
+FUNCTION odciaggregatemerge
+(
+    SELF IN OUT <A HREF=#petet_sum_interval>petet_sum_interval</A>,
+    ctx  IN <A HREF=#petet_sum_interval>petet_sum_interval</A>
+) RETURN NUMBER
+
+</PRE>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+</BODY>
+</HTML>
