@@ -14,7 +14,7 @@
 </TR></TABLE>
 <TABLE CLASS="MAIN_TABLE"><TR><TD CLASS="DESC_TEXT">
 <P CLASS="MAIN_TITLE">Package pete_assert</P>
-<A HREF="pete.html">Pete</A> assert package<br>
+<A HREF="pete.html">Pete</A> assert <A HREF="PETE_PLSQL_BLOCK.html">package</A>
 
 <BR>
 </TD></TR></TABLE>
@@ -72,22 +72,27 @@ This assert procedure always fails.
 <TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
 <A HREF="#eq">eq</A>&nbsp;&nbsp;
 </TD><TD CLASS="DESC_TEXT" WIDTH=95%>
-Tests equality of the inpurt parameters.
+Group of assert procedures for testing equality of input arguments Nulls are considered equal
 </TD></TR>
 <TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
 <A HREF="#eq2">eq</A>&nbsp;&nbsp;
 </TD><TD CLASS="DESC_TEXT" WIDTH=95%>
-Tests equality of the inpurt parameters.
+
 </TD></TR>
 <TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
 <A HREF="#eq3">eq</A>&nbsp;&nbsp;
 </TD><TD CLASS="DESC_TEXT" WIDTH=95%>
-Tests equality of the inpurt parameters.
+
 </TD></TR>
 <TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
 <A HREF="#eq4">eq</A>&nbsp;&nbsp;
 </TD><TD CLASS="DESC_TEXT" WIDTH=95%>
-Tests equality of the inpurt parameters.
+
+</TD></TR>
+<TR><TD VALIGN="TOP" CLASS="TYPE_ITEM">
+<A HREF="#eq5">eq</A>&nbsp;&nbsp;
+</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
+
 </TD></TR>
 </TABLE>
 <BR>
@@ -105,38 +110,20 @@ PROCEDURE this
 
 </PRE>
 <P CLASS="DESC_TEXT">
-Basic assert procedure. Every other procedure transform it's parameters and calls this one<br>
+Basic assert procedure. Every other procedure transforms it's arguments and calls this one<br>
+&nbsp;<br>
+%argument a_value_in <A HREF="PETE_CONFIGURATION.html">value</A>, that is expected to be true<br>
+%argument a_comment_in comment in case of failing assert<br>
 
 <BR>
 </P>
-<A NAME="Parameters"></A>
-<TABLE CLASS="LIST_TABLE"><TR><TD CLASS="LIST_TITLE">
-Parameters
-</TD></TR></TABLE>
-<TABLE CLASS="LIST_TABLE">
-<TR><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
-</TD><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
-a_value_in&nbsp;&nbsp;
-</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
-value, that is expected to be true<br>
-
-</TD></TR>
-<TR><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
-</TD><TD VALIGN="TOP" CLASS="LIST_ITEM" WIDTH=1%>
-a_comment_in&nbsp;&nbsp;
-</TD><TD CLASS="DESC_TEXT" WIDTH=95%>
-comment in case of failing assert<br>
-
-</TD></TR>
-</TABLE>
-<BR>
 <HR>
 <A NAME="is_null"></A>
 <P CLASS="TYPE_TITLE">
 is_null
 </P>
 <PRE CLASS="DECL_TEXT">
-PROCEDURE <A HREF="petep_assert.html#is_null">is_null</A>
+PROCEDURE is_null
 (
     a_value_in   IN NUMBER,
     a_comment_in IN VARCHAR2 DEFAULT NULL
@@ -154,7 +141,7 @@ Group of assert procedure for testing null values<br>
 is_null
 </P>
 <PRE CLASS="DECL_TEXT">
-PROCEDURE <A HREF="petep_assert.html#is_null">is_null</A>
+PROCEDURE is_null
 (
     a_value_in   IN VARCHAR2,
     a_comment_in IN VARCHAR2 DEFAULT NULL
@@ -167,7 +154,7 @@ PROCEDURE <A HREF="petep_assert.html#is_null">is_null</A>
 is_null
 </P>
 <PRE CLASS="DECL_TEXT">
-PROCEDURE <A HREF="petep_assert.html#is_null">is_null</A>
+PROCEDURE is_null
 (
     a_value_in   IN DATE,
     a_comment_in IN VARCHAR2 DEFAULT NULL
@@ -180,7 +167,7 @@ PROCEDURE <A HREF="petep_assert.html#is_null">is_null</A>
 is_not_null
 </P>
 <PRE CLASS="DECL_TEXT">
-PROCEDURE <A HREF="petep_assert.html#is_not_null">is_not_null</A>
+PROCEDURE is_not_null
 (
     a_value_in   IN NUMBER,
     a_comment_in IN VARCHAR2 DEFAULT NULL
@@ -198,7 +185,7 @@ Group of assert procedure for testing null values<br>
 is_not_null
 </P>
 <PRE CLASS="DECL_TEXT">
-PROCEDURE <A HREF="petep_assert.html#is_not_null">is_not_null</A>
+PROCEDURE is_not_null
 (
     a_value_in   IN VARCHAR2,
     a_comment_in IN VARCHAR2 DEFAULT NULL
@@ -211,7 +198,7 @@ PROCEDURE <A HREF="petep_assert.html#is_not_null">is_not_null</A>
 is_not_null
 </P>
 <PRE CLASS="DECL_TEXT">
-PROCEDURE <A HREF="petep_assert.html#is_not_null">is_not_null</A>
+PROCEDURE is_not_null
 (
     a_value_in   IN DATE,
     a_comment_in IN VARCHAR2 DEFAULT NULL
@@ -224,11 +211,11 @@ PROCEDURE <A HREF="petep_assert.html#is_not_null">is_not_null</A>
 pass
 </P>
 <PRE CLASS="DECL_TEXT">
-PROCEDURE <A HREF="petep_assert.html#pass">pass</A>(a_comment_in IN VARCHAR2 DEFAULT NULL)
+PROCEDURE pass(a_comment_in IN VARCHAR2 DEFAULT NULL)
 
 </PRE>
 <P CLASS="DESC_TEXT">
-This assert procedure always succeeds. It's usefull to log, that something has happened if it is difficult to <A HREF="petep_convention_runner.html#test">test</A> it's value<br>
+This assert procedure always succeeds. It's usefull to <A HREF="petet_log.html#log">log</A>, that something has happened if it is difficult to test it's <A HREF="PETE_CONFIGURATION.html">value</A>
 
 <BR>
 </P>
@@ -238,7 +225,7 @@ This assert procedure always succeeds. It's usefull to log, that something has h
 fail
 </P>
 <PRE CLASS="DECL_TEXT">
-PROCEDURE <A HREF="petep_assert.html#fail">fail</A>(a_comment_in IN VARCHAR2 DEFAULT NULL)
+PROCEDURE fail(a_comment_in IN VARCHAR2 DEFAULT NULL)
 
 </PRE>
 <P CLASS="DESC_TEXT">
@@ -252,7 +239,7 @@ This assert procedure always fails. It's usefull in a branch of code where the p
 eq
 </P>
 <PRE CLASS="DECL_TEXT">
-PROCEDURE <A HREF="petep_assert.html#eq">eq</A>
+PROCEDURE eq
 (
     a_expected_in NUMBER,
     a_actual_in   NUMBER,
@@ -261,7 +248,7 @@ PROCEDURE <A HREF="petep_assert.html#eq">eq</A>
 
 </PRE>
 <P CLASS="DESC_TEXT">
-Tests equality of the inpurt parameters. Nulls are considered equal<br>
+Group of assert procedures for testing equality of input arguments Nulls are considered equal<br>
 
 <BR>
 </P>
@@ -271,7 +258,7 @@ Tests equality of the inpurt parameters. Nulls are considered equal<br>
 eq
 </P>
 <PRE CLASS="DECL_TEXT">
-PROCEDURE <A HREF="petep_assert.html#eq">eq</A>
+PROCEDURE eq
 (
     a_expected_in VARCHAR2,
     a_actual_in   VARCHAR2,
@@ -279,18 +266,13 @@ PROCEDURE <A HREF="petep_assert.html#eq">eq</A>
 )
 
 </PRE>
-<P CLASS="DESC_TEXT">
-Tests equality of the inpurt parameters. Nulls are considered equal<br>
-
-<BR>
-</P>
 <HR>
 <A NAME="eq3"></A>
 <P CLASS="TYPE_TITLE">
 eq
 </P>
 <PRE CLASS="DECL_TEXT">
-PROCEDURE <A HREF="petep_assert.html#eq">eq</A>
+PROCEDURE eq
 (
     a_expected_in DATE,
     a_actual_in   DATE,
@@ -298,18 +280,27 @@ PROCEDURE <A HREF="petep_assert.html#eq">eq</A>
 )
 
 </PRE>
-<P CLASS="DESC_TEXT">
-Tests equality of the inpurt parameters. Nulls are considered equal<br>
-
-<BR>
-</P>
 <HR>
 <A NAME="eq4"></A>
 <P CLASS="TYPE_TITLE">
 eq
 </P>
 <PRE CLASS="DECL_TEXT">
-PROCEDURE <A HREF="petep_assert.html#eq">eq</A>
+PROCEDURE eq
+(
+    a_expected_in BOOLEAN,
+    a_actual_in   BOOLEAN,
+    a_comment_in  VARCHAR2 DEFAULT NULL
+)
+
+</PRE>
+<HR>
+<A NAME="eq5"></A>
+<P CLASS="TYPE_TITLE">
+eq
+</P>
+<PRE CLASS="DECL_TEXT">
+PROCEDURE eq
 (
     a_expected_in sys.xmltype,
     a_actual_in   sys.xmltype,
@@ -317,11 +308,6 @@ PROCEDURE <A HREF="petep_assert.html#eq">eq</A>
 )
 
 </PRE>
-<P CLASS="DESC_TEXT">
-Tests equality of the inpurt parameters. Nulls are considered equal<br>
-
-<BR>
-</P>
 <P>&nbsp;</P>
 <P>&nbsp;</P>
 </BODY>
