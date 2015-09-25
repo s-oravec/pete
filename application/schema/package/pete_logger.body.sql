@@ -295,9 +295,7 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
             IF (do_output(a_log_line_in => log_line))
             THEN
                 --TODO: move to petev_output_run_log
-                IF log_line.object_type IN
-                   (pete_core.g_OBJECT_TYPE_PACKAGE,
-                    pete_core.g_OBJECT_TYPE_SCRIPT)
+                IF log_line.object_type = pete_core.g_OBJECT_TYPE_PACKAGE
                 THEN
                     dbms_output.put_line('.');
                 END IF;

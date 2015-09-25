@@ -119,70 +119,6 @@ CREATE OR REPLACE PACKAGE BODY pete AS
     END run_test_suite;
 
     --------------------------------------------------------------------------------
-    FUNCTION run_test_script_impl
-    (
-        a_script_name_in       IN VARCHAR2,
-        a_parent_run_log_id_in IN INTEGER DEFAULT NULL
-    ) RETURN typ_run_result IS
-        l_result typ_run_result;
-    BEGIN
-        pete_logger.trace('RUN_TEST_SCRIPT_IMPL: ' || 'a_script_name_in:' ||
-                          NVL(a_script_name_in, 'NULL'));
-        IF a_script_name_in IS NULL
-        THEN
-            raise_application_error(-20000, 'Test script name not specified');
-        END IF;
-        --
-        l_result.run_log_id := begin_test(a_object_name_in       => a_script_name_in,
-                                          a_object_type_in       => pete_core.g_OBJECT_TYPE_SCRIPT,
-                                          a_parent_run_log_id_in => a_parent_run_log_id_in);
-    
-        --
-        l_result.result := pete_configuration_runner.run_script(a_script_name_in       => a_script_name_in,
-                                                                a_parent_run_log_id_in => l_result.run_log_id);
-        --
-        --do not output log if recursive call
-        end_test(a_result_in     => l_result.result,
-                 a_run_log_id_in => l_result.run_log_id);
-        --
-        RETURN l_result;
-        --
-    END run_test_script_impl;
-
-    --------------------------------------------------------------------------------
-    PROCEDURE run_test_script
-    (
-        a_script_name_in       IN VARCHAR2,
-        a_parent_run_log_id_in IN INTEGER DEFAULT NULL
-    ) IS
-        l_impl_call_result typ_run_result;
-    BEGIN
-        l_impl_call_result := run_test_script_impl(a_script_name_in       => a_script_name_in,
-                                                   a_parent_run_log_id_in => a_parent_run_log_id_in);
-        --
-        IF a_parent_run_log_id_in IS NULL
-        THEN
-            pete_logger.output_log(a_run_log_id_in => l_impl_call_result.run_log_id);
-        END IF;
-        --
-    END;
-
-    --------------------------------------------------------------------------------
-    FUNCTION run_test_script
-    (
-        a_script_name_in       IN VARCHAR2,
-        a_parent_run_log_id_in IN INTEGER DEFAULT NULL
-    ) RETURN pete_core.typ_execution_result IS
-        l_impl_call_result typ_run_result;
-    BEGIN
-        l_impl_call_result := run_test_script_impl(a_script_name_in       => a_script_name_in,
-                                                   a_parent_run_log_id_in => a_parent_run_log_id_in);
-        --
-        RETURN l_impl_call_result.result;
-        --
-    END;
-
-    --------------------------------------------------------------------------------
     FUNCTION run_test_case_impl
     (
         a_case_name_in         VARCHAR2,
@@ -329,8 +265,8 @@ CREATE OR REPLACE PACKAGE BODY pete AS
                                           a_object_type_in       => pete_core.g_OBJECT_TYPE_PETE,
                                           a_parent_run_log_id_in => a_parent_run_log_id_in);
         --
-        --1. run all Configuration scripts
-        l_result.result := abs(pete_configuration_runner.run_all_test_scripts) +
+        --1. run all Configuration suites
+        l_result.result := abs(pete_configuration_runner.run_all_test_suites) +
                            abs(l_result.result);
         --2. run user Conventional suite
         l_result.result := abs(pete_convention_runner.run_suite(a_suite_name_in        => USER,
@@ -375,7 +311,6 @@ CREATE OR REPLACE PACKAGE BODY pete AS
         a_suite_name_in         IN VARCHAR2 DEFAULT NULL,
         a_package_name_in       IN VARCHAR2 DEFAULT NULL,
         a_method_name_in        IN VARCHAR2 DEFAULT NULL,
-        a_script_name_in        IN VARCHAR2 DEFAULT NULL,
         a_case_name_in          IN VARCHAR2 DEFAULT NULL,
         a_style_conventional_in IN BOOLEAN DEFAULT NULL,
         a_parent_run_log_id_in  IN INTEGER DEFAULT NULL
@@ -387,7 +322,6 @@ CREATE OR REPLACE PACKAGE BODY pete AS
                           'a_package_name_in:' ||
                           NVL(a_package_name_in, 'NULL') || ', ' ||
                           'a_method_name_in:' || NVL(a_method_name_in, 'NULL') || ', ' ||
-                          'a_script_name_in:' || NVL(a_script_name_in, 'NULL') || ', ' ||
                           'a_case_name_in:' || NVL(a_case_name_in, 'NULL') || ', ' ||
                           'a_style_conventional_in:' ||
                           NVL(CASE WHEN a_style_conventional_in THEN 'TRUE' WHEN
@@ -406,9 +340,6 @@ CREATE OR REPLACE PACKAGE BODY pete AS
             FROM dual
           UNION ALL
           SELECT a_method_name_in AS x
-            FROM dual
-          UNION ALL
-          SELECT a_script_name_in AS x
             FROM dual
           UNION ALL
           SELECT a_case_name_in AS x
@@ -433,10 +364,6 @@ CREATE OR REPLACE PACKAGE BODY pete AS
             RETURN run_test_package_impl(a_package_name_in      => a_package_name_in,
                                          a_method_name_like_in  => a_method_name_in,
                                          a_parent_run_log_id_in => a_parent_run_log_id_in);
-        ELSIF a_script_name_in IS NOT NULL
-        THEN
-            RETURN run_test_script_impl(a_script_name_in       => a_script_name_in,
-                                        a_parent_run_log_id_in => a_parent_run_log_id_in);
         ELSIF a_case_name_in IS NOT NULL
         THEN
             RETURN run_test_case_impl(a_case_name_in         => a_case_name_in,
@@ -454,7 +381,6 @@ CREATE OR REPLACE PACKAGE BODY pete AS
         a_suite_name_in         IN VARCHAR2 DEFAULT NULL,
         a_package_name_in       IN VARCHAR2 DEFAULT NULL,
         a_method_name_in        IN VARCHAR2 DEFAULT NULL,
-        a_script_name_in        IN VARCHAR2 DEFAULT NULL,
         a_case_name_in          IN VARCHAR2 DEFAULT NULL,
         a_style_conventional_in IN BOOLEAN DEFAULT NULL,
         a_parent_run_log_id_in  IN INTEGER DEFAULT NULL
@@ -464,7 +390,6 @@ CREATE OR REPLACE PACKAGE BODY pete AS
         l_impl_call_result := run_impl(a_suite_name_in         => a_suite_name_in,
                                        a_package_name_in       => a_package_name_in,
                                        a_method_name_in        => a_method_name_in,
-                                       a_script_name_in        => a_script_name_in,
                                        a_case_name_in          => a_case_name_in,
                                        a_style_conventional_in => a_style_conventional_in,
                                        a_parent_run_log_id_in  => a_parent_run_log_id_in);
@@ -482,7 +407,6 @@ CREATE OR REPLACE PACKAGE BODY pete AS
         a_suite_name_in         IN VARCHAR2 DEFAULT NULL,
         a_package_name_in       IN VARCHAR2 DEFAULT NULL,
         a_method_name_in        IN VARCHAR2 DEFAULT NULL,
-        a_script_name_in        IN VARCHAR2 DEFAULT NULL,
         a_case_name_in          IN VARCHAR2 DEFAULT NULL,
         a_style_conventional_in IN BOOLEAN DEFAULT NULL,
         a_parent_run_log_id_in  IN INTEGER DEFAULT NULL
@@ -492,7 +416,6 @@ CREATE OR REPLACE PACKAGE BODY pete AS
         l_impl_call_result := run_impl(a_suite_name_in         => a_suite_name_in,
                                        a_package_name_in       => a_package_name_in,
                                        a_method_name_in        => a_method_name_in,
-                                       a_script_name_in        => a_script_name_in,
                                        a_case_name_in          => a_case_name_in,
                                        a_style_conventional_in => a_style_conventional_in,
                                        a_parent_run_log_id_in  => a_parent_run_log_id_in);

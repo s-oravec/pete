@@ -12,14 +12,10 @@ CREATE OR REPLACE PACKAGE pete_core AS
     g_OBJECT_TYPE_PETE CONSTANT typ_object_type := 'PETE';
     -- test suite
     g_OBJECT_TYPE_SUITE CONSTANT typ_object_type := 'SUITE';
-    -- test script
-    g_OBJECT_TYPE_SCRIPT CONSTANT typ_object_type := 'SCRIPT';
     -- test case
     g_OBJECT_TYPE_CASE CONSTANT typ_object_type := 'CASE';
     -- PL/SQL block
     g_OBJECT_TYPE_BLOCK CONSTANT typ_object_type := 'BLOCK';
-    -- Oracle DB schema
-    g_OBJECT_TYPE_SCHEMA CONSTANT typ_object_type := 'SCHEMA';
     -- PL/SQL package
     g_OBJECT_TYPE_PACKAGE CONSTANT typ_object_type := 'PACKAGE';
     -- PL/SQL pacakge method

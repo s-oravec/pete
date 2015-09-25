@@ -55,9 +55,9 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_config_runner AS
         RETURNING id INTO g_test_case_id;
         --add block to case
         INSERT INTO pete_plsql_block_in_case
-            (id, test_case_id, plsql_block_id)
+            (id, test_case_id, plsql_block_id, block_order)
         VALUES
-            (petes_plsql_block_in_case.nextval, g_test_case_id, g_block_id)
+            (petes_plsql_block_in_case.nextval, g_test_case_id, g_block_id, 1)
         RETURNING id INTO g_pete_plsql_block_in_case_id;
         --
         COMMIT;

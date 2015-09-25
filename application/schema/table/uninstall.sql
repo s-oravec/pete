@@ -1,7 +1,7 @@
 @&&run_dir_begin
 
-prompt dropping table pete_test_script
-drop table pete_test_script cascade constraints purge;
+prompt dropping table pete_test_suite
+drop table pete_test_suite cascade constraints purge;
 
 prompt dropping table pete_input_argument
 drop table pete_input_argument cascade constraints purge;
@@ -15,8 +15,11 @@ drop table pete_test_case cascade constraints purge;
 prompt dropping table pete_plsql_block_in_case
 drop table pete_plsql_block_in_case cascade constraints purge;
 
-prompt dropping table pete_test_case_in_script
-drop table pete_test_case_in_script cascade constraints purge;
+prompt dropping table pete_test_case_in_suite
+drop table pete_test_case_in_suite cascade constraints purge;
+
+prompt dropping table pete_test_case_in_case
+drop table pete_test_case_in_case cascade constraints purge;
 
 prompt dropping table pete_configuration
 drop table pete_configuration cascade constraints purge;

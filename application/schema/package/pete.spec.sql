@@ -8,10 +8,9 @@ CREATE OR REPLACE PACKAGE pete AS
     pete.run(a_suite_in => 'suite_name');
     
     \a suite
-        \a script
-            \a case in order
-                \a block in order
-                    execute immediate block
+       \a case in order [optional sub-cases]
+          \a block in order
+             execute immediate block
     Convention
     pete.run(a_suite_in => 'suite_name'
              a_style_in => pete_runner.convention);
@@ -29,10 +28,9 @@ CREATE OR REPLACE PACKAGE pete AS
             if \e pete_after_each.run
         if \e pete_after_all.run
     
-    run for other optional arguments will run "subset": a_package_in - jednu package
-    a_script in - jeden skript
-    a_method_in - jednu metodu
-    a_case_in - jeden test case.
+    run for other optional arguments will run "subset": a_package_in - one package
+    a_method_in - one method
+    a_case_in   - one test case.
     
     a_style_in is optional, unless it is impossible to decide to which style use, when both are available
     */
@@ -41,7 +39,7 @@ CREATE OR REPLACE PACKAGE pete AS
     -- Runs test
     -- Universal run procedure. Can be used to run any unit of work of either testing style. 
     -- Other public run procedures call this one. It accepts only 
-    -- - configuration arguments (a_suite_name_in, a_script_name_in, a_case_name_in) or
+    -- - configuration arguments (a_suite_name_in, a_case_name_in) or
     -- - conventional arguments (a_suite_name_in, a_package_name_in, a_method_name_in) 
     -- not a combination from both sets
     -- testing style can be explicitly set by a_style_conventional_in argument
@@ -51,7 +49,6 @@ CREATE OR REPLACE PACKAGE pete AS
     --
     -- %argument a_package_name_in Runs all tests following convention in a given package 
     -- %argument a_method_name_mask_in Runs only tests of a given mask in a given package. Must be used with argument a_package_in
-    -- %argument a_script_name_in Runs a test script of a given name
     -- %argument a_case_name_in Runs a test case of a given name
     -- %argument a_style_conventional_in If true then specified suite is conventional
     -- %argument a_parent_run_log_id_in Specify parent run_log_id for recursive execution - used for testing of Pete
@@ -64,7 +61,6 @@ CREATE OR REPLACE PACKAGE pete AS
         a_suite_name_in         IN VARCHAR2 DEFAULT NULL,
         a_package_name_in       IN VARCHAR2 DEFAULT NULL,
         a_method_name_in        IN VARCHAR2 DEFAULT NULL,
-        a_script_name_in        IN VARCHAR2 DEFAULT NULL,
         a_case_name_in          IN VARCHAR2 DEFAULT NULL,
         a_style_conventional_in IN BOOLEAN DEFAULT NULL,
         a_parent_run_log_id_in  IN INTEGER DEFAULT NULL
@@ -75,7 +71,6 @@ CREATE OR REPLACE PACKAGE pete AS
         a_suite_name_in         IN VARCHAR2 DEFAULT NULL,
         a_package_name_in       IN VARCHAR2 DEFAULT NULL,
         a_method_name_in        IN VARCHAR2 DEFAULT NULL,
-        a_script_name_in        IN VARCHAR2 DEFAULT NULL,
         a_case_name_in          IN VARCHAR2 DEFAULT NULL,
         a_style_conventional_in IN BOOLEAN DEFAULT NULL,
         a_parent_run_log_id_in  IN INTEGER DEFAULT NULL
@@ -125,35 +120,9 @@ CREATE OR REPLACE PACKAGE pete AS
     ) RETURN pete_core.typ_execution_result;
 
     --
-    -- Runs a script identified by name
+    -- Runs a test case identified by name
     --
-    -- %argument a_script_name_in name of the script to be run
-    -- %argument a_parent_run_log_id_in Specify parent run_log_id for recursive execution - used for testing of Pete
-    --
-    PROCEDURE run_test_script
-    (
-        a_script_name_in       IN VARCHAR2,
-        a_parent_run_log_id_in IN INTEGER DEFAULT NULL
-    );
-
-    --
-    -- Runs a script identified by name
-    --
-    -- %argument a_script_name_in name of the script to be run
-    -- %argument a_parent_run_log_id_in Specify parent run_log_id for recursive execution - used for testing of Pete
-    --
-    -- %returns pete_core.typ_execution_result execution result
-    --
-    FUNCTION run_test_script
-    (
-        a_script_name_in       IN VARCHAR2,
-        a_parent_run_log_id_in IN INTEGER DEFAULT NULL
-    ) RETURN pete_core.typ_execution_result;
-
-    --
-    -- Runs a script identified by name
-    --
-    -- %argument a_script_name_in name of the script to be run
+    -- %argument a_case_name_in name of the test case to be run
     -- %argument a_parent_run_log_id_in Specify parent run_log_id for recursive execution - used for testing of Pete
     --
     PROCEDURE run_test_case
@@ -163,9 +132,9 @@ CREATE OR REPLACE PACKAGE pete AS
     );
 
     --
-    -- Runs a script identified by name
+    -- Runs a test case identified by name
     --
-    -- %argument a_script_name_in name of the script to be run
+    -- %argument a_case_name_in name of the test case to be run
     -- %argument a_parent_run_log_id_in Specify parent run_log_id for recursive execution - used for testing of Pete
     --
     -- %returns pete_core.typ_execution_result execution result
@@ -209,15 +178,15 @@ CREATE OR REPLACE PACKAGE pete AS
     ) RETURN pete_core.typ_execution_result;
 
     --
-    -- Runs all availaible tests. That means all configured scripts from table pete_scripts and all
-    -- test packages conforming convention.
+    -- Runs all availaible tests. That means all configured test suites from table pete_suite and all
+    -- test packages conforming convention
     --
     -- %argument a_parent_run_log_id_in Specify parent run_log_id for recursive execution - used for testing of Pete
     --
     PROCEDURE run_all_tests(a_parent_run_log_id_in IN INTEGER DEFAULT NULL);
 
     --
-    -- Runs all availaible tests. That means all configured scripts from table pete_scripts and all
+    -- Runs all availaible tests. That means all configured test suites from table pete_suite and all
     -- test packages conforming convention.
     --
     -- %argument a_parent_run_log_id_in Specify parent run_log_id for recursive execution - used for testing of Pete

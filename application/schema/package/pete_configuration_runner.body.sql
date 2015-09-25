@@ -1,5 +1,6 @@
 CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
 
+    --TODO: move to pete_core???
     g_YES CONSTANT VARCHAR2(1) := 'Y';
     g_NO  CONSTANT VARCHAR2(1) := 'N';
 
@@ -48,9 +49,11 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
          ORDER BY block_order;
         -- NoFormat End
 
+    --TODO: add cursor for case in case for test case hierarchies
+
     -- Cursor used to find test case in test script
     -- NoFormat Start
-    CURSOR gcur_test_case_in_test_script(p_test_cript_id NUMBER) IS
+    CURSOR gcur_test_case_in_test_suite(p_test_suite_id NUMBER) IS
         WITH test_cases AS
          (SELECT /*+ materialize */
           DISTINCT tc.*,
@@ -60,10 +63,10 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
                    SUM(CASE WHEN cis.run_modifier = 'ONLY' THEN 1 ELSE 0 END) OVER() AS overall_case_only,
                    SUM(CASE WHEN bic.run_modifier = 'ONLY' THEN 1 ELSE 0 END) OVER() AS overall_block_only,
                    SUM(CASE WHEN bic.run_modifier = 'ONLY' THEN 1 ELSE 0 END) OVER(PARTITION BY tc.id) AS case_has_block_only
-            FROM pete_test_case_in_script cis,
-                 pete_test_case           tc,
+            FROM pete_test_case_in_suite  cis,
+                 pete_test_case           tc, --TODO: add case_in_case for test case hierarchies
                  pete_plsql_block_in_case bic
-           WHERE cis.test_script_id = p_test_cript_id
+           WHERE cis.test_suite_id = p_test_suite_id
              AND (cis.run_modifier != 'SKIP' OR cis.run_modifier IS NULL)
              AND bic.test_case_id = cis.test_case_id
              AND (bic.run_modifier != 'SKIP' OR bic.run_modifier IS NULL)
@@ -78,22 +81,22 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
          ORDER BY case_order;
         -- NoFormat End
 
-    -- Cursor used to find test scripts to run
+    -- Cursor used to find test suites to run
     -- NoFormat Start
-    CURSOR gcur_test_scripts IS
-        WITH test_scripts AS
+    CURSOR gcur_test_suites IS
+        WITH test_suites AS
          (SELECT /*+ materialize */ 
         DISTINCT ts.*,
-                 SUM(CASE WHEN ts.run_modifier  = 'ONLY' THEN 1 ELSE 0 END) OVER() AS overall_script_only,
+                 SUM(CASE WHEN ts.run_modifier  = 'ONLY' THEN 1 ELSE 0 END) OVER() AS overall_suite_only,
                  SUM(CASE WHEN cis.run_modifier = 'ONLY' THEN 1 ELSE 0 END) OVER() AS overall_case_only,
                  SUM(CASE WHEN bic.run_modifier = 'ONLY' THEN 1 ELSE 0 END) OVER() AS overall_block_only,
-                 SUM(CASE WHEN cis.run_modifier = 'ONLY' THEN 1 ELSE 0 END) OVER (PARTITION BY ts.id) AS script_has_case_only,
-                 SUM(CASE WHEN bic.run_modifier = 'ONLY' THEN 1 ELSE 0 END) OVER (PARTITION BY ts.id) AS script_has_block_only
-            FROM pete_test_script         ts,
-                 pete_test_case_in_script cis,
+                 SUM(CASE WHEN cis.run_modifier = 'ONLY' THEN 1 ELSE 0 END) OVER (PARTITION BY ts.id) AS suite_has_case_only,
+                 SUM(CASE WHEN bic.run_modifier = 'ONLY' THEN 1 ELSE 0 END) OVER (PARTITION BY ts.id) AS suite_has_block_only
+            FROM pete_test_suite         ts,
+                 pete_test_case_in_suite cis, --TODO: add case_in_case for test case hierarchies
                  pete_plsql_block_in_case bic
            WHERE (ts.run_modifier != 'SKIP' OR ts.run_modifier IS NULL)
-             AND cis.test_script_id = ts.id
+             AND cis.test_suite_id = ts.id
              AND (cis.run_modifier != 'SKIP' OR cis.run_modifier IS NULL)
              AND bic.test_case_id = cis.test_case_id
              AND (bic.run_modifier != 'SKIP' OR bic.run_modifier IS NULL)
@@ -102,12 +105,12 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
                name, 
                stop_on_failure,
                run_modifier, 
-               description               
-          FROM test_scripts
+               description
+          FROM test_suites
          WHERE --no ONLY run modifiers
-               (overall_script_only = 0 AND overall_case_only = 0 AND overall_block_only = 0)
-               --or script or its case/block have ONLY run modifier
-            OR (run_modifier = 'ONLY' OR script_has_case_only > 0 OR script_has_block_only > 0);
+               (overall_suite_only = 0 AND overall_case_only = 0 AND overall_block_only = 0)
+               --or suite or its case/block have ONLY run modifier
+            OR (run_modifier = 'ONLY' OR suite_has_case_only > 0 OR suite_has_block_only > 0);
     -- NoFormat End
 
     -------------------------------------------------------------------------------------------------------------------------------
@@ -194,10 +197,11 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
     
     END run_block;
 
+    --TODO: implement case_in_case for test case hierarchies
     -------------------------------------------------------------------------------------------------------------------------------
     FUNCTION run_case
     (
-        a_test_case_in         IN gcur_test_case_in_test_script%ROWTYPE,
+        a_test_case_in         IN gcur_test_case_in_test_suite%ROWTYPE,
         a_parent_run_log_id_in IN pete_run_log.parent_id%TYPE DEFAULT NULL
     ) RETURN pete_core.typ_execution_result IS
         l_run_log_id pete_run_log.id%TYPE;
@@ -238,7 +242,7 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
         a_case_name_in         IN pete_core.typ_object_name,
         a_parent_run_log_id_in IN pete_run_log.parent_id%TYPE DEFAULT NULL
     ) RETURN pete_core.typ_execution_result IS
-        lrec_test_case gcur_test_case_in_test_script%ROWTYPE;
+        lrec_test_case gcur_test_case_in_test_suite%ROWTYPE;
     BEGIN
         SELECT pete_test_case.*, g_NO AS stop_on_failure
           INTO lrec_test_case
@@ -251,94 +255,82 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
     END run_case;
 
     -------------------------------------------------------------------------------------------------------------------------------
-    FUNCTION run_script
+    FUNCTION run_suite
     (
-        a_test_script_in       IN pete_test_script%ROWTYPE,
+        a_test_suite_in        IN pete_test_suite%ROWTYPE,
         a_parent_run_log_id_in IN pete_run_log.parent_id%TYPE DEFAULT NULL
     ) RETURN pete_core.typ_execution_result IS
         l_result     pete_core.typ_execution_result := pete_core.g_SUCCESS;
         l_run_log_id pete_run_log.id%TYPE;
     BEGIN
-        l_run_log_id := pete_core.begin_test(a_object_name_in       => a_test_script_in.name,
-                                             a_object_type_in       => pete_core.g_OBJECT_TYPE_SCRIPT,
-                                             a_description_in       => a_test_script_in.description,
+        l_run_log_id := pete_core.begin_test(a_object_name_in       => a_test_suite_in.name,
+                                             a_object_type_in       => pete_core.g_OBJECT_TYPE_SUITE,
+                                             a_description_in       => a_test_suite_in.description,
                                              a_parent_run_log_id_in => a_parent_run_log_id_in);
     
-        <<test_cases_in_test_script>>
-        FOR test_case_in_test_script IN gcur_test_case_in_test_script(p_test_cript_id => a_test_script_in.id)
+        <<test_cases_in_test_suite>>
+        FOR test_case_in_test_suite IN gcur_test_case_in_test_suite(p_test_suite_id => a_test_suite_in.id)
         LOOP
-            l_result := abs(run_case(a_test_case_in         => test_case_in_test_script,
+            l_result := abs(run_case(a_test_case_in         => test_case_in_test_suite,
                                      a_parent_run_log_id_in => l_run_log_id)) +
                         abs(l_result);
             --
-            IF test_case_in_test_script.stop_on_failure = g_YES
+            IF test_case_in_test_suite.stop_on_failure = g_YES
                AND NOT l_result = pete_core.g_SUCCESS
             THEN
                 pete_logger.trace('RUN_SCRIPT: stopping on failure');
                 raise_application_error(-20000, 'Stopping on failure');
             END IF;
             --
-        END LOOP test_cases_in_test_script;
+        END LOOP test_cases_in_test_suite;
         --
         pete_core.end_test(a_run_log_id_in       => l_run_log_id,
                            a_execution_result_in => l_result);
         --
         RETURN l_result;
         --
-    END run_script;
+    END run_suite;
 
     -------------------------------------------------------------------------------------------------------------------------------
-    FUNCTION run_script
-    (
-        a_script_name_in       IN pete_core.typ_object_name,
-        a_parent_run_log_id_in IN pete_run_log.parent_id%TYPE DEFAULT NULL
-    ) RETURN pete_core.typ_execution_result IS
-        lrec_test_script pete_test_script%ROWTYPE;
-    BEGIN
-        SELECT *
-          INTO lrec_test_script
-          FROM pete_test_script
-         WHERE NAME = a_script_name_in;
-        -- 
-        RETURN run_script(a_test_script_in       => lrec_test_script,
-                          a_parent_run_log_id_in => a_parent_run_log_id_in);
-        --
-    END run_script;
-
-    -------------------------------------------------------------------------------------------------------------------------------
-    FUNCTION run_all_test_scripts(a_parent_run_log_id_in IN pete_run_log.parent_id%TYPE DEFAULT NULL)
-        RETURN pete_core.typ_execution_result IS
-        l_result pete_core.typ_execution_result := pete_core.g_SUCCESS;
-    BEGIN
-        <<test_scripts_in_configuration>>
-        FOR test_script IN gcur_test_scripts
-        LOOP
-            l_result := abs(run_script(a_test_script_in       => test_script,
-                                       a_parent_run_log_id_in => a_parent_run_log_id_in)) +
-                        abs(l_result);
-            IF test_script.stop_on_failure = g_YES
-               AND NOT l_result = pete_core.g_SUCCESS
-            THEN
-                pete_logger.trace('RUN_ALL_TEST_SCRIPTS: stopping on failure');
-                raise_application_error(-20000, 'Stopping on failure');
-            END IF;
-        END LOOP test_scripts_in_configuration;
-        --
-        RETURN l_result;
-        --
-    END run_all_test_scripts;
-
-    --------------------------------------------------------------------------------
     FUNCTION run_suite
     (
         a_suite_name_in        IN pete_core.typ_object_name,
         a_parent_run_log_id_in IN pete_run_log.parent_id%TYPE DEFAULT NULL
     ) RETURN pete_core.typ_execution_result IS
+        lrec_test_suite pete_test_suite%ROWTYPE;
     BEGIN
-        raise_application_error(-20000,
-                                'Not implemented - [pete_configuration_runner.run_suite]');
-        RETURN pete_core.g_FAILURE;
+        SELECT *
+          INTO lrec_test_suite
+          FROM pete_test_suite
+         WHERE NAME = a_suite_name_in;
+        -- 
+        RETURN run_suite(a_test_suite_in        => lrec_test_suite,
+                         a_parent_run_log_id_in => a_parent_run_log_id_in);
+        --
     END run_suite;
+
+    -------------------------------------------------------------------------------------------------------------------------------
+    FUNCTION run_all_test_suites(a_parent_run_log_id_in IN pete_run_log.parent_id%TYPE DEFAULT NULL)
+        RETURN pete_core.typ_execution_result IS
+        l_result pete_core.typ_execution_result := pete_core.g_SUCCESS;
+    BEGIN
+        <<test_suites_in_configuration>>
+        FOR test_suite IN gcur_test_suites
+        LOOP
+            l_result := abs(run_suite(a_test_suite_in        => test_suite,
+                                      a_parent_run_log_id_in => a_parent_run_log_id_in)) +
+                        abs(l_result);
+            IF test_suite.stop_on_failure = g_YES
+               AND NOT l_result = pete_core.g_SUCCESS
+            THEN
+                pete_logger.trace('RUN_ALL_TEST_SCRIPTS: stopping on failure');
+                raise_application_error(-20000, 'Stopping on failure');
+            END IF;
+        END LOOP test_suites_in_configuration;
+        --
+        RETURN l_result;
+        --
+    END run_all_test_suites;
 
 END pete_configuration_runner;
 /
