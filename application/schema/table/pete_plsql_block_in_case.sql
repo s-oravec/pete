@@ -5,7 +5,7 @@ create table PETE_PLSQL_BLOCK_IN_CASE
   plsql_block_id     INTEGER not null,
   input_argument_id  INTEGER,
   expected_result_id INTEGER,
-  block_order        INTEGER not null,
+  position        NUMBER not null,
   stop_on_failure    VARCHAR2(1) default 'N' not null,
   run_modifier       VARCHAR2(30),
   description        VARCHAR2(4000)
@@ -24,7 +24,7 @@ comment on column PETE_PLSQL_BLOCK_IN_CASE.input_argument_id
   is 'Input argument identifier';
 comment on column PETE_PLSQL_BLOCK_IN_CASE.expected_result_id
   is 'Expected result identifier';
-comment on column PETE_PLSQL_BLOCK_IN_CASE.block_order
+comment on column PETE_PLSQL_BLOCK_IN_CASE.position
   is 'Block order in Test case';
 comment on column PETE_PLSQL_BLOCK_IN_CASE.stop_on_failure
   is 'Stops test execution on error';
@@ -40,7 +40,8 @@ create index PETE_PLSQL_BLOCK_IN_CASE_FK03 on PETE_PLSQL_BLOCK_IN_CASE (TEST_CAS
 alter table PETE_PLSQL_BLOCK_IN_CASE
   add constraint PETE_PLSQL_BLOCK_IN_CASE_PK primary key (ID);
 alter table PETE_PLSQL_BLOCK_IN_CASE
-  add constraint PETE_PLSQL_BLOCK_IN_CASE_UK01 unique (TEST_CASE_ID, BLOCK_ORDER);
+  add constraint PETE_PLSQL_BLOCK_IN_CASE_UK01 unique (TEST_CASE_ID, position)
+  INITIALLY DEFERRED;
 alter table PETE_PLSQL_BLOCK_IN_CASE
   add constraint PETE_PLSQL_BLOCK_IN_CASE_FK01 foreign key (PLSQL_BLOCK_ID)
   references PETE_PLSQL_BLOCK (ID);

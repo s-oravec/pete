@@ -18,6 +18,9 @@ prompt Creating package PETE_CONFIGURATION_RUNNER
 prompt Creating package PETE_CONVENTION_RUNNER
 @@pete_convention_runner.spec.sql
 
+prompt Creating package PETE_CONFIGURATION_RUNNER_API
+@@pete_configuration_runner_api.pks
+
 prompt Creating package PETE
 @@pete.spec.sql
 
@@ -36,11 +39,16 @@ prompt Creating package body PETE_CONFIGURATION_RUNNER
 prompt Creating package body PETE_CONVENTION_RUNNER
 @@pete_convention_runner.body.sql
 
+prompt Creating package body PETE_CONFIGURATION_RUNNER_API
+@@pete_configuration_runner_api.pkb
+
 prompt Creating package body PETE_CORE
 @@pete_core.body.sql
 
 prompt Creating package body PETE_LOGGER
 @@pete_logger.body.sql
+
+
 
 @&&run_dir_end
 

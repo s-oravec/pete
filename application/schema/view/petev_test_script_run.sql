@@ -6,7 +6,7 @@ select tmp.code,
        max(case
              when tmp.test_case_id = run.test_case_id
                   and tmp.plsql_block_id = run.plsql_block_id
-                  and tmp.block_order = run.run_order then
+                  and tmp.position = run.run_order then
               run.expected_result
              else
               null
@@ -14,7 +14,7 @@ select tmp.code,
        max(case
              when tmp.test_case_id = run.test_case_id
                   and tmp.plsql_block_id = run.plsql_block_id
-                  and tmp.block_order = run.run_order then
+                  and tmp.position = run.run_order then
               run.RESULT
              else
               null
@@ -25,11 +25,11 @@ select tmp.code,
                ts.code,
                ts.name,
                ts.description,
-               rank() over(partition by ts.id, tcts.test_case_id order by bltc.block_order desc) my_rank,
+               rank() over(partition by ts.id, tcts.test_case_id order by bltc.position desc) my_rank,
                tcts.test_case_id,
-               tcts.case_order,
+               tcts.position,
                bltc.plsql_block_id,
-               bltc.block_order
+               bltc.position
           from pete_test_script ts, pete_test_case_in_script tcts, pete_plsql_block_in_case bltc
          where ts.id = tcts.test_script_id
            and tcts.test_case_id = bltc.test_case_id) tmp,

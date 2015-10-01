@@ -16,7 +16,7 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
                  blk.method,
                  blk.anonymous_block,
                  bic.description,
-                 bic.block_order,
+                 bic.position,
                  bic.stop_on_failure,
                  bic.run_modifier,
                  inarg.value AS input,
@@ -46,7 +46,7 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
                (overall_block_only = 0)
                -- or block has only modifier
             OR (run_modifier = 'ONLY')
-         ORDER BY block_order;
+         ORDER BY position;
         -- NoFormat End
 
     --TODO: add cursor for case in case for test case hierarchies
@@ -57,7 +57,7 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
         WITH test_cases AS
          (SELECT /*+ materialize */
           DISTINCT tc.*,
-                   cis.case_order,
+                   cis.position,
                    cis.stop_on_failure,
                    cis.run_modifier,
                    SUM(CASE WHEN cis.run_modifier = 'ONLY' THEN 1 ELSE 0 END) OVER() AS overall_case_only,
@@ -71,14 +71,14 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
              AND bic.test_case_id = cis.test_case_id
              AND (bic.run_modifier != 'SKIP' OR bic.run_modifier IS NULL)
              AND tc.id = cis.test_case_id
-           ORDER BY cis.case_order)
+           ORDER BY cis.position)
         SELECT id, NAME, description, stop_on_failure
           FROM test_cases
          WHERE --no ONLY run modifiers
                (overall_case_only = 0 AND overall_block_only = 0)
                --or case or its blocks have ONLY run modifier 
             OR (run_modifier = 'ONLY' OR case_has_block_only > 0)
-         ORDER BY case_order;
+         ORDER BY position;
         -- NoFormat End
 
     -- Cursor used to find test suites to run

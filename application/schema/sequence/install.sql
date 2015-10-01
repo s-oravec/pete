@@ -15,16 +15,16 @@ prompt Creating sequence PETES_PLSQL_BLOCK_IN_CASE
 prompt Creating sequence PETES_TEST_CASE
 @@petes_test_case.sql
 
-prompt Creating sequence PETES_TEST_CASE_IN_SCRIPT
-@@petes_test_case_in_script.sql
-
-prompt Creating sequence PETES_TEST_SCRIPT
-@@petes_test_script.sql
-
 prompt Creating sequence PETES_RUN_LOG
 @@petes_run_log.sql
 
 prompt Creating sequence PETES_RUN_LOG_DETAIL
 @@petes_run_log_detail.sql
+
+prompt Creating SEQUENCE PETES_TEST_SUITE
+@@petes_test_suite.sql
+
+prompt Creating SEQUENCE PETES_TEST_CASE_IN_SUITE
+@@petes_test_case_in_suite.sql
 
 @&&run_dir_end

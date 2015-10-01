@@ -21,4 +21,7 @@ prompt Install test package UT_PETE_LOGGER
 prompt Install test package UT_PETE_CONFIG
 @@ut_pete_config.package.sql
 
+prompt Install test package UT_PETE_CONFIG_RUNNER_API
+@@ut_pete_config_runner_api.pkg
+
 @&&run_dir_end

@@ -36,6 +36,20 @@ CREATE OR REPLACE PACKAGE pete_core AS
     -- description subtype
     SUBTYPE typ_description IS VARCHAR2(4000);
 
+    subtype typ_YES_NO is varchar2(1);
+    g_YES constant typ_YES_NO := 'Y';
+    g_NO constant typ_YES_NO := 'N';
+
+    --
+    -- Order constants
+    --
+    -- Order first
+    g_ORDER_FIRST CONSTANT pete_plsql_block_in_case.position%TYPE := -1;
+    --
+    -- Order last
+    g_ORDER_LAST CONSTANT pete_plsql_block_in_case.position%TYPE := -2;
+
+
     --
     -- Core begin test implementation
     -- creates record for test run

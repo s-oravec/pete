@@ -3,7 +3,7 @@ create table PETE_TEST_CASE_IN_SUITE
   id              INTEGER not null,
   test_suite_id   INTEGER not null,
   test_case_id    INTEGER not null,
-  case_order      INTEGER not null,
+  position      NUMBER not null,
   stop_on_failure VARCHAR2(1) default 'N' not null,
   run_modifier    VARCHAR2(30),
   description     VARCHAR2(4000)
@@ -18,7 +18,7 @@ comment on column PETE_TEST_CASE_IN_SUITE.test_suite_id
   is 'Test script identifier';
 comment on column PETE_TEST_CASE_IN_SUITE.test_case_id
   is 'Test case identifier';
-comment on column PETE_TEST_CASE_IN_SUITE.case_order
+comment on column PETE_TEST_CASE_IN_SUITE.position
   is 'Defines order of test cases in test script';
 comment on column PETE_TEST_CASE_IN_SUITE.stop_on_failure
   is 'Stops test execution on error';
