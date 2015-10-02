@@ -1,4 +1,4 @@
-CREATE OR REPLACE PACKAGE ut_oopete_config_runner_api AS
+CREATE OR REPLACE PACKAGE ut_pete_config_runner_api AS
 
     description pete_core.typ_description := 'Pete Configuration Runner API tests';
 
@@ -25,6 +25,7 @@ CREATE OR REPLACE PACKAGE ut_oopete_config_runner_api AS
     PROCEDURE set_block_in_case_with_ids(d VARCHAR2 := 'Insert PLSQL Block in Test Case with subobject ids works');
     PROCEDURE set_block_in_case_with_objs(d VARCHAR2 := 'Insert PLSQL Block in Test Case with subobjects works');
 
+    PROCEDURE set_test_case_with_ids(d VARCHAR2 := 'Insert Test Case with subobject ids works');
     PROCEDURE set_test_case_with_objs(d VARCHAR2 := 'Insert Test Case with subobjects works');
 
     PROCEDURE move_block_to_first(d VARCHAR2 := 'Move PLSQL Block to first position in Test Case');
@@ -40,7 +41,7 @@ CREATE OR REPLACE PACKAGE ut_oopete_config_runner_api AS
 
 END;
 /
-CREATE OR REPLACE PACKAGE BODY ut_oopete_config_runner_api AS
+CREATE OR REPLACE PACKAGE BODY ut_pete_config_runner_api AS
 
     -- NoFormat Start
     g_passthrough_anonymous_block VARCHAR2(32767) 
@@ -49,7 +50,6 @@ CREATE OR REPLACE PACKAGE BODY ut_oopete_config_runner_api AS
     || 'BEGIN' || chr(10)
     || '    :2 := l_xml_in;' || chr(10)
     || 'END;';
-    
     -- NoFormat End
 
     g_plsql_block_template     petet_plsql_block;
@@ -510,13 +510,15 @@ CREATE OR REPLACE PACKAGE BODY ut_oopete_config_runner_api AS
         g_block_in_case_template.plsql_block_id     := g_plsql_block_template.id;
         g_block_in_case_template.input_argument_id  := g_input_argument_template.id;
         g_block_in_case_template.expected_result_id := g_expected_result_template.id;
-        g_block_in_case_template.position        := 1;
+        g_block_in_case_template.position           := 1;
         --test
         pete_configuration_runner_api.set_plsql_block_in_case(a_plsql_block_in_case_io => g_block_in_case_template);
+        --TODO: Asserts
     END;
 
     --------------------------------------------------------------------------------
     PROCEDURE set_block_in_case_with_objs(d VARCHAR2) IS
+        l_db_plsql_block_in_case petet_plsql_block_in_case;
     BEGIN
         --log
         pete_logger.log_method_description(d);
@@ -532,9 +534,47 @@ CREATE OR REPLACE PACKAGE BODY ut_oopete_config_runner_api AS
         g_block_in_case_template.plsql_block     := g_plsql_block_template;
         g_block_in_case_template.input_argument  := g_input_argument_template;
         g_block_in_case_template.expected_result := g_expected_result_template;
-        g_block_in_case_template.position     := 1;
+        g_block_in_case_template.position        := 1;
         --test
         pete_configuration_runner_api.set_plsql_block_in_case(a_plsql_block_in_case_io => g_block_in_case_template);
+        --TODO: Asserts
+        l_db_plsql_block_in_case := pete_configuration_runner_api.get_plsql_block_in_case(a_id_in => g_block_in_case_template.id);
+    
+    END;
+
+    --------------------------------------------------------------------------------
+    PROCEDURE set_test_case_with_ids(d VARCHAR2) IS
+        l_name         VARCHAR2(32) := 'set_test_case_with_ids';
+        l_block        petet_plsql_block := petet_plsql_block(NAME            => l_name,
+                                                              anonymous_block => g_passthrough_anonymous_block);
+        l_test_case    petet_test_case;
+        l_db_test_case petet_test_case;
+    BEGIN
+        --log
+        pete_logger.log_method_description(d);
+        --prepare
+        pete_configuration_runner_api.set_plsql_block(a_plsql_block_io => l_block);
+        -- NoFormat Start
+        l_test_case := 
+            petet_test_case(
+                NAME                 => l_name,
+                plsql_blocks_in_case => petet_plsql_blocks_in_case(
+                    petet_plsql_block_in_case(plsql_block_id => l_block.id),
+                    petet_plsql_block_in_case(plsql_block_id => l_block.id),
+                    petet_plsql_block_in_case(plsql_block_id => l_block.id)
+                )
+            );
+        -- NoFormat End
+        --test
+        pete_configuration_runner_api.set_test_case(a_test_case_io => l_test_case);
+        --assert
+        l_db_test_case := pete_configuration_runner_api.get_test_case(a_id_in                 => l_test_case.id,
+                                                                      a_cascade_subobjects_in => pete_core.g_YES);
+        --
+        pete_assert.eq(a_expected_in => pete_core.g_YES,
+                       a_actual_in   => l_db_test_case.equals(p_obj_in  => l_test_case,
+                                                              p_deep_in => pete_core.g_YES),
+                       a_comment_in  => 'objects should be equal');
     END;
 
     --------------------------------------------------------------------------------
@@ -551,13 +591,13 @@ CREATE OR REPLACE PACKAGE BODY ut_oopete_config_runner_api AS
         --prepare
         pete_configuration_runner_api.set_plsql_block(a_plsql_block_io => l_block);
         -- NoFormat Start
-        l_test_case := 
+        l_test_case :=
             petet_test_case(
                 NAME                 => l_name,
                 plsql_blocks_in_case => petet_plsql_blocks_in_case(
-                    petet_plsql_block_in_case(plsql_block => l_block),
-                    petet_plsql_block_in_case(plsql_block => l_block),
-                    petet_plsql_block_in_case(plsql_block => l_block)
+                    petet_plsql_block_in_case(plsql_block_id => l_block.id),
+                    petet_plsql_block_in_case(plsql_block_id => l_block.id),
+                    petet_plsql_block_in_case(plsql_block_id => l_block.id)
                 )
             );
         -- NoFormat End
@@ -566,52 +606,12 @@ CREATE OR REPLACE PACKAGE BODY ut_oopete_config_runner_api AS
         --assert
         l_db_test_case := pete_configuration_runner_api.get_test_case(a_id_in                 => l_test_case.id,
                                                                       a_cascade_subobjects_in => pete_core.g_YES);
-        FOR block_idx IN l_db_test_case.plsql_blocks_in_case.first .. l_db_test_case.plsql_blocks_in_case.last
-        LOOP
-            pete_assert.eq(a_expected_in => l_test_case.plsql_blocks_in_case(block_idx).id,
-                           a_actual_in   => l_db_test_case.plsql_blocks_in_case(block_idx).id,
-                           a_comment_in  => '.id should match');
-            pete_assert.eq(a_expected_in => l_test_case.plsql_blocks_in_case(block_idx)
-                                            .test_case_id,
-                           a_actual_in   => l_db_test_case.plsql_blocks_in_case(block_idx)
-                                            .test_case_id,
-                           a_comment_in  => 'test_case_id should match');
-            pete_assert.eq(a_expected_in => l_test_case.plsql_blocks_in_case(block_idx)
-                                            .plsql_block_id,
-                           a_actual_in   => l_db_test_case.plsql_blocks_in_case(block_idx)
-                                            .plsql_block_id,
-                           a_comment_in  => 'plsql_block_id should match');
-            pete_assert.eq(a_expected_in => l_test_case.plsql_blocks_in_case(block_idx)
-                                            .input_argument_id,
-                           a_actual_in   => l_db_test_case.plsql_blocks_in_case(block_idx)
-                                            .input_argument_id,
-                           a_comment_in  => 'input_argument_id should match');
-            pete_assert.eq(a_expected_in => l_test_case.plsql_blocks_in_case(block_idx)
-                                            .expected_result_id,
-                           a_actual_in   => l_db_test_case.plsql_blocks_in_case(block_idx)
-                                            .expected_result_id,
-                           a_comment_in  => 'expected_result_id should match');
-            pete_assert.eq(a_expected_in => l_test_case.plsql_blocks_in_case(block_idx)
-                                            .position,
-                           a_actual_in   => l_db_test_case.plsql_blocks_in_case(block_idx)
-                                            .position,
-                           a_comment_in  => 'position should match');
-            pete_assert.eq(a_expected_in => l_test_case.plsql_blocks_in_case(block_idx)
-                                            .stop_on_failure,
-                           a_actual_in   => l_db_test_case.plsql_blocks_in_case(block_idx)
-                                            .stop_on_failure,
-                           a_comment_in  => 'stop_on_failure should match');
-            pete_assert.eq(a_expected_in => l_test_case.plsql_blocks_in_case(block_idx)
-                                            .run_modifier,
-                           a_actual_in   => l_db_test_case.plsql_blocks_in_case(block_idx)
-                                            .run_modifier,
-                           a_comment_in  => 'run_modifier should match');
-            pete_assert.eq(a_expected_in => l_test_case.plsql_blocks_in_case(block_idx)
-                                            .description,
-                           a_actual_in   => l_db_test_case.plsql_blocks_in_case(block_idx)
-                                            .description,
-                           a_comment_in  => 'description should match');
-        END LOOP;
+        --
+        pete_assert.eq(a_expected_in => pete_core.g_YES,
+                       a_actual_in   => l_db_test_case.equals(p_obj_in  => l_test_case,
+                                                              p_deep_in => pete_core.g_YES),
+                       a_comment_in  => 'objects should be equal');
+        --
     END;
 
     --------------------------------------------------------------------------------
@@ -626,8 +626,8 @@ CREATE OR REPLACE PACKAGE BODY ut_oopete_config_runner_api AS
         l_test_case      := helper_test_case_with_3_blocks('move_block_to_first');
         l_block_id_moved := l_test_case.plsql_blocks_in_case(3).id;
         --test
-        pete_configuration_runner_api.move_plsql_block_in_case(a_id_in                 => l_block_id_moved,
-                                                               a_test_case_id_in       => l_test_case.id,
+        pete_configuration_runner_api.move_plsql_block_in_case(a_id_in              => l_block_id_moved,
+                                                               a_test_case_id_in    => l_test_case.id,
                                                                a_position_target_in => pete_core.g_ORDER_FIRST);
         --assert
         l_plsql_block_in_case := pete_configuration_runner_api.get_plsql_block_in_case(a_id_in => l_block_id_moved);
@@ -648,8 +648,8 @@ CREATE OR REPLACE PACKAGE BODY ut_oopete_config_runner_api AS
         l_test_case      := helper_test_case_with_3_blocks('move_block_to_last');
         l_block_id_moved := l_test_case.plsql_blocks_in_case(1).id;
         --test
-        pete_configuration_runner_api.move_plsql_block_in_case(a_id_in                 => l_block_id_moved,
-                                                               a_test_case_id_in       => l_test_case.id,
+        pete_configuration_runner_api.move_plsql_block_in_case(a_id_in              => l_block_id_moved,
+                                                               a_test_case_id_in    => l_test_case.id,
                                                                a_position_target_in => pete_core.g_ORDER_LAST);
         --assert
         l_plsql_block_in_case := pete_configuration_runner_api.get_plsql_block_in_case(a_id_in => l_block_id_moved);
@@ -670,8 +670,8 @@ CREATE OR REPLACE PACKAGE BODY ut_oopete_config_runner_api AS
         l_test_case      := helper_test_case_with_3_blocks('move_block_up');
         l_block_id_moved := l_test_case.plsql_blocks_in_case(1).id;
         --test
-        pete_configuration_runner_api.move_plsql_block_in_case(a_id_in                 => l_block_id_moved,
-                                                               a_test_case_id_in       => l_test_case.id,
+        pete_configuration_runner_api.move_plsql_block_in_case(a_id_in              => l_block_id_moved,
+                                                               a_test_case_id_in    => l_test_case.id,
                                                                a_position_offset_in => 1);
         --assert
         l_plsql_block_in_case := pete_configuration_runner_api.get_plsql_block_in_case(a_id_in => l_block_id_moved);
@@ -692,8 +692,8 @@ CREATE OR REPLACE PACKAGE BODY ut_oopete_config_runner_api AS
         l_test_case      := helper_test_case_with_3_blocks('move_block_down');
         l_block_id_moved := l_test_case.plsql_blocks_in_case(3).id;
         --test
-        pete_configuration_runner_api.move_plsql_block_in_case(a_id_in                 => l_block_id_moved,
-                                                               a_test_case_id_in       => l_test_case.id,
+        pete_configuration_runner_api.move_plsql_block_in_case(a_id_in              => l_block_id_moved,
+                                                               a_test_case_id_in    => l_test_case.id,
                                                                a_position_offset_in => -1);
         --assert
         l_plsql_block_in_case := pete_configuration_runner_api.get_plsql_block_in_case(a_id_in => l_block_id_moved);

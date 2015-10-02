@@ -11,6 +11,15 @@ CREATE OR REPLACE TYPE petet_test_case FORCE AS OBJECT
         NAME                 IN VARCHAR2,
         description          IN VARCHAR2 DEFAULT NULL,
         plsql_blocks_in_case IN petet_plsql_blocks_in_case DEFAULT NULL
-    ) RETURN SELF AS RESULT
+    ) RETURN SELF AS RESULT,
+
+    MEMBER FUNCTION copy RETURN petet_test_case,
+
+    MEMBER FUNCTION equals
+    (
+        p_obj_in  IN petet_test_case,
+        p_deep_in IN VARCHAR2 DEFAULT 'N' --pete_core.g_NO
+    ) RETURN VARCHAR2 --pete_core.typ_YES_NO
+
 )
 /

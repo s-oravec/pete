@@ -17,6 +17,15 @@ CREATE OR REPLACE TYPE petet_plsql_block FORCE AS OBJECT
         PACKAGE         IN VARCHAR2 DEFAULT NULL,
         method          IN VARCHAR2 DEFAULT NULL,
         anonymous_block IN CLOB DEFAULT NULL
-    ) RETURN SELF AS RESULT
+    ) RETURN SELF AS RESULT,
+
+    MEMBER FUNCTION copy RETURN petet_plsql_block,
+
+    MEMBER FUNCTION equals
+    (
+        p_obj_in  IN petet_plsql_block,
+        p_deep_in IN VARCHAR2 DEFAULT 'N' --pete_core.g_NO
+    ) RETURN VARCHAR2 --pete_core.typ_YES_NO
+
 )
 /

@@ -21,12 +21,6 @@ prompt Creating type petet_plsql_block
 prompt Creating type body petet_plsql_block
 @@petet_plsql_block.tpb
 
-prompt Creating type petet_test_case
-@@petet_test_case.tps
-
-prompt Creating type body petet_test_case
-@@petet_test_case.tpb
-
 prompt Creating type petet_expected_result
 @@petet_expected_result.tps
 
@@ -45,10 +39,28 @@ prompt Creating type petet_plsql_block_in_case
 prompt Creating type body petet_plsql_block_in_case
 @@petet_plsql_block_in_case.tpb
 
+prompt Creating type petet_plsql_blocks_in_case
+@@petet_plsql_blocks_in_case.tps
+
+prompt Creating type petet_test_case
+@@petet_test_case.tps
+
+prompt Creating type body petet_test_case
+@@petet_test_case.tpb
+
 prompt Creating type petet_test_case_in_suite
 @@petet_test_case_in_suite.tps
 
 prompt Creating type body petet_test_case_in_suite
 @@petet_test_case_in_suite.tpb
+
+prompt Creating type petet_test_cases_in_suite
+@@petet_test_cases_in_suite.tps
+
+prompt Creating type petet_test_suite
+@@petet_test_suite.tps
+
+prompt Creating type body petet_test_suite
+@@petet_test_suite.tpb
 
 @&&run_dir_end

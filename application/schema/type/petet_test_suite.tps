@@ -15,6 +15,14 @@ CREATE OR REPLACE TYPE petet_test_suite FORCE AS OBJECT
         run_modifier        IN VARCHAR2 DEFAULT NULL,
         description         IN VARCHAR2 DEFAULT NULL,
         test_cases_in_suite IN petet_test_cases_in_suite DEFAULT NULL
-    ) RETURN SELF AS RESULT
+    ) RETURN SELF AS RESULT,
+
+    MEMBER FUNCTION copy RETURN petet_test_suite,
+
+    MEMBER FUNCTION equals
+    (
+        p_obj_in  IN petet_test_suite,
+        p_deep_in IN VARCHAR2 DEFAULT 'N' --pete_core.g_NO
+    ) RETURN VARCHAR2 --pete_core.typ_YES_NO
 )
 /

@@ -46,15 +46,9 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner_api IS
         l_result petet_plsql_block;
     BEGIN
         --
-        SELECT petet_plsql_block(id,
-                                 NAME,
-                                 description,
-                                 owner,
-                                 PACKAGE,
-                                 method,
-                                 anonymous_block)
+        SELECT plsql_block
           INTO l_result
-          FROM pete_plsql_block
+          FROM petev_plsql_block
          WHERE id = a_id_in;
         --
         RETURN l_result;
@@ -114,9 +108,9 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner_api IS
         l_result petet_input_argument;
     BEGIN
         --
-        SELECT petet_input_argument(id, NAME, VALUE, description)
+        SELECT input_argument
           INTO l_result
-          FROM pete_input_argument
+          FROM petev_input_argument
          WHERE id = a_id_in;
         --
         RETURN l_result;
@@ -176,9 +170,9 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner_api IS
         l_result petet_expected_result;
     BEGIN
         --
-        SELECT petet_expected_result(id, NAME, VALUE, description)
+        SELECT expected_result
           INTO l_result
-          FROM pete_expected_result
+          FROM petev_expected_result
          WHERE id = a_id_in;
         --
         RETURN l_result;
@@ -320,47 +314,10 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner_api IS
               FROM pete_plsql_block_in_case bic
              WHERE bic.id = a_id_in;
         ELSE
-            SELECT petet_plsql_block_in_case(id                 => bic.id,
-                                             test_case_id       => bic.test_case_id,
-                                             plsql_block_id     => pb.id,
-                                             plsql_block        => CASE
-                                                                       WHEN pb.id IS NOT NULL THEN
-                                                                        petet_plsql_block(id              => pb.id,
-                                                                                          NAME            => pb.name,
-                                                                                          description     => pb.description,
-                                                                                          owner           => pb.owner,
-                                                                                          PACKAGE         => pb.package,
-                                                                                          method          => pb.method,
-                                                                                          anonymous_block => pb.anonymous_block)
-                                                                   END,
-                                             input_argument_id  => inarg.id,
-                                             input_argument     => CASE
-                                                                       WHEN inarg.id IS NOT NULL THEN
-                                                                        petet_input_argument(id          => inarg.id,
-                                                                                             NAME        => inarg.name,
-                                                                                             VALUE       => inarg.value,
-                                                                                             description => inarg.description)
-                                                                   END,
-                                             expected_result_id => er.id,
-                                             expected_result    => CASE
-                                                                       WHEN er.id IS NOT NULL THEN
-                                                                        petet_expected_result(id          => er.id,
-                                                                                              NAME        => er.name,
-                                                                                              VALUE       => er.value,
-                                                                                              description => er.description)
-                                                                   END,
-                                             position           => bic.position,
-                                             stop_on_failure    => bic.stop_on_failure,
-                                             run_modifier       => bic.run_modifier,
-                                             description        => bic.description)
+            SELECT plsql_block_in_case
               INTO l_result
-              FROM pete_plsql_block_in_case bic
-              JOIN pete_plsql_block pb ON (pb.id = bic.plsql_block_id)
-              LEFT OUTER JOIN pete_input_argument inarg ON (inarg.id =
-                                                           bic.input_argument_id)
-              LEFT OUTER JOIN pete_expected_result er ON (er.id =
-                                                         bic.expected_result_id)
-             WHERE bic.id = a_id_in;
+              FROM petev_plsql_block_in_case
+             WHERE id = a_id_in;
         END IF;
         --
         RETURN l_result;
@@ -503,53 +460,9 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner_api IS
              WHERE id = a_id_in;
         ELSE
             -- NoFormat Start
-            SELECT petet_test_case(
-                       id                   => tc.id,
-                       NAME                 => tc.NAME,
-                       description          => tc.description,
-                       plsql_blocks_in_case => (SELECT CAST(COLLECT(
-                           petet_plsql_block_in_case(
-                               id                 => bic.id,
-                               test_case_id       => bic.test_case_id,
-                               plsql_block_id     => pb.id,
-                               plsql_block        => CASE WHEN pb.id IS NOT NULL THEN
-                                                          petet_plsql_block(id              => pb.id,
-                                                                            NAME            => pb.name,
-                                                                            description     => pb.description,
-                                                                            owner           => pb.owner,
-                                                                            PACKAGE         => pb.package,
-                                                                            method          => pb.method,
-                                                                            anonymous_block => pb.anonymous_block)
-                                                     END,
-                               input_argument_id  => inarg.id,
-                               input_argument     => CASE WHEN inarg.id IS NOT NULL THEN
-                                                          petet_input_argument(id          => inarg.id,
-                                                                               NAME        => inarg.name,
-                                                                               VALUE       => inarg.value,
-                                                                               description => inarg.description)
-                                                     END,
-                               expected_result_id => er.id,
-                               expected_result    => CASE WHEN er.id IS NOT NULL THEN
-                                                          petet_expected_result(id          => er.id,
-                                                                                NAME        => er.name,
-                                                                                VALUE       => er.value,
-                                                                                description => er.description)
-                                                     END,
-                               position        => bic.position,
-                               stop_on_failure    => bic.stop_on_failure,
-                               run_modifier       => bic.run_modifier,
-                               description        => bic.description)) AS
-                         petet_plsql_blocks_in_case)
-                                                 FROM pete_plsql_block_in_case bic
-                                                 JOIN pete_plsql_block pb ON (pb.id =
-                                                                             bic.plsql_block_id)
-                                                 LEFT OUTER JOIN pete_input_argument inarg ON (inarg.id =
-                                                                                              bic.input_argument_id)
-                                                 LEFT OUTER JOIN pete_expected_result er ON (er.id =
-                                                                                            bic.expected_result_id)
-                                                WHERE bic.test_case_id = a_id_in))
+            SELECT test_case
               INTO l_result
-              FROM pete_test_case tc
+              FROM petev_test_case tc
              WHERE tc.id = a_id_in;
              -- NoFormat End
         END IF;
@@ -642,7 +555,56 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner_api IS
     --------------------------------------------------------------------------------  
     PROCEDURE set_test_case_in_suite(a_test_case_in_suite_io IN OUT petet_test_case_in_suite) IS
     BEGIN
-        NULL;
+        --
+        --if sub-objects are defined
+        --plsql_block
+        IF a_test_case_in_suite_io.test_case IS NOT NULL
+        THEN
+            --
+            --save object
+            set_test_case(a_test_case_io => a_test_case_in_suite_io.test_case);
+            --
+            --update id
+            a_test_case_in_suite_io.test_case_id := a_test_case_in_suite_io.test_case.id;
+        END IF;
+        --
+        --set object
+        IF a_test_case_in_suite_io.id IS NULL
+        THEN
+            --
+            a_test_case_in_suite_io.id := petes_test_case_in_suite.nextval;
+            --
+            INSERT INTO pete_test_case_in_suite
+            VALUES
+                (a_test_case_in_suite_io.id,
+                 a_test_case_in_suite_io.test_suite_id,
+                 a_test_case_in_suite_io.test_case_id,
+                 a_test_case_in_suite_io.position,
+                 a_test_case_in_suite_io.stop_on_failure,
+                 a_test_case_in_suite_io.run_modifier,
+                 a_test_case_in_suite_io.description);
+            --
+        ELSE
+            UPDATE pete_test_case_in_suite
+               SET test_suite_id   = a_test_case_in_suite_io.test_suite_id,
+                   test_case_id    = a_test_case_in_suite_io.test_case_id,
+                   position        = a_test_case_in_suite_io.position,
+                   stop_on_failure = a_test_case_in_suite_io.stop_on_failure,
+                   run_modifier    = a_test_case_in_suite_io.run_modifier,
+                   description     = a_test_case_in_suite_io.description
+             WHERE id = a_test_case_in_suite_io.id;
+            --
+            IF SQL%ROWCOUNT = 0
+            THEN
+                raise_application_error(gc_RECORD_NOT_FOUND,
+                                        'Record not found. {"id":"' ||
+                                        a_test_case_in_suite_io.id || '"} ');
+            END IF;
+            --
+        END IF;
+        --
+        sort_cases_impl(a_test_suite_id_in => a_test_case_in_suite_io.test_suite_id);
+        --
     END;
 
     -------------------------------------------------------------------------------------------------------------------------------
@@ -724,9 +686,10 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner_api IS
               FROM pete_test_suite
              WHERE id = a_id_in;
         ELSE
-            -- NoFormat Start
-            NULL;
-             -- NoFormat End
+            SELECT test_suite
+              INTO l_result
+              FROM petev_test_suite
+             WHERE id = a_id_in;
         END IF;
         --
         RETURN l_result;

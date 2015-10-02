@@ -11,6 +11,15 @@ CREATE OR REPLACE TYPE petet_input_argument FORCE AS OBJECT
         NAME        IN VARCHAR2,
         VALUE       IN XMLTYPE DEFAULT NULL,
         description IN VARCHAR2 DEFAULT NULL
-    ) RETURN SELF AS RESULT
+    ) RETURN SELF AS RESULT,
+
+    MEMBER FUNCTION copy RETURN petet_input_argument,
+
+    MEMBER FUNCTION equals
+    (
+        p_obj_in  IN petet_input_argument,
+        p_deep_in IN VARCHAR2 DEFAULT 'N' --pete_core.g_NO
+    ) RETURN VARCHAR2 --pete_core.typ_YES_NO
+
 )
 /
