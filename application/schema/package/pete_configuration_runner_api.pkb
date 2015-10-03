@@ -3,6 +3,8 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner_api IS
     -------------------------------------------------------------------------------------------------------------------------------
     PROCEDURE set_plsql_block(a_plsql_block_io IN OUT NOCOPY petet_plsql_block) IS
     BEGIN
+        -- TODO: try to dbms_sql.parse the anobnymous block
+        -- TODO: dbms_assert  owner, package, name        
         IF a_plsql_block_io.id IS NULL
         THEN
             --
@@ -19,8 +21,6 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner_api IS
                  a_plsql_block_io.anonymous_block);
             --
         ELSE
-            -- TODO: try to dbms_sql.parse the anobnymous block
-            -- TODO: dbms_assert  owner, package, name
             UPDATE pete_plsql_block
                SET NAME            = a_plsql_block_io.name,
                    description     = a_plsql_block_io.description,

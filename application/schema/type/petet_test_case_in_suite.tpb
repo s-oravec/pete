@@ -3,11 +3,11 @@ CREATE OR REPLACE TYPE BODY petet_test_case_in_suite AS
     -------------------------------------------------------------------------------------------------
     CONSTRUCTOR FUNCTION petet_test_case_in_suite
     (
-        id              IN INTEGER,
-        test_suite_id   IN INTEGER,
+        id              IN INTEGER DEFAULT NULL,
+        test_suite_id   IN INTEGER DEFAULT NULL,
         test_case_id    IN INTEGER DEFAULT NULL,
         test_case       IN petet_test_case DEFAULT NULL,
-        position        IN INTEGER,
+        position        IN NUMBER DEFAULT -1,
         stop_on_failure IN VARCHAR2 DEFAULT 'N',
         run_modifier    IN VARCHAR2 DEFAULT NULL,
         description     IN VARCHAR2 DEFAULT NULL

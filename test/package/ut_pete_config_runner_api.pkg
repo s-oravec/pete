@@ -28,16 +28,14 @@ CREATE OR REPLACE PACKAGE ut_pete_config_runner_api AS
     PROCEDURE set_test_case_with_ids(d VARCHAR2 := 'Insert Test Case with subobject ids works');
     PROCEDURE set_test_case_with_objs(d VARCHAR2 := 'Insert Test Case with subobjects works');
 
+    PROCEDURE set_test_suite_with_ids(d VARCHAR2 := 'Insert Test Suite with subobject ids works');
+
     PROCEDURE move_block_to_first(d VARCHAR2 := 'Move PLSQL Block to first position in Test Case');
     PROCEDURE move_block_to_last(d VARCHAR2 := 'Move PLSQL Block to last position in Test Case');
     PROCEDURE move_block_up(d VARCHAR2 := 'Move PLSQL Block one position up in Test Case');
     PROCEDURE move_block_down(d VARCHAR2 := 'Move PLSQL Block one position down in Test Case');
 
     PROCEDURE after_each;
-
-    ---
-    FUNCTION helper_test_case_with_3_blocks(a_prefix_in IN VARCHAR2)
-        RETURN petet_test_case;
 
 END;
 /
@@ -74,8 +72,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_config_runner_api AS
     END;
 
     --------------------------------------------------------------------------------
-    FUNCTION helper_test_case_with_3_blocks(a_prefix_in IN VARCHAR2)
-        RETURN petet_test_case IS
+    FUNCTION hlp_create_test_case(a_prefix_in IN VARCHAR2) RETURN petet_test_case IS
     BEGIN
         --
         --create plsql block
@@ -615,6 +612,27 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_config_runner_api AS
     END;
 
     --------------------------------------------------------------------------------
+    PROCEDURE set_test_suite_with_ids(d VARCHAR2 := 'Insert Test Suite with subobject ids works') IS
+        l_name          VARCHAR2(32) := 'set_test_case_in_suite_w_ids';
+        l_test_case     petet_test_case;
+        l_test_suite    petet_test_suite;
+        l_db_test_suite petet_test_suite;
+    BEGIN
+        --log
+        pete_logger.log_method_description(d);
+        --prepare
+        --create test case and save to table
+        l_test_case := hlp_create_test_case(a_prefix_in => l_name);
+        --create test suite object with test case referenced by id
+        l_test_suite := petet_test_suite(NAME                => l_name,
+                                         test_cases_in_suite => petet_test_cases_in_suite(petet_test_case_in_suite(test_case_id => l_test_case.id)));
+        --test
+        pete_configuration_runner_api.set_test_suite(a_test_suite_io => l_test_suite);
+        --assert
+        l_db_test_suite := pete_configuration_runner_api.get_test_suite(a_id_in => l_test_suite.id);
+    END;
+
+    --------------------------------------------------------------------------------
     PROCEDURE move_block_to_first(d VARCHAR2) IS
         l_test_case           petet_test_case;
         l_block_id_moved      pete_plsql_block_in_case.id%TYPE;
@@ -623,7 +641,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_config_runner_api AS
         --log
         pete_logger.log_method_description(d);
         --prepare
-        l_test_case      := helper_test_case_with_3_blocks('move_block_to_first');
+        l_test_case      := hlp_create_test_case('move_block_to_first');
         l_block_id_moved := l_test_case.plsql_blocks_in_case(3).id;
         --test
         pete_configuration_runner_api.move_plsql_block_in_case(a_id_in              => l_block_id_moved,
@@ -645,7 +663,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_config_runner_api AS
         --log
         pete_logger.log_method_description(d);
         --prepare
-        l_test_case      := helper_test_case_with_3_blocks('move_block_to_last');
+        l_test_case      := hlp_create_test_case('move_block_to_last');
         l_block_id_moved := l_test_case.plsql_blocks_in_case(1).id;
         --test
         pete_configuration_runner_api.move_plsql_block_in_case(a_id_in              => l_block_id_moved,
@@ -667,7 +685,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_config_runner_api AS
         --log
         pete_logger.log_method_description(d);
         --prepare
-        l_test_case      := helper_test_case_with_3_blocks('move_block_up');
+        l_test_case      := hlp_create_test_case('move_block_up');
         l_block_id_moved := l_test_case.plsql_blocks_in_case(1).id;
         --test
         pete_configuration_runner_api.move_plsql_block_in_case(a_id_in              => l_block_id_moved,
@@ -689,7 +707,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_config_runner_api AS
         --log
         pete_logger.log_method_description(d);
         --prepare
-        l_test_case      := helper_test_case_with_3_blocks('move_block_down');
+        l_test_case      := hlp_create_test_case('move_block_down');
         l_block_id_moved := l_test_case.plsql_blocks_in_case(3).id;
         --test
         pete_configuration_runner_api.move_plsql_block_in_case(a_id_in              => l_block_id_moved,
