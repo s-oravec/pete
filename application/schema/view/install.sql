@@ -1,13 +1,13 @@
 @&&run_dir_begin
 
 rem prompt Creating view PETEV_TEST_CASE_RUN
-rem @@petev_test_case_run.sql
+rem @@petev_test_case_run.vw
 
 rem prompt Creating view PETEV_TEST_SCRIPT_RUN
-rem @@petev_test_script_run.sql
+rem @@petev_test_script_run.vw
 
 prompt Creating view PETEV_OUTPUT_RUN_LOG
-@@petev_output_run_log.sql
+@@petev_output_run_log.vw
 
 rem Pete Configuration Runner API Views
 prompt Creating view PETEV_PLSQL_BLOCK

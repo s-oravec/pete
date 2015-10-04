@@ -2,17 +2,17 @@
 
 rem Pete logging
 prompt Creating type petet_log
-@@petet_log.spec.sql
+@@petet_log.tps
 
 prompt Creating type petet_log_tab
-@@petet_log_tab.spec.sql
+@@petet_log_tab.tps
 
 rem Sum interval
 prompt Creating type petet_sum_interval
-@@petet_sum_interval.spec.sql
+@@petet_sum_interval.tps
 
 prompt Creating type body petet_sum_interval
-@@petet_sum_interval.body.sql
+@@petet_sum_interval.tpb
 
 rem Pete Configuration Runner API types
 prompt Creating type petet_plsql_block

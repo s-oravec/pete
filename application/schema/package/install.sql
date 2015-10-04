@@ -4,52 +4,52 @@ prompt Creating package PETE_EXCEPTION
 @@pete_exception.pks
 
 prompt Creating package PETE_CONFIG
-@@pete_config.spec.sql
+@@pete_config.pks
 
 prompt Creating package PETE_LOGGER
-@@pete_logger.spec.sql
+@@pete_logger.pks
 
 prompt Creating package PETE_CORE
-@@pete_core.spec.sql
+@@pete_core.pks
 
 prompt Creating package PETE_ASSERT
-@@pete_assert.spec.sql
+@@pete_assert.pks
 
 prompt Creating package PETE_CONFIGURATION_RUNNER
-@@pete_configuration_runner.spec.sql
+@@pete_configuration_runner.pks
 
 prompt Creating package PETE_CONVENTION_RUNNER
-@@pete_convention_runner.spec.sql
+@@pete_convention_runner.pks
 
 prompt Creating package PETE_CONFIGURATION_RUNNER_API
 @@pete_configuration_runner_api.pks
 
 prompt Creating package PETE
-@@pete.spec.sql
+@@pete.pks
 
 prompt Creating package body PETE
-@@pete.body.sql
+@@pete.pkb
 
 prompt Creating package body PETE_ASSERT
-@@pete_assert.body.sql
+@@pete_assert.pkb
 
 prompt Creating package body PETE_CONFIG
-@@pete_config.body.sql
+@@pete_config.pkb
 
 prompt Creating package body PETE_CONFIGURATION_RUNNER
-@@pete_configuration_runner.body.sql
+@@pete_configuration_runner.pkb
 
 prompt Creating package body PETE_CONVENTION_RUNNER
-@@pete_convention_runner.body.sql
+@@pete_convention_runner.pkb
 
 prompt Creating package body PETE_CONFIGURATION_RUNNER_API
 @@pete_configuration_runner_api.pkb
 
 prompt Creating package body PETE_CORE
-@@pete_core.body.sql
+@@pete_core.pkb
 
 prompt Creating package body PETE_LOGGER
-@@pete_logger.body.sql
+@@pete_logger.pkb
 
 
 
