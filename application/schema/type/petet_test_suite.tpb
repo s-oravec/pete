@@ -60,48 +60,48 @@ CREATE OR REPLACE TYPE BODY petet_test_suite AS
     --------------------------------------------------------------------------------
     MEMBER FUNCTION equals
     (
-        p_obj_in  IN petet_test_suite,
-        p_deep_in IN VARCHAR2 DEFAULT 'N' --pete_core.g_NO
+        a_obj_in  IN petet_test_suite,
+        a_deep_in IN VARCHAR2 DEFAULT 'N' --pete_core.g_NO
     ) RETURN VARCHAR2 --pete_core.typ_YES_NO
      IS
-        l_deep_in          pete_core.typ_YES_NO := nvl(p_deep_in,
+        l_deep_in          pete_core.typ_YES_NO := nvl(a_deep_in,
                                                        pete_core.g_NO);
         l_test_case_equals pete_core.typ_YES_NO;
     BEGIN
         --
-        IF (self.id IS NULL AND p_obj_in.id IS NOT NULL)
-           OR (self.id IS NOT NULL AND p_obj_in.id IS NULL)
-           OR (self.id != p_obj_in.id)
+        IF (self.id IS NULL AND a_obj_in.id IS NOT NULL)
+           OR (self.id IS NOT NULL AND a_obj_in.id IS NULL)
+           OR (self.id != a_obj_in.id)
         THEN
             RETURN pete_core.g_NO;
         END IF;
         --
-        IF (self.name IS NULL AND p_obj_in.name IS NOT NULL)
-           OR (self.name IS NOT NULL AND p_obj_in.name IS NULL)
-           OR (self.name != p_obj_in.name)
+        IF (self.name IS NULL AND a_obj_in.name IS NOT NULL)
+           OR (self.name IS NOT NULL AND a_obj_in.name IS NULL)
+           OR (self.name != a_obj_in.name)
         THEN
             RETURN pete_core.g_NO;
         END IF;
         --
         IF (self.stop_on_failure IS NULL AND
-           p_obj_in.stop_on_failure IS NOT NULL)
+           a_obj_in.stop_on_failure IS NOT NULL)
            OR (self.stop_on_failure IS NOT NULL AND
-           p_obj_in.stop_on_failure IS NULL)
-           OR (self.stop_on_failure != p_obj_in.stop_on_failure)
+           a_obj_in.stop_on_failure IS NULL)
+           OR (self.stop_on_failure != a_obj_in.stop_on_failure)
         THEN
             RETURN pete_core.g_NO;
         END IF;
         --
-        IF (self.run_modifier IS NULL AND p_obj_in.run_modifier IS NOT NULL)
-           OR (self.run_modifier IS NOT NULL AND p_obj_in.run_modifier IS NULL)
-           OR (self.run_modifier != p_obj_in.run_modifier)
+        IF (self.run_modifier IS NULL AND a_obj_in.run_modifier IS NOT NULL)
+           OR (self.run_modifier IS NOT NULL AND a_obj_in.run_modifier IS NULL)
+           OR (self.run_modifier != a_obj_in.run_modifier)
         THEN
             RETURN pete_core.g_NO;
         END IF;
         --
-        IF (self.description IS NULL AND p_obj_in.description IS NOT NULL)
-           OR (self.description IS NOT NULL AND p_obj_in.description IS NULL)
-           OR (self.description != p_obj_in.description)
+        IF (self.description IS NULL AND a_obj_in.description IS NOT NULL)
+           OR (self.description IS NOT NULL AND a_obj_in.description IS NULL)
+           OR (self.description != a_obj_in.description)
         THEN
             RETURN pete_core.g_NO;
         END IF;
@@ -110,11 +110,11 @@ CREATE OR REPLACE TYPE BODY petet_test_suite AS
         THEN
             --
             IF (self.test_cases_in_suite IS NOT NULL AND
-               p_obj_in.test_cases_in_suite IS NULL)
+               a_obj_in.test_cases_in_suite IS NULL)
                OR (self.test_cases_in_suite IS NULL AND
-               p_obj_in.test_cases_in_suite IS NOT NULL)
+               a_obj_in.test_cases_in_suite IS NOT NULL)
                OR (self.test_cases_in_suite.count !=
-               p_obj_in.test_cases_in_suite.count)
+               a_obj_in.test_cases_in_suite.count)
             THEN
                 RETURN pete_core.g_NO;
             END IF;
@@ -122,8 +122,8 @@ CREATE OR REPLACE TYPE BODY petet_test_suite AS
             FOR case_idx IN 1 .. self.test_cases_in_suite.count
             LOOP
                 l_test_case_equals := self.test_cases_in_suite(case_idx)
-                                      .equals(p_obj_in  => p_obj_in.test_cases_in_suite(case_idx),
-                                              p_deep_in => l_deep_in);
+                                      .equals(a_obj_in  => a_obj_in.test_cases_in_suite(case_idx),
+                                              a_deep_in => l_deep_in);
                 IF l_test_case_equals = pete_core.g_NO
                 THEN
                     RETURN pete_core.g_NO;

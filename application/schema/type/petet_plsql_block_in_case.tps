@@ -34,8 +34,8 @@ CREATE OR REPLACE TYPE petet_plsql_block_in_case FORCE AS OBJECT
 
     MEMBER FUNCTION equals
     (
-        p_obj_in  IN petet_plsql_block_in_case,
-        p_deep_in IN VARCHAR2 DEFAULT 'N' --pete_core.g_NO
+        a_obj_in  IN petet_plsql_block_in_case,
+        a_deep_in IN VARCHAR2 DEFAULT 'N' --pete_core.g_NO
     ) RETURN VARCHAR2 --pete_core.typ_YES_NO
 
 )

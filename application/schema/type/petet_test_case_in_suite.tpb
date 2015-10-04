@@ -14,6 +14,20 @@ CREATE OR REPLACE TYPE BODY petet_test_case_in_suite AS
     ) RETURN SELF AS RESULT IS
     BEGIN
         --
+        --asserts
+        --test_case or test_case_id should be not null
+        pete_assert.this(a_value_in   => test_case_id IS NOT NULL OR
+                                         test_case IS NOT NULL,
+                         a_comment_in => 'Either PETET_TEST_CASE_IN_SUITE.TEST_CASE_ID or PETET_TEST_CASE_IN_SUITE.TEST_CASE should be not null');
+        --
+        --if both test_case and test_case_id are defined then test_case.id should be set and should be same as test_case_id
+        IF test_case IS NOT NULL
+           AND test_case_id IS NOT NULL
+        THEN
+            pete_assert.this(a_value_in   => test_case_id = test_case.id,
+                             a_comment_in => 'PETET_TEST_CASE_IN_SUITE.TEST_CASE_ID and PETET_TEST_CASE_IN_SUITE.TEST_CASE.ID should be same');
+        END IF;
+        --
         self.id            := id;
         self.test_suite_id := test_suite_id;
         --
@@ -51,73 +65,73 @@ CREATE OR REPLACE TYPE BODY petet_test_case_in_suite AS
     --------------------------------------------------------------------------------
     MEMBER FUNCTION equals
     (
-        p_obj_in  IN petet_test_case_in_suite,
-        p_deep_in IN VARCHAR2 DEFAULT 'N' --pete_core.g_NO
+        a_obj_in  IN petet_test_case_in_suite,
+        a_deep_in IN VARCHAR2 DEFAULT 'N' --pete_core.g_NO
     ) RETURN VARCHAR2 --pete_core.typ_YES_NO
      IS
-        l_deep_in pete_core.typ_YES_NO := nvl(p_deep_in, pete_core.g_NO);
+        l_deep_in pete_core.typ_YES_NO := nvl(a_deep_in, pete_core.g_NO);
     BEGIN
         --
-        IF (self.id IS NULL AND p_obj_in.id IS NOT NULL)
-           OR (self.id IS NOT NULL AND p_obj_in.id IS NULL)
-           OR (self.id != p_obj_in.id)
+        IF (self.id IS NULL AND a_obj_in.id IS NOT NULL)
+           OR (self.id IS NOT NULL AND a_obj_in.id IS NULL)
+           OR (self.id != a_obj_in.id)
         THEN
             RETURN pete_core.g_NO;
         END IF;
         --
-        IF (self.test_suite_id IS NULL AND p_obj_in.test_suite_id IS NOT NULL)
+        IF (self.test_suite_id IS NULL AND a_obj_in.test_suite_id IS NOT NULL)
            OR
-           (self.test_suite_id IS NOT NULL AND p_obj_in.test_suite_id IS NULL)
-           OR (self.test_suite_id != p_obj_in.test_suite_id)
+           (self.test_suite_id IS NOT NULL AND a_obj_in.test_suite_id IS NULL)
+           OR (self.test_suite_id != a_obj_in.test_suite_id)
         THEN
             RETURN pete_core.g_NO;
         END IF;
         --
-        IF (self.test_case_id IS NULL AND p_obj_in.test_case_id IS NOT NULL)
-           OR (self.test_case_id IS NOT NULL AND p_obj_in.test_case_id IS NULL)
-           OR (self.test_case_id != p_obj_in.test_case_id)
+        IF (self.test_case_id IS NULL AND a_obj_in.test_case_id IS NOT NULL)
+           OR (self.test_case_id IS NOT NULL AND a_obj_in.test_case_id IS NULL)
+           OR (self.test_case_id != a_obj_in.test_case_id)
         THEN
             RETURN pete_core.g_NO;
         END IF;
         --
         IF l_deep_in = pete_core.g_YES
         THEN
-            IF (self.test_case IS NULL AND p_obj_in.test_case IS NOT NULL)
-               OR (self.test_case IS NOT NULL AND p_obj_in.test_case IS NULL)
+            IF (self.test_case IS NULL AND a_obj_in.test_case IS NOT NULL)
+               OR (self.test_case IS NOT NULL AND a_obj_in.test_case IS NULL)
                OR
-               (self.test_case.equals(p_obj_in  => p_obj_in.test_case,
-                                      p_deep_in => l_deep_in) = pete_core.g_NO)
+               (self.test_case.equals(a_obj_in  => a_obj_in.test_case,
+                                      a_deep_in => l_deep_in) = pete_core.g_NO)
             THEN
                 RETURN pete_core.g_NO;
             END IF;
         END IF;
         --
-        IF (self.position IS NULL AND p_obj_in.position IS NOT NULL)
-           OR (self.position IS NOT NULL AND p_obj_in.position IS NULL)
-           OR (self.position != p_obj_in.position)
+        IF (self.position IS NULL AND a_obj_in.position IS NOT NULL)
+           OR (self.position IS NOT NULL AND a_obj_in.position IS NULL)
+           OR (self.position != a_obj_in.position)
         THEN
             RETURN pete_core.g_NO;
         END IF;
         --
         IF (self.stop_on_failure IS NULL AND
-           p_obj_in.stop_on_failure IS NOT NULL)
+           a_obj_in.stop_on_failure IS NOT NULL)
            OR (self.stop_on_failure IS NOT NULL AND
-           p_obj_in.stop_on_failure IS NULL)
-           OR (self.stop_on_failure != p_obj_in.stop_on_failure)
+           a_obj_in.stop_on_failure IS NULL)
+           OR (self.stop_on_failure != a_obj_in.stop_on_failure)
         THEN
             RETURN pete_core.g_NO;
         END IF;
         --
-        IF (self.run_modifier IS NULL AND p_obj_in.run_modifier IS NOT NULL)
-           OR (self.run_modifier IS NOT NULL AND p_obj_in.run_modifier IS NULL)
-           OR (self.run_modifier != p_obj_in.run_modifier)
+        IF (self.run_modifier IS NULL AND a_obj_in.run_modifier IS NOT NULL)
+           OR (self.run_modifier IS NOT NULL AND a_obj_in.run_modifier IS NULL)
+           OR (self.run_modifier != a_obj_in.run_modifier)
         THEN
             RETURN pete_core.g_NO;
         END IF;
         --
-        IF (self.description IS NULL AND p_obj_in.description IS NOT NULL)
-           OR (self.description IS NOT NULL AND p_obj_in.description IS NULL)
-           OR (self.description != p_obj_in.description)
+        IF (self.description IS NULL AND a_obj_in.description IS NOT NULL)
+           OR (self.description IS NOT NULL AND a_obj_in.description IS NULL)
+           OR (self.description != a_obj_in.description)
         THEN
             RETURN pete_core.g_NO;
         END IF;

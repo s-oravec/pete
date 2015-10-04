@@ -254,13 +254,13 @@ CREATE OR REPLACE PACKAGE BODY ut_oopetet_plsql_block_in_case AS
         l_plsql_block_in_case2 := l_plsql_block_in_case_tmpl.copy;
         --assert
         pete_assert.eq(a_expected_in => pete_core.g_YES,
-                       a_actual_in   => l_plsql_block_in_case1.equals(p_obj_in => l_plsql_block_in_case2, p_deep_in => pete_core.g_YES));
+                       a_actual_in   => l_plsql_block_in_case1.equals(a_obj_in => l_plsql_block_in_case2, a_deep_in => pete_core.g_YES));
         --prepare case - shallow
         l_plsql_block_in_case1 := l_plsql_block_in_case_tmpl.copy;
         l_plsql_block_in_case2 := l_plsql_block_in_case_tmpl.copy;
         --assert
         pete_assert.eq(a_expected_in => pete_core.g_YES,
-                       a_actual_in   => l_plsql_block_in_case1.equals(p_obj_in => l_plsql_block_in_case2, p_deep_in => pete_core.g_NO));
+                       a_actual_in   => l_plsql_block_in_case1.equals(a_obj_in => l_plsql_block_in_case2, a_deep_in => pete_core.g_NO));
         --prepare case - null = null
         l_plsql_block_in_case1 := l_plsql_block_in_case_tmpl.copy;
         l_plsql_block_in_case2 := l_plsql_block_in_case_tmpl.copy;
@@ -299,7 +299,7 @@ CREATE OR REPLACE PACKAGE BODY ut_oopetet_plsql_block_in_case AS
         l_plsql_block_in_case1.plsql_block.id := 2;
         --assert
         pete_assert.eq(a_expected_in => pete_core.g_NO,
-                       a_actual_in   => l_plsql_block_in_case1.equals(p_obj_in => l_plsql_block_in_case2, p_deep_in => pete_core.g_YES));
+                       a_actual_in   => l_plsql_block_in_case1.equals(a_obj_in => l_plsql_block_in_case2, a_deep_in => pete_core.g_YES));
     END;
 
 

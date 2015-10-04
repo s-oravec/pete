@@ -54,32 +54,32 @@ CREATE OR REPLACE TYPE BODY petet_test_case AS
     --------------------------------------------------------------------------------
     MEMBER FUNCTION equals
     (
-        p_obj_in  IN petet_test_case,
-        p_deep_in IN VARCHAR2 DEFAULT 'N' --pete_core.g_NO
+        a_obj_in  IN petet_test_case,
+        a_deep_in IN VARCHAR2 DEFAULT 'N' --pete_core.g_NO
     ) RETURN VARCHAR2 --pete_core.typ_YES_NO
      IS
-        l_deep_in            pete_core.typ_YES_NO := nvl(p_deep_in,
+        l_deep_in            pete_core.typ_YES_NO := nvl(a_deep_in,
                                                          pete_core.g_NO);
         l_plsql_block_equals pete_core.typ_YES_NO;
     BEGIN
         --
-        IF (self.id IS NULL AND p_obj_in.id IS NOT NULL)
-           OR (self.id IS NOT NULL AND p_obj_in.id IS NULL)
-           OR (self.id != p_obj_in.id)
+        IF (self.id IS NULL AND a_obj_in.id IS NOT NULL)
+           OR (self.id IS NOT NULL AND a_obj_in.id IS NULL)
+           OR (self.id != a_obj_in.id)
         THEN
             RETURN pete_core.g_NO;
         END IF;
         --
-        IF (self.name IS NULL AND p_obj_in.name IS NOT NULL)
-           OR (self.name IS NOT NULL AND p_obj_in.name IS NULL)
-           OR (self.name != p_obj_in.name)
+        IF (self.name IS NULL AND a_obj_in.name IS NOT NULL)
+           OR (self.name IS NOT NULL AND a_obj_in.name IS NULL)
+           OR (self.name != a_obj_in.name)
         THEN
             RETURN pete_core.g_NO;
         END IF;
         --
-        IF (self.description IS NULL AND p_obj_in.description IS NOT NULL)
-           OR (self.description IS NOT NULL AND p_obj_in.description IS NULL)
-           OR (self.description != p_obj_in.description)
+        IF (self.description IS NULL AND a_obj_in.description IS NOT NULL)
+           OR (self.description IS NOT NULL AND a_obj_in.description IS NULL)
+           OR (self.description != a_obj_in.description)
         THEN
             RETURN pete_core.g_NO;
         END IF;
@@ -88,11 +88,11 @@ CREATE OR REPLACE TYPE BODY petet_test_case AS
         THEN
             --
             IF (self.plsql_blocks_in_case IS NOT NULL AND
-               p_obj_in.plsql_blocks_in_case IS NULL)
+               a_obj_in.plsql_blocks_in_case IS NULL)
                OR (self.plsql_blocks_in_case IS NULL AND
-               p_obj_in.plsql_blocks_in_case IS NOT NULL)
+               a_obj_in.plsql_blocks_in_case IS NOT NULL)
                OR (self.plsql_blocks_in_case.count !=
-               p_obj_in.plsql_blocks_in_case.count)
+               a_obj_in.plsql_blocks_in_case.count)
             THEN
                 RETURN pete_core.g_NO;
             END IF;
@@ -100,8 +100,8 @@ CREATE OR REPLACE TYPE BODY petet_test_case AS
             FOR block_idx IN 1 .. self.plsql_blocks_in_case.count
             LOOP
                 l_plsql_block_equals := self.plsql_blocks_in_case(block_idx)
-                                        .equals(p_obj_in  => p_obj_in.plsql_blocks_in_case(block_idx),
-                                                p_deep_in => l_deep_in);
+                                        .equals(a_obj_in  => a_obj_in.plsql_blocks_in_case(block_idx),
+                                                a_deep_in => l_deep_in);
                 IF l_plsql_block_equals = pete_core.g_NO
                 THEN
                     RETURN pete_core.g_NO;
