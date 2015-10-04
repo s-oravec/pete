@@ -10,6 +10,10 @@ CREATE OR REPLACE TYPE BODY petet_input_argument AS
     ) RETURN SELF AS RESULT IS
     BEGIN
         --
+        --asserts
+        pete_assert.is_not_null(a_value_in   => NAME,
+                                a_comment_in => 'PETET_INPUT_ARGUMENT.NAME should be not null');
+        --
         self.id          := id;
         self.name        := NAME;
         self.value       := VALUE;
@@ -21,10 +25,19 @@ CREATE OR REPLACE TYPE BODY petet_input_argument AS
 
     --------------------------------------------------------------------------------
     MEMBER FUNCTION copy RETURN petet_input_argument IS
+        l_copy_of_value xmltype;
     BEGIN
+        --create vopy of xmltype
+        IF self.value IS NULL
+        THEN
+            l_copy_of_value := NULL;
+        ELSE
+            l_copy_of_value := xmltype.createxml(self.value.getclobval);
+        END IF;
+        --
         RETURN NEW petet_input_argument(self.id,
                                         self.name,
-                                        self.value,
+                                        l_copy_of_value,
                                         self.description);
     END;
 
@@ -37,26 +50,29 @@ CREATE OR REPLACE TYPE BODY petet_input_argument AS
      IS
     BEGIN
         --
-        IF NOT
-            (self.id = p_obj_in.id OR (self.id IS NULL AND p_obj_in.id IS NULL))
+        IF (self.id IS NULL AND p_obj_in.id IS NOT NULL)
+           OR (self.id IS NOT NULL AND p_obj_in.id IS NULL)
+           OR (self.id != p_obj_in.id)
         THEN
             RETURN pete_core.g_NO;
         END IF;
         --
-        IF NOT (self.name = p_obj_in.name OR
-            (self.name IS NULL AND p_obj_in.name IS NULL))
+        IF (self.name IS NULL AND p_obj_in.name IS NOT NULL)
+           OR (self.name IS NOT NULL AND p_obj_in.name IS NULL)
+           OR (self.name != p_obj_in.name)
         THEN
             RETURN pete_core.g_NO;
         END IF;
         --
-        IF NOT (self.value.getclobval = p_obj_in.value.getclobval OR
-            (self.value IS NULL AND p_obj_in.value IS NULL))
+        IF NOT pete_assert.eq(a_expected_in => self.value,
+                              a_actual_in   => p_obj_in.value)
         THEN
             RETURN pete_core.g_NO;
         END IF;
         --
-        IF NOT (self.description = p_obj_in.description OR
-            (self.description IS NULL AND p_obj_in.description IS NULL))
+        IF (self.description IS NULL AND p_obj_in.description IS NOT NULL)
+           OR (self.description IS NOT NULL AND p_obj_in.description IS NULL)
+           OR (self.description != p_obj_in.description)
         THEN
             RETURN pete_core.g_NO;
         END IF;

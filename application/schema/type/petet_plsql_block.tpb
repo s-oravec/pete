@@ -13,6 +13,16 @@ CREATE OR REPLACE TYPE BODY petet_plsql_block AS
     ) RETURN SELF AS RESULT IS
     BEGIN
         --
+        --asserts
+        pete_assert.is_not_null(a_value_in   => NAME,
+                                a_comment_in => 'PETET_PLSQL_BLOCK.NAME should be not null');
+        -- NoFormat Start
+        pete_assert.this(a_value_in => (anonymous_block IS NULL AND method IS NOT NULL) OR
+                                       (anonymous_block IS NOT NULL AND owner IS NULL AND PACKAGE IS NULL AND method IS NULL),
+                         a_comment_in => 'either PETET_PLSQL_BLOCK.ANONYMOUS_BLOCK or [PETET_PLSQL_BLOCK.OWNER, PETET_PLSQL_BLOCK.PACKAGE] PETET_PLSQL_BLOCK.METHOD should be set');
+        -- NoFormat End
+        --
+        --set
         self.id              := id;
         self.NAME            := NAME;
         self.description     := description;
@@ -46,45 +56,51 @@ CREATE OR REPLACE TYPE BODY petet_plsql_block AS
      IS
     BEGIN
         --
-        IF NOT
-            (self.id = p_obj_in.id OR (self.id IS NULL AND p_obj_in.id IS NULL))
+        IF(self.id IS NULL AND p_obj_in.id IS NOT NULL)
+           OR (self.id IS NOT NULL AND p_obj_in.id IS NULL)
+           OR (self.id != p_obj_in.id)
         THEN
             RETURN pete_core.g_NO;
         END IF;
         --
-        IF NOT (self.name = p_obj_in.name OR
-            (self.name IS NULL AND p_obj_in.name IS NULL))
+        IF (self.name IS NULL AND p_obj_in.name IS NOT NULL)
+           OR (self.name IS NOT NULL AND p_obj_in.name IS NULL)
+           OR (self.name != p_obj_in.name)
         THEN
             RETURN pete_core.g_NO;
         END IF;
         --
-        IF NOT (self.description = p_obj_in.description OR
-            (self.description IS NULL AND p_obj_in.description IS NULL))
+        IF (self.description IS NULL AND p_obj_in.description IS NOT NULL)
+           OR (self.description IS NOT NULL AND p_obj_in.description IS NULL)
+           OR (self.description != p_obj_in.description)
         THEN
             RETURN pete_core.g_NO;
         END IF;
         --
-        IF NOT (self.owner = p_obj_in.owner OR
-            (self.owner IS NULL AND p_obj_in.owner IS NULL))
+        IF (self.owner IS NULL AND p_obj_in.owner IS NOT NULL)
+           OR (self.owner IS NOT NULL AND p_obj_in.owner IS NULL)
+           OR (self.owner != p_obj_in.owner)
         THEN
             RETURN pete_core.g_NO;
         END IF;
         --
-        IF NOT (self.package = p_obj_in.package OR
-            (self.package IS NULL AND p_obj_in.package IS NULL))
+        IF (self.package IS NULL AND p_obj_in.package IS NOT NULL)
+           OR (self.package IS NOT NULL AND p_obj_in.package IS NULL)
+           OR (self.package != p_obj_in.package)
         THEN
             RETURN pete_core.g_NO;
         END IF;
         --
-        IF NOT (self.method = p_obj_in.method OR
-            (self.method IS NULL AND p_obj_in.method IS NULL))
+        IF (self.method IS NULL AND p_obj_in.method IS NOT NULL)
+           OR (self.method IS NOT NULL AND p_obj_in.method IS NULL)
+           OR (self.method != p_obj_in.method)
         THEN
             RETURN pete_core.g_NO;
         END IF;
         --
-        IF NOT
-            (self.anonymous_block = p_obj_in.anonymous_block OR
-            (self.anonymous_block IS NULL AND p_obj_in.anonymous_block IS NULL))
+        IF (self.anonymous_block IS NULL AND p_obj_in.anonymous_block IS NOT NULL)
+           OR (self.anonymous_block IS NOT NULL AND p_obj_in.anonymous_block IS NULL)
+           OR (self.anonymous_block != p_obj_in.anonymous_block)
         THEN
             RETURN pete_core.g_NO;
         END IF;

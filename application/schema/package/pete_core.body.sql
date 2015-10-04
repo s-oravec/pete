@@ -42,7 +42,6 @@ CREATE OR REPLACE PACKAGE BODY pete_core AS
     ) IS
     BEGIN
         --
-    
         pete_logger.log_end(a_run_log_id_in      => a_run_log_id_in,
                             a_result_in          => a_execution_result_in,
                             a_xml_in_in          => a_xml_in_in,
@@ -62,6 +61,7 @@ CREATE OR REPLACE PACKAGE BODY pete_core AS
                                                         ELSE
                                                          NULL
                                                     END);
+        g_last_run_log_id := NULL;
     END;
 
 END;

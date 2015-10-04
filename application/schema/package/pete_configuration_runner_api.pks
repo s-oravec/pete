@@ -1,10 +1,5 @@
 CREATE OR REPLACE PACKAGE pete_configuration_runner_api IS
 
-    -- Thrown if the set method
-    ge_record_not_found EXCEPTION;
-    gc_RECORD_NOT_FOUND CONSTANT PLS_INTEGER := -20001;
-    PRAGMA EXCEPTION_INIT(ge_record_not_found, -20001);
-
     --
     -- Sets PLSQL Block
     --   - if a_plsql_block.id is not set, then new block is created and a_plsql_block.id 
@@ -74,7 +69,7 @@ CREATE OR REPLACE PACKAGE pete_configuration_runner_api IS
     --
     -- %throws ge_record_not_found thrown when record being updated is not found
     --
-    PROCEDURE set_expected_result(a_expected_result_io IN OUT petet_expected_result);
+    PROCEDURE set_expected_result(a_expected_result_io IN OUT NOCOPY petet_expected_result);
 
     --
     -- Deletes Expected Result
@@ -147,7 +142,7 @@ CREATE OR REPLACE PACKAGE pete_configuration_runner_api IS
     --
     -- %throws ge_record_not_found thrown when record being updated is not found
     --
-    PROCEDURE set_test_case(a_test_case_io IN OUT petet_test_case);
+    PROCEDURE set_test_case(a_test_case_io IN OUT NOCOPY petet_test_case);
 
     --
     -- Deletes Test Case - cascading deletes Blocks in Case
@@ -179,7 +174,7 @@ CREATE OR REPLACE PACKAGE pete_configuration_runner_api IS
     --
     -- %throws ge_record_not_found thrown when record being updated is not found
     --
-    PROCEDURE set_test_suite(a_test_suite_io IN OUT petet_test_suite);
+    PROCEDURE set_test_suite(a_test_suite_io IN OUT NOCOPY petet_test_suite);
 
     --
     -- Deletes Test Suite - cascading deletes Blocks in Suite

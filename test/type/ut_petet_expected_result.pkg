@@ -1,0 +1,168 @@
+CREATE OR REPLACE PACKAGE ut_petet_expected_result AS
+
+    description pete_core.typ_description := 'Expected Result Type';
+
+    PROCEDURE ctor(d VARCHAR2 := 'minimal constructor works');
+    PROCEDURE ctor_without_mandatory(d VARCHAR2 := 'constructor without mandatory attributes fails');
+    PROCEDURE copy(d VARCHAR2 := 'copy works');
+    PROCEDURE equals(d VARCHAR2 := 'equals works');
+
+    PROCEDURE after_each;
+
+END;
+/
+CREATE OR REPLACE PACKAGE BODY ut_petet_expected_result AS
+
+    g_xml1 xmltype := xmltype.createxml('<foo>foo</foo>');
+    g_xml2 xmltype := xmltype.createxml('<bar>bar</bar>');
+
+    --------------------------------------------------------------------------------
+    PROCEDURE ctor(d VARCHAR2) IS
+        l_name        VARCHAR2(255) := 'ctor';
+        l_expected_result petet_expected_result;
+    BEGIN
+        --log
+        pete_logger.log_method_description(d);
+        --test
+        --with anonymous expected_result
+        l_expected_result := petet_expected_result(NAME            => l_name);
+        pete_configuration_runner_api.set_expected_result(a_expected_result_io => l_expected_result);
+        --assert
+        pete_assert.pass;
+    END;
+
+    --------------------------------------------------------------------------------
+    PROCEDURE ctor_without_mandatory(d VARCHAR2) IS
+        l_thrown      BOOLEAN := FALSE;
+        l_expected_result petet_expected_result;
+    BEGIN
+        --log
+        pete_logger.log_method_description(d);
+        --test
+        BEGIN
+            l_expected_result := petet_expected_result(NAME => NULL);
+            l_thrown      := FALSE;
+        EXCEPTION
+            WHEN OTHERS THEN
+                l_thrown := TRUE;
+        END;
+        --assert
+        IF NOT l_thrown
+        THEN
+            raise_application_error(-20000,
+                                    'PETET_EXPECTED_RESULT constructor should have thrown.');
+        END IF;
+    END;
+
+    --------------------------------------------------------------------------------
+    PROCEDURE copy(d VARCHAR2) IS
+        l_src petet_expected_result;
+        l_tgt petet_expected_result;
+    BEGIN
+        --log
+        pete_logger.log_method_description(d);
+        --test
+        l_src := petet_expected_result(id => 1, NAME => 'n', value => g_xml1, DESCRIPTION => 'd');
+        l_tgt := l_src.copy();
+        --assert
+        pete_assert.eq(l_src.id, l_tgt.id);
+        pete_assert.eq(l_src.name, l_tgt.name);
+        pete_assert.eq(l_src.value, l_tgt.value);
+        pete_assert.eq(l_src.description, l_tgt.description);
+        --test
+        l_src := petet_expected_result(NAME => 'n', value => g_xml1, DESCRIPTION => 'd');
+        l_tgt := l_src.copy();
+        --assert
+        pete_assert.eq(l_src.id, l_tgt.id);
+        pete_assert.eq(l_src.name, l_tgt.name);
+        pete_assert.eq(l_src.value, l_tgt.value);
+        pete_assert.eq(l_src.description, l_tgt.description);
+        --test
+        l_src := petet_expected_result(id => 1, NAME => 'n', DESCRIPTION => 'd');
+        l_tgt := l_src.copy();
+        --assert
+        pete_assert.eq(l_src.id, l_tgt.id);
+        pete_assert.eq(l_src.name, l_tgt.name);
+        pete_assert.eq(l_src.value, l_tgt.value);
+        pete_assert.eq(l_src.description, l_tgt.description);
+        --test
+        l_src := petet_expected_result(id => 1, NAME => 'n', value => g_xml1);
+        l_tgt := l_src.copy();
+        --assert
+        pete_assert.eq(l_src.id, l_tgt.id);
+        pete_assert.eq(l_src.name, l_tgt.name);
+        pete_assert.eq(l_src.value, l_tgt.value);
+        pete_assert.eq(l_src.description, l_tgt.description);
+    END;
+
+    --------------------------------------------------------------------------------
+    PROCEDURE equals(d VARCHAR2) IS
+        l_expected_result1 petet_expected_result;
+        l_expected_result2 petet_expected_result;
+    BEGIN
+        --log
+        pete_logger.log_method_description(d);
+        --prepare
+        l_expected_result1 := petet_expected_result(NAME => 'n');
+        l_expected_result2 := petet_expected_result(NAME => 'n');
+        --assert
+        pete_assert.eq(a_expected_in => pete_core.g_YES,
+                       a_actual_in   => l_expected_result1.equals(l_expected_result2));
+        --prepare
+        l_expected_result1 := petet_expected_result(id => 1, NAME => 'n', value => g_xml1, description => 'd');
+        l_expected_result2 := petet_expected_result(id => 1, NAME => 'n', value => g_xml1, description => 'd');
+        --assert
+        pete_assert.eq(a_expected_in => pete_core.g_YES,
+                       a_actual_in   => l_expected_result1.equals(l_expected_result2));
+        --prepare
+        l_expected_result1 := petet_expected_result(id => 1, NAME => 'n', value => g_xml1, description => 'x');
+        l_expected_result2 := petet_expected_result(id => 1, NAME => 'n', value => g_xml1, description => 'd');
+        --assert
+        pete_assert.eq(a_expected_in => pete_core.g_NO,
+                       a_actual_in   => l_expected_result1.equals(l_expected_result2));
+        --prepare
+        l_expected_result1 := petet_expected_result(id => 1, NAME => 'n', value => g_xml1, description => 'd');
+        l_expected_result2 := petet_expected_result(id => 1, NAME => 'n', value => g_xml2, description => 'd');
+        --assert
+        pete_assert.eq(a_expected_in => pete_core.g_NO,
+                       a_actual_in   => l_expected_result1.equals(l_expected_result2));
+        --prepare
+        l_expected_result1 := petet_expected_result(id => 1, NAME => 'n', value => g_xml1, description => 'd');
+        l_expected_result2 := petet_expected_result(id => 1, NAME => 'x', value => g_xml1, description => 'd');
+        --assert
+        pete_assert.eq(a_expected_in => pete_core.g_NO,
+                       a_actual_in   => l_expected_result1.equals(l_expected_result2));
+        --prepare
+        l_expected_result1 := petet_expected_result(id => 1, NAME => 'n', value => g_xml1, description => 'd');
+        l_expected_result2 := petet_expected_result(id => 2, NAME => 'n', value => g_xml1, description => 'd');
+        --assert
+        pete_assert.eq(a_expected_in => pete_core.g_NO,
+                       a_actual_in   => l_expected_result1.equals(l_expected_result2));
+        --prepare
+        l_expected_result1 := petet_expected_result(id => 1, NAME => 'n', value => g_xml1, description => 'd');
+        l_expected_result2 := petet_expected_result(NAME => 'n', value => g_xml1, description => 'd');
+        --assert
+        pete_assert.eq(a_expected_in => pete_core.g_NO,
+                       a_actual_in   => l_expected_result1.equals(l_expected_result2));
+        --prepare
+        l_expected_result1 := petet_expected_result(id => 1, NAME => 'n', value => g_xml1, description => 'd');
+        l_expected_result2 := petet_expected_result(id => 1, NAME => 'n', description => 'd');
+        --assert
+        pete_assert.eq(a_expected_in => pete_core.g_NO,
+                       a_actual_in   => l_expected_result1.equals(l_expected_result2));
+        --prepare
+        l_expected_result1 := petet_expected_result(id => 1, NAME => 'n', value => g_xml1, description => 'd');
+        l_expected_result2 := petet_expected_result(id => 1, NAME => 'n', value => g_xml1);
+        --assert
+        pete_assert.eq(a_expected_in => pete_core.g_NO,
+                       a_actual_in   => l_expected_result1.equals(l_expected_result2));
+    END;
+
+    --------------------------------------------------------------------------------
+    procedure after_each is
+    begin
+        rollback;
+    end;
+
+END;
+/

@@ -36,9 +36,15 @@ CREATE OR REPLACE PACKAGE pete_core AS
     -- description subtype
     SUBTYPE typ_description IS VARCHAR2(4000);
 
+    -- Boolean - YES/NO subtype
     subtype typ_YES_NO is varchar2(1);
     g_YES constant typ_YES_NO := 'Y';
     g_NO constant typ_YES_NO := 'N';
+
+    -- Run modifier subytpe
+    subtype typ_run_modifier is pete_plsql_block_in_case.RUN_MODIFIER%type;
+    g_SKIP constant typ_run_modifier := 'SKIP';
+    g_ONLY constant typ_run_modifier := 'ONLY';
 
     --
     -- Order constants
@@ -53,6 +59,7 @@ CREATE OR REPLACE PACKAGE pete_core AS
     --
     -- Core begin test implementation
     -- creates record for test run
+    -- sets last run_log_id
     --
     -- %argument a_object_name_in object name
     -- %argument a_object_type_in object type
@@ -72,6 +79,7 @@ CREATE OR REPLACE PACKAGE pete_core AS
     --
     -- Core end test implementation
     -- updates record for test run with result and detailed info
+    -- clears last run_log_id
     --
     -- %argument a_run_log_id_in id of current run log
     -- %argument a_is_succes_in is result success?

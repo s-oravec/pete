@@ -32,7 +32,7 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner_api IS
             --
             IF SQL%ROWCOUNT = 0
             THEN
-                raise_application_error(gc_RECORD_NOT_FOUND,
+                raise_application_error(pete_exception.gc_RECORD_NOT_FOUND,
                                         'Record not found. {"id":"' ||
                                         a_plsql_block_io.id || '"} ');
             END IF;
@@ -63,7 +63,7 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner_api IS
         --
         IF SQL%ROWCOUNT = 0
         THEN
-            raise_application_error(gc_RECORD_NOT_FOUND,
+            raise_application_error(pete_exception.gc_RECORD_NOT_FOUND,
                                     'Record not found. {"id":"' || a_id_in ||
                                     '"} ');
         END IF;
@@ -94,7 +94,7 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner_api IS
             --
             IF SQL%ROWCOUNT = 0
             THEN
-                raise_application_error(gc_RECORD_NOT_FOUND,
+                raise_application_error(pete_exception.gc_RECORD_NOT_FOUND,
                                         'Record not found. {"id":"' ||
                                         a_input_argument_io.id || '"} ');
             END IF;
@@ -124,7 +124,7 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner_api IS
         --
         IF SQL%ROWCOUNT = 0
         THEN
-            raise_application_error(gc_RECORD_NOT_FOUND,
+            raise_application_error(pete_exception.gc_RECORD_NOT_FOUND,
                                     'Record not found. {"id":"' || a_id_in ||
                                     '"} ');
         END IF;
@@ -156,7 +156,7 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner_api IS
             --
             IF SQL%ROWCOUNT = 0
             THEN
-                raise_application_error(gc_RECORD_NOT_FOUND,
+                raise_application_error(pete_exception.gc_RECORD_NOT_FOUND,
                                         'Record not found. {"id":"' ||
                                         a_expected_result_io.id || '"} ');
             END IF;
@@ -186,7 +186,7 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner_api IS
         --
         IF SQL%ROWCOUNT = 0
         THEN
-            raise_application_error(gc_RECORD_NOT_FOUND,
+            raise_application_error(pete_exception.gc_RECORD_NOT_FOUND,
                                     'Record not found. {"id":"' || a_id_in ||
                                     '"} ');
         END IF;
@@ -279,7 +279,7 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner_api IS
             --
             IF SQL%ROWCOUNT = 0
             THEN
-                raise_application_error(gc_RECORD_NOT_FOUND,
+                raise_application_error(pete_exception.gc_RECORD_NOT_FOUND,
                                         'Record not found. {"id":"' ||
                                         a_plsql_block_in_case_io.id || '"} ');
             END IF;
@@ -332,7 +332,7 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner_api IS
         --
         IF SQL%ROWCOUNT = 0
         THEN
-            raise_application_error(gc_RECORD_NOT_FOUND,
+            raise_application_error(pete_exception.gc_RECORD_NOT_FOUND,
                                     'Record not found. {"id":"' || a_id_in ||
                                     '"} ');
         END IF;
@@ -412,7 +412,7 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner_api IS
             --
             IF SQL%ROWCOUNT = 0
             THEN
-                raise_application_error(gc_RECORD_NOT_FOUND,
+                raise_application_error(pete_exception.gc_RECORD_NOT_FOUND,
                                         'Record not found. {"id":"' ||
                                         a_test_case_io.id || '"} ');
             END IF;
@@ -483,7 +483,7 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner_api IS
         --
         IF SQL%ROWCOUNT = 0
         THEN
-            raise_application_error(gc_RECORD_NOT_FOUND,
+            raise_application_error(pete_exception.gc_RECORD_NOT_FOUND,
                                     'Record not found. {"id":"' || a_id_in ||
                                     '"} ');
         END IF;
@@ -596,7 +596,7 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner_api IS
             --
             IF SQL%ROWCOUNT = 0
             THEN
-                raise_application_error(gc_RECORD_NOT_FOUND,
+                raise_application_error(pete_exception.gc_RECORD_NOT_FOUND,
                                         'Record not found. {"id":"' ||
                                         a_test_case_in_suite_io.id || '"} ');
             END IF;
@@ -635,7 +635,7 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner_api IS
             --
             IF SQL%ROWCOUNT = 0
             THEN
-                raise_application_error(gc_RECORD_NOT_FOUND,
+                raise_application_error(pete_exception.gc_RECORD_NOT_FOUND,
                                         'Record not found. {"id":"' ||
                                         a_test_suite_io.id || '"} ');
             END IF;
@@ -708,7 +708,7 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner_api IS
         --
         IF SQL%ROWCOUNT = 0
         THEN
-            raise_application_error(gc_RECORD_NOT_FOUND,
+            raise_application_error(pete_exception.gc_RECORD_NOT_FOUND,
                                     'Record not found. {"id":"' || a_id_in ||
                                     '"} ');
         END IF;

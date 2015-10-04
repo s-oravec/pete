@@ -105,5 +105,11 @@ CREATE OR REPLACE PACKAGE pete_assert AS
         a_comment_in  VARCHAR2 DEFAULT NULL
     );
 
+    FUNCTION eq
+    (
+        a_expected_in sys.xmltype,
+        a_actual_in   sys.xmltype
+    ) RETURN BOOLEAN;
+
 END pete_assert;
 /

@@ -248,6 +248,10 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_assert AS
         pete_logger.log_method_description(d);
         --test
         pete_assert.eq(l_xml1, l_xml2);
+        --nulls are equal
+        l_xml1 := null;
+        l_xml2 := null;
+        pete_assert.eq(l_xml1, l_xml2);
         --assert
     END;
 
@@ -261,6 +265,32 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_assert AS
         --test
         BEGIN
             pete_assert.eq(l_xml1, l_xml2);
+            l_thrown := FALSE;
+        EXCEPTION
+            WHEN OTHERS THEN
+                l_thrown := TRUE;
+        END;
+        --assert
+        IF NOT l_thrown
+        THEN
+            raise_application_error(-20000, 'PETE_ASSSERT.EQ should throw.');
+        END IF;
+        --test
+        BEGIN
+            pete_assert.eq(null, l_xml2);
+            l_thrown := FALSE;
+        EXCEPTION
+            WHEN OTHERS THEN
+                l_thrown := TRUE;
+        END;
+        --assert
+        IF NOT l_thrown
+        THEN
+            raise_application_error(-20000, 'PETE_ASSSERT.EQ should throw.');
+        END IF;
+        --test
+        BEGIN
+            pete_assert.eq(l_xml1, null);
             l_thrown := FALSE;
         EXCEPTION
             WHEN OTHERS THEN

@@ -18,6 +18,36 @@ CREATE OR REPLACE TYPE BODY petet_plsql_block_in_case AS
     ) RETURN SELF AS RESULT IS
     BEGIN
         --
+        --asserts
+        --plsql_block or plsql_block_id should be not null
+        pete_assert.this(a_value_in   => plsql_block_id IS NOT NULL OR
+                                         plsql_block IS NOT NULL,
+                         a_comment_in => 'Either PETET_PLSQL_BLOCK_IN_CASE.PLSQL_BLOCK_ID or PETET_PLSQL_BLOCK_IN_CASE.PLSQL_BLOCK should be not null');
+        --
+        --if both plsql_block and plsql_block_id are defined then plsql_block.id should be set and should be same as pslql_block_id
+        IF plsql_block IS NOT NULL
+           AND plsql_block_id IS NOT NULL
+        THEN
+            pete_assert.this(a_value_in   => plsql_block_id = plsql_block.id,
+                             a_comment_in => 'PETET_PLSQL_BLOCK_IN_CASE.PLSQL_BLOCK_ID and PETET_PLSQL_BLOCK_IN_CASE.PLSQL_BLOCK.ID should be same');
+        END IF;
+        --
+        --if both input_argument and input_argument_id are defined then input_argument.id should be set and should be same as pslql_block_id
+        IF input_argument IS NOT NULL
+           AND input_argument_id IS NOT NULL
+        THEN
+            pete_assert.this(a_value_in   => input_argument_id = input_argument.id,
+                             a_comment_in => 'PETET_PLSQL_BLOCK_IN_CASE.INPUT_ARGUMENT_ID and PETET_PLSQL_BLOCK_IN_CASE.INPUT_ARGUMENT.ID should be same');
+        END IF;
+        --
+        --if both expected_result and expected_result_id are defined then expected_result.id should be set and should be same as pslql_block_id
+        IF expected_result IS NOT NULL
+           AND expected_result_id IS NOT NULL
+        THEN
+            pete_assert.this(a_value_in   => expected_result_id = expected_result.id,
+                             a_comment_in => 'PETET_PLSQL_BLOCK_IN_CASE.EXPECTED_RESULT_ID and PETET_PLSQL_BLOCK_IN_CASE.EXPECTED_RESULT.ID should be same');
+        END IF;
+        --
         self.id           := id;
         self.test_case_id := test_case_id;
         --
@@ -87,93 +117,113 @@ CREATE OR REPLACE TYPE BODY petet_plsql_block_in_case AS
         l_deep_in pete_core.typ_YES_NO := nvl(p_deep_in, pete_core.g_NO);
     BEGIN
         --
-        IF NOT
-            (self.id = p_obj_in.id OR (self.id IS NULL AND p_obj_in.id IS NULL))
+        IF (self.id IS NULL AND p_obj_in.id IS NOT NULL)
+           OR (self.id IS NOT NULL AND p_obj_in.id IS NULL)
+           OR (self.id != p_obj_in.id)
         THEN
             RETURN pete_core.g_NO;
         END IF;
         --
-        IF NOT (self.test_case_id = p_obj_in.test_case_id OR
-            (self.test_case_id IS NULL AND p_obj_in.test_case_id IS NULL))
+        IF (self.test_case_id IS NULL AND p_obj_in.test_case_id IS NOT NULL)
+           OR (self.test_case_id IS NOT NULL AND p_obj_in.test_case_id IS NULL)
+           OR (self.test_case_id != p_obj_in.test_case_id)
         THEN
             RETURN pete_core.g_NO;
         END IF;
         --
-        IF NOT
-            (self.plsql_block_id = p_obj_in.plsql_block_id OR
-            (self.plsql_block_id IS NULL AND p_obj_in.plsql_block_id IS NULL))
-        THEN
-            RETURN pete_core.g_NO;
-        END IF;
-        --
-        IF l_deep_in = pete_core.g_YES
-        THEN
-            IF NOT ((self.plsql_block IS NULL AND p_obj_in.plsql_block IS NULL) OR
-                self.plsql_block.equals(p_obj_in  => p_obj_in.plsql_block,
-                                            p_deep_in => l_deep_in) =
-                pete_core.g_YES)
-            THEN
-                RETURN pete_core.g_NO;
-            END IF;
-        END IF;
-        --
-        IF NOT (self.input_argument_id = p_obj_in.input_argument_id OR
-            (self.input_argument_id IS NULL AND
-            p_obj_in.input_argument_id IS NULL))
+        IF (self.plsql_block_id IS NULL AND p_obj_in.plsql_block_id IS NOT NULL)
+           OR
+           (self.plsql_block_id IS NOT NULL AND p_obj_in.plsql_block_id IS NULL)
+           OR (self.plsql_block_id != p_obj_in.plsql_block_id)
         THEN
             RETURN pete_core.g_NO;
         END IF;
         --
         IF l_deep_in = pete_core.g_YES
         THEN
-            IF NOT ((self.input_argument IS NULL AND
-                p_obj_in.input_argument IS NULL) OR self.input_argument.equals(p_obj_in  => p_obj_in.input_argument,
-                                                                                   p_deep_in => l_deep_in) =
-                pete_core.g_YES)
+            IF (self.plsql_block IS NULL AND p_obj_in.plsql_block IS NOT NULL)
+               OR
+               (self.plsql_block IS NOT NULL AND p_obj_in.plsql_block IS NULL)
+               OR (self.plsql_block.equals(p_obj_in  => p_obj_in.plsql_block,
+                                           p_deep_in => l_deep_in) =
+               pete_core.g_NO)
             THEN
                 RETURN pete_core.g_NO;
             END IF;
         END IF;
         --
-        IF NOT (self.expected_result_id = p_obj_in.expected_result_id OR
-            (self.expected_result_id IS NULL AND
-            p_obj_in.expected_result_id IS NULL))
+        IF (self.input_argument_id IS NULL AND
+           p_obj_in.input_argument_id IS NOT NULL)
+           OR (self.input_argument_id IS NOT NULL AND
+           p_obj_in.input_argument_id IS NULL)
+           OR (self.input_argument_id != p_obj_in.input_argument_id)
         THEN
             RETURN pete_core.g_NO;
         END IF;
         --
         IF l_deep_in = pete_core.g_YES
         THEN
-            IF NOT ((self.expected_result IS NULL AND
-                p_obj_in.expected_result IS NULL) OR self.expected_result.equals(p_obj_in  => p_obj_in.expected_result,
-                                                                                     p_deep_in => l_deep_in) =
-                pete_core.g_YES)
+            IF (self.input_argument IS NULL AND
+               p_obj_in.input_argument IS NOT NULL)
+               OR (self.input_argument IS NOT NULL AND
+               p_obj_in.input_argument IS NULL)
+               OR (self.input_argument.equals(p_obj_in  => p_obj_in.input_argument,
+                                              p_deep_in => l_deep_in) =
+               pete_core.g_NO)
             THEN
                 RETURN pete_core.g_NO;
             END IF;
         END IF;
         --
-        IF NOT (self.position = p_obj_in.position OR
-            (self.position IS NULL AND p_obj_in.position IS NULL))
+        IF (self.expected_result_id IS NULL AND
+           p_obj_in.expected_result_id IS NOT NULL)
+           OR (self.expected_result_id IS NOT NULL AND
+           p_obj_in.expected_result_id IS NULL)
+           OR (self.expected_result_id != p_obj_in.expected_result_id)
         THEN
             RETURN pete_core.g_NO;
         END IF;
         --
-        IF NOT
-            (self.stop_on_failure = p_obj_in.stop_on_failure OR
-            (self.stop_on_failure IS NULL AND p_obj_in.stop_on_failure IS NULL))
+        IF l_deep_in = pete_core.g_YES
+        THEN
+            IF (self.expected_result IS NULL AND
+               p_obj_in.expected_result IS NOT NULL)
+               OR (self.expected_result IS NOT NULL AND
+               p_obj_in.expected_result IS NULL)
+               OR (self.expected_result.equals(p_obj_in  => p_obj_in.expected_result,
+                                               p_deep_in => l_deep_in) =
+               pete_core.g_NO)
+            THEN
+                RETURN pete_core.g_NO;
+            END IF;
+        END IF;
+        --
+        IF (self.position IS NULL AND p_obj_in.position IS NOT NULL)
+           OR (self.position IS NOT NULL AND p_obj_in.position IS NULL)
+           OR (self.position != p_obj_in.position)
         THEN
             RETURN pete_core.g_NO;
         END IF;
         --
-        IF NOT (self.run_modifier = p_obj_in.run_modifier OR
-            (self.run_modifier IS NULL AND p_obj_in.run_modifier IS NULL))
+        IF (self.stop_on_failure IS NULL AND
+           p_obj_in.stop_on_failure IS NOT NULL)
+           OR (self.stop_on_failure IS NOT NULL AND
+           p_obj_in.stop_on_failure IS NULL)
+           OR (self.stop_on_failure != p_obj_in.stop_on_failure)
         THEN
             RETURN pete_core.g_NO;
         END IF;
         --
-        IF NOT (self.description = p_obj_in.description OR
-            (self.description IS NULL AND p_obj_in.description IS NULL))
+        IF (self.run_modifier IS NULL AND p_obj_in.run_modifier IS NOT NULL)
+           OR (self.run_modifier IS NOT NULL AND p_obj_in.run_modifier IS NULL)
+           OR (self.run_modifier != p_obj_in.run_modifier)
+        THEN
+            RETURN pete_core.g_NO;
+        END IF;
+        --
+        IF (self.description IS NULL AND p_obj_in.description IS NOT NULL)
+           OR (self.description IS NOT NULL AND p_obj_in.description IS NULL)
+           OR (self.description != p_obj_in.description)
         THEN
             RETURN pete_core.g_NO;
         END IF;

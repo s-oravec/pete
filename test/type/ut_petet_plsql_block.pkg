@@ -1,0 +1,595 @@
+CREATE OR REPLACE PACKAGE ut_petet_plsql_block AS
+
+    description pete_core.typ_description := 'PLSQL Block Type';
+
+    PROCEDURE xx_temporary_method
+    (
+        a_xml_in  IN xmltype,
+        a_xml_out OUT NOCOPY xmltype
+    );
+
+    PROCEDURE ctor_with_anonymous_block(d VARCHAR2 := 'minimal constructor with anonymous block works');
+    PROCEDURE ctor_with_package_method(d VARCHAR2 := 'minimal constructor with pacakge method works');
+    PROCEDURE ctor_without_mandatory(d VARCHAR2 := 'constructor without mandatory attributes fails');
+    PROCEDURE ctor_with_block_and_method(d VARCHAR2 := 'constructor with both block and method fails');
+
+    PROCEDURE copy_with_anonymous_block(d VARCHAR2 := 'copy with anonymous block works');
+    PROCEDURE copy_with_package_method(d VARCHAR2 := 'copy with package method works');
+
+    PROCEDURE equals_with_anonymous_block(d VARCHAR2 := 'equals with anonymous block works');
+    PROCEDURE equals_with_package_method(d VARCHAR2 := 'equals with package method works');
+
+END;
+/
+CREATE OR REPLACE PACKAGE BODY ut_petet_plsql_block AS
+
+    -- NoFormat Start
+    g_passthrough_anonymous_block varchar2(32767)
+    := 'DECLARE' || CHR(10)
+    || '    l_xml_in xmltype := :1;' || CHR(10)
+    || 'BEGIN' || CHR(10)
+    || '    :2 := l_xml_in;' || CHR(10)
+    || 'END;';
+    -- NoFormat End
+
+    --------------------------------------------------------------------------------
+    PROCEDURE xx_temporary_method
+    (
+        a_xml_in  IN xmltype,
+        a_xml_out OUT NOCOPY xmltype
+    ) IS
+    BEGIN
+        a_xml_out := a_xml_in;
+    END;
+
+    --------------------------------------------------------------------------------
+    PROCEDURE ctor_with_anonymous_block(d VARCHAR2) IS
+        l_name        VARCHAR2(255) := 'ctor_with_anonymous_block';
+        l_plsql_block petet_plsql_block;
+    BEGIN
+        --log
+        pete_logger.log_method_description(d);
+        --test
+        --with anonymous block
+        l_plsql_block := petet_plsql_block(NAME            => l_name,
+                                           anonymous_block => g_passthrough_anonymous_block);
+        pete_configuration_runner_api.set_plsql_block(a_plsql_block_io => l_plsql_block);
+        --assert
+        pete_assert.pass;
+    END;
+
+    --------------------------------------------------------------------------------
+    PROCEDURE ctor_with_package_method(d VARCHAR2) IS
+        l_name        VARCHAR2(255) := 'ctor_with_package_method';
+        l_plsql_block petet_plsql_block;
+    BEGIN
+        --log
+        pete_logger.log_method_description(d);
+        --test
+        --with anonymous block
+        l_plsql_block := petet_plsql_block(NAME    => l_name,
+                                           owner   => USER,
+                                           PACKAGE => 'UT_PETET_PLSQL_BLOCK',
+                                           method  => 'XX_TEMPORARY_METHOD');
+        pete_configuration_runner_api.set_plsql_block(a_plsql_block_io => l_plsql_block);
+        --assert
+        pete_assert.pass;
+    END;
+
+    --------------------------------------------------------------------------------
+    PROCEDURE ctor_without_mandatory(d VARCHAR2) IS
+        l_thrown      BOOLEAN := FALSE;
+        l_plsql_block petet_plsql_block;
+    BEGIN
+        --log
+        pete_logger.log_method_description(d);
+        --test
+        BEGIN
+            l_plsql_block := petet_plsql_block(NAME => NULL);
+            l_thrown      := FALSE;
+        EXCEPTION
+            WHEN OTHERS THEN
+                l_thrown := TRUE;
+        END;
+        --assert
+        IF NOT l_thrown
+        THEN
+            raise_application_error(-20000,
+                                    'PETET_PLSQL_BLOCK constructor should have thrown.');
+        END IF;
+        --test
+        BEGIN
+            l_plsql_block := petet_plsql_block(NAME => 'n');
+            l_thrown      := FALSE;
+        EXCEPTION
+            WHEN OTHERS THEN
+                l_thrown := TRUE;
+        END;
+        --assert
+        IF NOT l_thrown
+        THEN
+            raise_application_error(-20000,
+                                    'PETET_PLSQL_BLOCK constructor should have thrown.');
+        END IF;
+        --test
+        BEGIN
+            l_plsql_block := petet_plsql_block(NAME => NULL, method => 'm');
+            l_thrown      := FALSE;
+        EXCEPTION
+            WHEN OTHERS THEN
+                l_thrown := TRUE;
+        END;
+        --assert
+        IF NOT l_thrown
+        THEN
+            raise_application_error(-20000,
+                                    'PETET_PLSQL_BLOCK constructor should have thrown.');
+        END IF;
+        --test
+        BEGIN
+            l_plsql_block := petet_plsql_block(NAME            => NULL,
+                                               anonymous_block => 'a');
+            l_thrown      := FALSE;
+        EXCEPTION
+            WHEN OTHERS THEN
+                l_thrown := TRUE;
+        END;
+        --assert
+        IF NOT l_thrown
+        THEN
+            raise_application_error(-20000,
+                                    'PETET_PLSQL_BLOCK constructor should have thrown.');
+        END IF;
+    END;
+
+    --------------------------------------------------------------------------------
+    PROCEDURE ctor_with_block_and_method(d VARCHAR2) IS
+        l_thrown      BOOLEAN := FALSE;
+        l_plsql_block petet_plsql_block;
+    BEGIN
+        --log
+        pete_logger.log_method_description(d);
+        --test
+        BEGIN
+            l_plsql_block := petet_plsql_block(NAME            => 'n',
+                                               anonymous_block => 'a',
+                                               method          => 'm');
+            l_thrown      := FALSE;
+        EXCEPTION
+            WHEN OTHERS THEN
+                l_thrown := TRUE;
+        END;
+        --assert
+        IF NOT l_thrown
+        THEN
+            raise_application_error(-20000,
+                                    'PETET_PLSQL_BLOCK constructor should have thrown.');
+        END IF;
+        --test
+        BEGIN
+            l_plsql_block := petet_plsql_block(NAME            => 'n',
+                                               anonymous_block => 'a',
+                                               PACKAGE         => 'p');
+            l_thrown      := FALSE;
+        EXCEPTION
+            WHEN OTHERS THEN
+                l_thrown := TRUE;
+        END;
+        --assert
+        IF NOT l_thrown
+        THEN
+            raise_application_error(-20000,
+                                    'PETET_PLSQL_BLOCK constructor should have thrown.');
+        END IF;
+        --test
+        BEGIN
+            l_plsql_block := petet_plsql_block(NAME            => 'n',
+                                               anonymous_block => 'a',
+                                               owner           => 'o');
+            l_thrown      := FALSE;
+        EXCEPTION
+            WHEN OTHERS THEN
+                l_thrown := TRUE;
+        END;
+        --assert
+        IF NOT l_thrown
+        THEN
+            raise_application_error(-20000,
+                                    'PETET_PLSQL_BLOCK constructor should have thrown.');
+        END IF;
+        --test
+        BEGIN
+            l_plsql_block := petet_plsql_block(NAME            => 'n',
+                                               anonymous_block => 'a',
+                                               owner           => 'o');
+            l_thrown      := FALSE;
+        EXCEPTION
+            WHEN OTHERS THEN
+                l_thrown := TRUE;
+        END;
+        --assert
+        IF NOT l_thrown
+        THEN
+            raise_application_error(-20000,
+                                    'PETET_PLSQL_BLOCK constructor should have thrown.');
+        END IF;
+    END;
+
+    --------------------------------------------------------------------------------
+    PROCEDURE copy_with_anonymous_block(d VARCHAR2) IS
+        l_src petet_plsql_block;
+        l_tgt petet_plsql_block;
+    BEGIN
+        --log
+        pete_logger.log_method_description(d);
+        --test
+        l_src := petet_plsql_block(NAME => 'n', anonymous_block => 'a');
+        l_tgt := l_src.copy();
+        --assert
+        pete_assert.eq(l_src.id, l_tgt.id);
+        pete_assert.eq(l_src.name, l_tgt.name);
+        pete_assert.eq(l_src.description, l_tgt.description);
+        pete_assert.eq(l_src.owner, l_tgt.owner);
+        pete_assert.eq(l_src.package, l_tgt.package);
+        pete_assert.eq(l_src.method, l_tgt.method);
+        pete_assert.eq(l_src.anonymous_block, l_tgt.anonymous_block);
+    END;
+
+    --------------------------------------------------------------------------------
+    PROCEDURE copy_with_package_method(d VARCHAR2) IS
+        l_src petet_plsql_block;
+        l_tgt petet_plsql_block;
+    BEGIN
+        --log
+        pete_logger.log_method_description(d);
+        --test
+        l_src := petet_plsql_block(NAME => 'n', method => 'm');
+        l_tgt := l_src.copy();
+        --assert
+        pete_assert.eq(l_src.id, l_tgt.id);
+        pete_assert.eq(l_src.name, l_tgt.name);
+        pete_assert.eq(l_src.description, l_tgt.description);
+        pete_assert.eq(l_src.owner, l_tgt.owner);
+        pete_assert.eq(l_src.package, l_tgt.package);
+        pete_assert.eq(l_src.method, l_tgt.method);
+        pete_assert.eq(l_src.anonymous_block, l_tgt.anonymous_block);
+        --test
+        l_src := petet_plsql_block(NAME => 'n', owner => 'o', method => 'm');
+        l_tgt := l_src.copy();
+        --assert
+        pete_assert.eq(l_src.id, l_tgt.id);
+        pete_assert.eq(l_src.name, l_tgt.name);
+        pete_assert.eq(l_src.description, l_tgt.description);
+        pete_assert.eq(l_src.owner, l_tgt.owner);
+        pete_assert.eq(l_src.package, l_tgt.package);
+        pete_assert.eq(l_src.method, l_tgt.method);
+        pete_assert.eq(l_src.anonymous_block, l_tgt.anonymous_block);
+        --test
+        l_src := petet_plsql_block(NAME => 'n', PACKAGE => 'p', method => 'm');
+        l_tgt := l_src.copy();
+        --assert
+        pete_assert.eq(l_src.id, l_tgt.id);
+        pete_assert.eq(l_src.name, l_tgt.name);
+        pete_assert.eq(l_src.description, l_tgt.description);
+        pete_assert.eq(l_src.owner, l_tgt.owner);
+        pete_assert.eq(l_src.package, l_tgt.package);
+        pete_assert.eq(l_src.method, l_tgt.method);
+        pete_assert.eq(l_src.anonymous_block, l_tgt.anonymous_block);
+        --test
+        l_src := petet_plsql_block(NAME    => 'n',
+                                   owner   => 'o',
+                                   PACKAGE => 'p',
+                                   method  => 'm');
+        l_tgt := l_src.copy();
+        --assert
+        pete_assert.eq(l_src.id, l_tgt.id);
+        pete_assert.eq(l_src.name, l_tgt.name);
+        pete_assert.eq(l_src.description, l_tgt.description);
+        pete_assert.eq(l_src.owner, l_tgt.owner);
+        pete_assert.eq(l_src.package, l_tgt.package);
+        pete_assert.eq(l_src.method, l_tgt.method);
+        pete_assert.eq(l_src.anonymous_block, l_tgt.anonymous_block);
+    END;
+
+    --------------------------------------------------------------------------------
+    PROCEDURE equals_with_anonymous_block(d VARCHAR2) IS
+        l_block1 petet_plsql_block;
+        l_block2 petet_plsql_block;
+    BEGIN
+        --log
+        pete_logger.log_method_description(d);
+        --prepare
+        l_block1 := petet_plsql_block(NAME => 'n', anonymous_block => 'a');
+        l_block2 := petet_plsql_block(NAME => 'n', anonymous_block => 'a');
+        --assert
+        pete_assert.eq(a_expected_in => l_block1.equals(l_block2),
+                       a_actual_in   => pete_core.g_YES);
+        --prepare
+        l_block1 := petet_plsql_block(id              => 1,
+                                      NAME            => 'n',
+                                      anonymous_block => 'a');
+        l_block2 := petet_plsql_block(id              => 1,
+                                      NAME            => 'n',
+                                      anonymous_block => 'a');
+        --assert
+        pete_assert.eq(a_expected_in => l_block1.equals(l_block2),
+                       a_actual_in   => pete_core.g_YES);
+        --prepare
+        l_block1 := petet_plsql_block(NAME => 'n', anonymous_block => 'x');
+        l_block2 := petet_plsql_block(NAME => 'n', anonymous_block => 'a');
+        --assert
+        pete_assert.eq(a_expected_in => l_block1.equals(l_block2),
+                       a_actual_in   => pete_core.g_NO);
+        --prepare
+        l_block1 := petet_plsql_block(NAME => 'n', anonymous_block => 'a');
+        l_block2 := petet_plsql_block(NAME => 'x', anonymous_block => 'a');
+        --assert
+        pete_assert.eq(a_expected_in => l_block1.equals(l_block2),
+                       a_actual_in   => pete_core.g_NO);
+        --prepare
+        l_block1 := petet_plsql_block(id              => 1,
+                                      NAME            => 'n',
+                                      anonymous_block => 'a');
+        l_block2 := petet_plsql_block(NAME => 'x', anonymous_block => 'a');
+        --assert
+        pete_assert.eq(a_expected_in => l_block1.equals(l_block2),
+                       a_actual_in   => pete_core.g_NO);
+        --prepare
+        l_block1 := petet_plsql_block(id              => 1,
+                                      NAME            => 'n',
+                                      anonymous_block => 'a');
+        l_block2 := petet_plsql_block(id              => 2,
+                                      NAME            => 'x',
+                                      anonymous_block => 'a');
+        --assert
+        pete_assert.eq(a_expected_in => l_block1.equals(l_block2),
+                       a_actual_in   => pete_core.g_NO);
+    END;
+
+    --------------------------------------------------------------------------------
+    PROCEDURE equals_with_package_method(d VARCHAR2) IS
+        l_block1 petet_plsql_block;
+        l_block2 petet_plsql_block;
+    BEGIN
+        --log
+        pete_logger.log_method_description(d);
+        --method
+        --prepare
+        l_block1 := petet_plsql_block(NAME => 'n', method => 'm');
+        l_block2 := petet_plsql_block(NAME => 'n', method => 'm');
+        --assert
+        pete_assert.eq(a_expected_in => l_block1.equals(l_block2),
+                       a_actual_in   => pete_core.g_YES);
+        --prepare
+        l_block1 := petet_plsql_block(id => 1, NAME => 'n', method => 'm');
+        l_block2 := petet_plsql_block(id => 1, NAME => 'n', method => 'm');
+        --assert
+        pete_assert.eq(a_expected_in => l_block1.equals(l_block2),
+                       a_actual_in   => pete_core.g_YES);
+        --prepare
+        l_block1 := petet_plsql_block(NAME => 'n', method => 'x');
+        l_block2 := petet_plsql_block(NAME => 'n', method => 'm');
+        --assert
+        pete_assert.eq(a_expected_in => l_block1.equals(l_block2),
+                       a_actual_in   => pete_core.g_NO);
+        --prepare
+        l_block1 := petet_plsql_block(NAME => 'n', method => 'm');
+        l_block2 := petet_plsql_block(NAME => 'x', method => 'm');
+        --assert
+        pete_assert.eq(a_expected_in => l_block1.equals(l_block2),
+                       a_actual_in   => pete_core.g_NO);
+        --prepare
+        l_block1 := petet_plsql_block(id => 1, NAME => 'n', method => 'm');
+        l_block2 := petet_plsql_block(NAME => 'x', method => 'm');
+        --assert
+        pete_assert.eq(a_expected_in => l_block1.equals(l_block2),
+                       a_actual_in   => pete_core.g_NO);
+        --prepare
+        l_block1 := petet_plsql_block(id => 1, NAME => 'n', method => 'm');
+        l_block2 := petet_plsql_block(id => 2, NAME => 'x', method => 'm');
+        --assert
+        pete_assert.eq(a_expected_in => l_block1.equals(l_block2),
+                       a_actual_in   => pete_core.g_NO);
+    
+        --package, method  
+        --prepare
+        l_block1 := petet_plsql_block(NAME    => 'n',
+                                      PACKAGE => 'p',
+                                      method  => 'm');
+        l_block2 := petet_plsql_block(NAME    => 'n',
+                                      PACKAGE => 'p',
+                                      method  => 'm');
+        --assert
+        pete_assert.eq(a_expected_in => l_block1.equals(l_block2),
+                       a_actual_in   => pete_core.g_YES);
+        --prepare
+        l_block1 := petet_plsql_block(id      => 1,
+                                      NAME    => 'n',
+                                      PACKAGE => 'p',
+                                      method  => 'm');
+        l_block2 := petet_plsql_block(id      => 1,
+                                      NAME    => 'n',
+                                      PACKAGE => 'p',
+                                      method  => 'm');
+        --assert
+        pete_assert.eq(a_expected_in => l_block1.equals(l_block2),
+                       a_actual_in   => pete_core.g_YES);
+        --prepare
+        l_block1 := petet_plsql_block(NAME    => 'n',
+                                      PACKAGE => 'p',
+                                      method  => 'x');
+        l_block2 := petet_plsql_block(NAME    => 'n',
+                                      PACKAGE => 'p',
+                                      method  => 'm');
+        --assert
+        pete_assert.eq(a_expected_in => l_block1.equals(l_block2),
+                       a_actual_in   => pete_core.g_NO);
+        --prepare
+        l_block1 := petet_plsql_block(NAME    => 'n',
+                                      PACKAGE => 'p',
+                                      method  => 'm');
+        l_block2 := petet_plsql_block(NAME    => 'x',
+                                      PACKAGE => 'p',
+                                      method  => 'm');
+        --assert
+        pete_assert.eq(a_expected_in => l_block1.equals(l_block2),
+                       a_actual_in   => pete_core.g_NO);
+        --prepare
+        l_block1 := petet_plsql_block(id      => 1,
+                                      NAME    => 'n',
+                                      PACKAGE => 'p',
+                                      method  => 'm');
+        l_block2 := petet_plsql_block(NAME    => 'x',
+                                      PACKAGE => 'p',
+                                      method  => 'm');
+        --assert
+        pete_assert.eq(a_expected_in => l_block1.equals(l_block2),
+                       a_actual_in   => pete_core.g_NO);
+        --prepare
+        l_block1 := petet_plsql_block(id      => 1,
+                                      NAME    => 'n',
+                                      PACKAGE => 'p',
+                                      method  => 'm');
+        l_block2 := petet_plsql_block(id      => 2,
+                                      NAME    => 'x',
+                                      PACKAGE => 'p',
+                                      method  => 'm');
+        --assert
+        pete_assert.eq(a_expected_in => l_block1.equals(l_block2),
+                       a_actual_in   => pete_core.g_NO);
+    
+        --owner, method  
+        --prepare
+        l_block1 := petet_plsql_block(NAME => 'n', owner => 'o', method => 'm');
+        l_block2 := petet_plsql_block(NAME => 'n', owner => 'o', method => 'm');
+        --assert
+        pete_assert.eq(a_expected_in => l_block1.equals(l_block2),
+                       a_actual_in   => pete_core.g_YES);
+        --prepare
+        l_block1 := petet_plsql_block(id     => 1,
+                                      NAME   => 'n',
+                                      owner  => 'o',
+                                      method => 'm');
+        l_block2 := petet_plsql_block(id     => 1,
+                                      NAME   => 'n',
+                                      owner  => 'o',
+                                      method => 'm');
+        --assert
+        pete_assert.eq(a_expected_in => l_block1.equals(l_block2),
+                       a_actual_in   => pete_core.g_YES);
+        --prepare
+        l_block1 := petet_plsql_block(NAME => 'n', owner => 'o', method => 'x');
+        l_block2 := petet_plsql_block(NAME => 'n', owner => 'o', method => 'm');
+        --assert
+        pete_assert.eq(a_expected_in => l_block1.equals(l_block2),
+                       a_actual_in   => pete_core.g_NO);
+        --prepare
+        l_block1 := petet_plsql_block(NAME => 'n', owner => 'o', method => 'm');
+        l_block2 := petet_plsql_block(NAME => 'x', owner => 'o', method => 'm');
+        --assert
+        pete_assert.eq(a_expected_in => l_block1.equals(l_block2),
+                       a_actual_in   => pete_core.g_NO);
+        --prepare
+        l_block1 := petet_plsql_block(id     => 1,
+                                      NAME   => 'n',
+                                      owner  => 'o',
+                                      method => 'm');
+        l_block2 := petet_plsql_block(NAME => 'x', owner => 'o', method => 'm');
+        --assert
+        pete_assert.eq(a_expected_in => l_block1.equals(l_block2),
+                       a_actual_in   => pete_core.g_NO);
+        --prepare
+        l_block1 := petet_plsql_block(id     => 1,
+                                      NAME   => 'n',
+                                      owner  => 'o',
+                                      method => 'm');
+        l_block2 := petet_plsql_block(id     => 2,
+                                      NAME   => 'x',
+                                      owner  => 'o',
+                                      method => 'm');
+        --assert
+        pete_assert.eq(a_expected_in => l_block1.equals(l_block2),
+                       a_actual_in   => pete_core.g_NO);
+    
+        --owner, package, method
+        --prepare
+        l_block1 := petet_plsql_block(NAME    => 'n',
+                                      owner   => 'o',
+                                      PACKAGE => 'p',
+                                      method  => 'm');
+        l_block2 := petet_plsql_block(NAME    => 'n',
+                                      owner   => 'o',
+                                      PACKAGE => 'p',
+                                      method  => 'm');
+        --assert
+        pete_assert.eq(a_expected_in => l_block1.equals(l_block2),
+                       a_actual_in   => pete_core.g_YES);
+        --prepare
+        l_block1 := petet_plsql_block(id      => 1,
+                                      NAME    => 'n',
+                                      owner   => 'o',
+                                      PACKAGE => 'p',
+                                      method  => 'm');
+        l_block2 := petet_plsql_block(id      => 1,
+                                      NAME    => 'n',
+                                      owner   => 'o',
+                                      PACKAGE => 'p',
+                                      method  => 'm');
+        --assert
+        pete_assert.eq(a_expected_in => l_block1.equals(l_block2),
+                       a_actual_in   => pete_core.g_YES);
+        --prepare
+        l_block1 := petet_plsql_block(NAME    => 'n',
+                                      owner   => 'o',
+                                      PACKAGE => 'p',
+                                      method  => 'x');
+        l_block2 := petet_plsql_block(NAME    => 'n',
+                                      owner   => 'o',
+                                      PACKAGE => 'p',
+                                      method  => 'm');
+        --assert
+        pete_assert.eq(a_expected_in => l_block1.equals(l_block2),
+                       a_actual_in   => pete_core.g_NO);
+        --prepare
+        l_block1 := petet_plsql_block(NAME    => 'n',
+                                      owner   => 'o',
+                                      PACKAGE => 'p',
+                                      method  => 'm');
+        l_block2 := petet_plsql_block(NAME    => 'x',
+                                      owner   => 'o',
+                                      PACKAGE => 'p',
+                                      method  => 'm');
+        --assert
+        pete_assert.eq(a_expected_in => l_block1.equals(l_block2),
+                       a_actual_in   => pete_core.g_NO);
+        --prepare
+        l_block1 := petet_plsql_block(id      => 1,
+                                      NAME    => 'n',
+                                      owner   => 'o',
+                                      PACKAGE => 'p',
+                                      method  => 'm');
+        l_block2 := petet_plsql_block(NAME    => 'x',
+                                      owner   => 'o',
+                                      PACKAGE => 'p',
+                                      method  => 'm');
+        --assert
+        pete_assert.eq(a_expected_in => l_block1.equals(l_block2),
+                       a_actual_in   => pete_core.g_NO);
+        --prepare
+        l_block1 := petet_plsql_block(id      => 1,
+                                      NAME    => 'n',
+                                      owner   => 'o',
+                                      PACKAGE => 'p',
+                                      method  => 'm');
+        l_block2 := petet_plsql_block(id      => 2,
+                                      NAME    => 'x',
+                                      owner   => 'o',
+                                      PACKAGE => 'p',
+                                      method  => 'm');
+        --assert
+        pete_assert.eq(a_expected_in => l_block1.equals(l_block2),
+                       a_actual_in   => pete_core.g_NO);
+    
+    END;
+END;
+/

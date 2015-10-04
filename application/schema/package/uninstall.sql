@@ -24,6 +24,9 @@ drop package pete_core;
 prompt Dropping package PETE_LOGGER
 drop package pete_logger;
 
+prompt Dropping package PETE_EXCEPTION
+drop package pete_exception;
+
 @&&run_dir_end
 
 
