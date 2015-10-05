@@ -24,16 +24,24 @@ CREATE OR REPLACE PACKAGE pete_assert AS
         a_value_in   IN NUMBER,
         a_comment_in IN VARCHAR2 DEFAULT NULL
     );
+
+    FUNCTION is_null(a_value_in IN NUMBER) RETURN BOOLEAN;
+
     PROCEDURE is_null
     (
         a_value_in   IN VARCHAR2,
         a_comment_in IN VARCHAR2 DEFAULT NULL
     );
+
+    FUNCTION is_null(a_value_in IN VARCHAR2) RETURN BOOLEAN;
+
     PROCEDURE is_null
     (
         a_value_in   IN DATE,
         a_comment_in IN VARCHAR2 DEFAULT NULL
     );
+
+    FUNCTION is_null(a_value_in IN DATE) RETURN BOOLEAN;
 
     -- 
     -- Group of assert procedure for testing null values
@@ -43,16 +51,24 @@ CREATE OR REPLACE PACKAGE pete_assert AS
         a_value_in   IN NUMBER,
         a_comment_in IN VARCHAR2 DEFAULT NULL
     );
+
+    FUNCTION is_not_null(a_value_in IN NUMBER) RETURN BOOLEAN;
+
     PROCEDURE is_not_null
     (
         a_value_in   IN VARCHAR2,
         a_comment_in IN VARCHAR2 DEFAULT NULL
     );
+
+    FUNCTION is_not_null(a_value_in IN VARCHAR2) RETURN BOOLEAN;
+
     PROCEDURE is_not_null
     (
         a_value_in   IN DATE,
         a_comment_in IN VARCHAR2 DEFAULT NULL
     );
+
+    FUNCTION is_not_null(a_value_in IN DATE) RETURN BOOLEAN;
 
     --
     -- This assert procedure always succeeds. It's usefull to log, that something has
@@ -60,11 +76,15 @@ CREATE OR REPLACE PACKAGE pete_assert AS
     --
     PROCEDURE pass(a_comment_in IN VARCHAR2 DEFAULT NULL);
 
+    FUNCTION pass RETURN BOOLEAN;
+
     --
     -- This assert procedure always fails. It's usefull in a branch of code where the
     -- program should never enter. E.g. in an exception block
     --
     PROCEDURE fail(a_comment_in IN VARCHAR2 DEFAULT NULL);
+
+    FUNCTION fail RETURN BOOLEAN;
 
     --
     -- Group of assert procedures for testing equality of input arguments
@@ -72,43 +92,67 @@ CREATE OR REPLACE PACKAGE pete_assert AS
     --
     PROCEDURE eq
     (
-        a_expected_in NUMBER,
-        a_actual_in   NUMBER,
-        a_comment_in  VARCHAR2 DEFAULT NULL
-    );
-
-    PROCEDURE eq
-    (
-        a_expected_in VARCHAR2,
-        a_actual_in   VARCHAR2,
-        a_comment_in  VARCHAR2 DEFAULT NULL
-    );
-
-    PROCEDURE eq
-    (
-        a_expected_in DATE,
-        a_actual_in   DATE,
-        a_comment_in  VARCHAR2 DEFAULT NULL
-    );
-
-    PROCEDURE eq
-    (
-        a_expected_in BOOLEAN,
-        a_actual_in   BOOLEAN,
-        a_comment_in  VARCHAR2 DEFAULT NULL
-    );
-
-    PROCEDURE eq
-    (
-        a_expected_in sys.xmltype,
-        a_actual_in   sys.xmltype,
-        a_comment_in  VARCHAR2 DEFAULT NULL
+        a_expected_in IN NUMBER,
+        a_actual_in   IN NUMBER,
+        a_comment_in  IN VARCHAR2 DEFAULT NULL
     );
 
     FUNCTION eq
     (
-        a_expected_in sys.xmltype,
-        a_actual_in   sys.xmltype
+        a_expected_in IN NUMBER,
+        a_actual_in   IN NUMBER
+    ) RETURN BOOLEAN;
+
+    PROCEDURE eq
+    (
+        a_expected_in IN VARCHAR2,
+        a_actual_in   IN VARCHAR2,
+        a_comment_in  IN VARCHAR2 DEFAULT NULL
+    );
+
+    FUNCTION eq
+    (
+        a_expected_in IN VARCHAR2,
+        a_actual_in   IN VARCHAR2
+    ) RETURN BOOLEAN;
+
+    PROCEDURE eq
+    (
+        a_expected_in IN DATE,
+        a_actual_in   IN DATE,
+        a_comment_in  IN VARCHAR2 DEFAULT NULL
+    );
+
+    FUNCTION eq
+    (
+        a_expected_in IN DATE,
+        a_actual_in   IN DATE
+    ) RETURN BOOLEAN;
+
+    PROCEDURE eq
+    (
+        a_expected_in IN BOOLEAN,
+        a_actual_in   IN BOOLEAN,
+        a_comment_in  IN VARCHAR2 DEFAULT NULL
+    );
+
+    FUNCTION eq
+    (
+        a_expected_in IN BOOLEAN,
+        a_actual_in   IN BOOLEAN
+    ) RETURN BOOLEAN;
+
+    PROCEDURE eq
+    (
+        a_expected_in IN sys.xmltype,
+        a_actual_in   IN sys.xmltype,
+        a_comment_in  IN VARCHAR2 DEFAULT NULL
+    );
+
+    FUNCTION eq
+    (
+        a_expected_in IN sys.xmltype,
+        a_actual_in   IN sys.xmltype
     ) RETURN BOOLEAN;
 
 END pete_assert;
