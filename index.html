@@ -31,7 +31,9 @@
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
-        
+        <p><img src="https://github.com/principal-engineering/pete/blob/master/asssets/logo/Pete.png" height="50px"></p>
+
+
 
 
 
@@ -198,7 +200,7 @@ END;
 <code>after_all</code> - execute once after all other methods</li>
 </ul>
 
-<p>All hook methods are optional. You choose whether to use them or not.</p>
+<p>All hook methods are optional. You choose whether to implement them or not.</p>
 
 <pre><code>CREATE OR REPLACE PACKAGE ut_test AS
 
@@ -397,8 +399,9 @@ END;
 <h3>
 <a id="2-create-testing-procedure" class="anchor" href="#2-create-testing-procedure" aria-hidden="true"><span class="octicon octicon-link"></span></a>2. Create testing procedure</h3>
 
-<p>All testing procedured have to be able to be called using parameters <code>a_xml_in</code> - input XML and <code>a_xml_out</code> - output XML. All other parameters have to be optional.
-Testing procedure is just wrapper, that provides required interface to Pete.</p>
+<p>All testing procedures have to be able to be called using arguments <code>a_xml_in</code> - input XML and <code>a_xml_out</code> - output XML. All other arguments have to be optional.
+Testing procedure is just wrapper, that provides required interface to Pete. 
+From Pete's point of view, testing procedure succeeds if it finishes without raising an exception.</p>
 
 <pre><code>CREATE OR REPLACE PROCEDURE test_get_salary
 (
@@ -428,7 +431,7 @@ END;
 <li>id - get it from sequence</li>
 <li>name - provide some nice name</li>
 <li>description - describe test implemented by PLSQL block</li>
-<li>method - in our case we have stored procedure, so only method argument will be specified</li>
+<li>method - in our case we have stored procedure, so only method argument will be specified, no owner, no package</li>
 </ul>
 
 <pre><code>INSERT INTO pete_plsql_block
@@ -486,10 +489,10 @@ VALUES
 <li>value - value as XML</li>
 </ul>
 
-<pre><code>INSERT INTO pete_input_param
+<pre><code>INSERT INTO pete_input_argument
     (id, name, value)
 VALUES
-    (petes_input_param.nextval, 'Accounting Department Identifier', '&lt;DEPTNO&gt;10&lt;/DEPTNO&gt;');
+    (petes_input_argument.nextval, 'Accounting Department Identifier', '&lt;DEPTNO&gt;10&lt;/DEPTNO&gt;');
 </code></pre>
 
 <hr>
@@ -503,13 +506,13 @@ VALUES
 <h4>
 <a id="24-plsql-block-in-test-case" class="anchor" href="#24-plsql-block-in-test-case" aria-hidden="true"><span class="octicon octicon-link"></span></a>2.4 PL/SQL Block in Test Case</h4>
 
-<p>Now glue everything together - map PL/SQL to test case Test case mapping using input argument.</p>
+<p>Now glue everything together - map a given PL/SQL block with a given input argument to a predefined test case.</p>
 
 <ul>
 <li>id - surrogate identifier, get it from sequence</li>
 <li>test_case_id - identifier of our Test Case</li>
 <li>pslql_block_id - identifier of our PL/SQL block</li>
-<li>input_param_id - identifier of Input argument</li>
+<li>input_argument_id - identifier of Input argument</li>
 <li>description - describe instance of PL/SQL block</li>
 <li>block_order - sort blocks in test case</li>
 </ul>
@@ -518,14 +521,14 @@ VALUES
     (id,
      test_case_id,
      plsql_block_id,
-     input_param_id,
+     input_argument_id,
      block_order,
      description)
 VALUES
     (petes_plsql_block_in_case.nextval,
      petes_test_case.currval,
      petes_plsql_block.currval,
-     petes_input_param.currval,
+     petes_input_argument.currval,
      1,
      'should not fail');
 </code></pre>
@@ -533,7 +536,7 @@ VALUES
 <p><strong>The rest of the columns</strong></p>
 
 <ul>
-<li>output_param_id - identifier of expected result</li>
+<li>expected_result_id - identifier of expected result, if there is one</li>
 </ul>
 
 <hr>
@@ -571,7 +574,7 @@ ORA-06512: at "SCOTT.PETE_CONFIGURATION_RUNNER", line 86
 <h3>
 <a id="4-fix-error-in-function" class="anchor" href="#4-fix-error-in-function" aria-hidden="true"><span class="octicon octicon-link"></span></a>4. Fix error in function</h3>
 
-<p>Add missing return from function.</p>
+<p>Add a missing return from function.</p>
 
 <pre><code>CREATE OR REPLACE FUNCTION get_salary(a_deptno_in IN emp.sal%TYPE)
     RETURN NUMBER AS
@@ -586,7 +589,7 @@ END;
 <h3>
 <a id="5-execute-test-case-again" class="anchor" href="#5-execute-test-case-again" aria-hidden="true"><span class="octicon octicon-link"></span></a>5. Execute Test Case again</h3>
 
-<p>Execute Test Case again and now it succeeds!!!</p>
+<p>Execute the Test Case again and now it succeeds!!!</p>
 
 <pre><code>
 .Pete run @ 23-APR-15 03.03.06.171390000 PM +02:00 - SUCCESS
