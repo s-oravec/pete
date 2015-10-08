@@ -59,9 +59,9 @@ module.exports = function(grunt) {
 
     grunt.registerTask('test', ['loadConfig', 'shell:runPeteUserScript:test']);
 
-    grunt.registerTask('create-dev', ['loadConfig', 'shell:runSuperUserScript:create']);
+    grunt.registerTask('create', ['loadConfig', 'shell:runSuperUserScript:create']);
 
-    grunt.registerTask('drop-dev', ['loadConfig', 'shell:runSuperUserScript:drop']);
+    grunt.registerTask('drop', ['loadConfig', 'shell:runSuperUserScript:drop']);
 
     grunt.registerTask('install', ['loadConfig', 'shell:runPeteUserScript:install']);
 
