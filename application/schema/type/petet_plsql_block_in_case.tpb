@@ -76,7 +76,7 @@ CREATE OR REPLACE TYPE BODY petet_plsql_block_in_case AS
         END IF;
         --
         --TODO: move constant definition to pete_core
-        self.position        := nvl(position, -1); -- pete_configuration_runner_api.g_ORDER_FIRST
+        self.position        := nvl(position, -1); -- pete_configuration_runner_adm.g_ORDER_FIRST
         self.stop_on_failure := nvl(stop_on_failure, 'N'); -- pete_core.g_NO
         self.run_modifier    := run_modifier;
         self.description     := description;

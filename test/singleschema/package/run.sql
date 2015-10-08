@@ -1,5 +1,8 @@
 @&&run_dir_begin
 
+prompt Install test package UT_PETE_UTILS
+@@ut_pete_utils.pkg
+
 prompt Install test package UT_PETE
 @@ut_pete.pkg
 
@@ -21,7 +24,7 @@ prompt Install test package UT_PETE_LOGGER
 prompt Install test package UT_PETE_CONFIG
 @@ut_pete_config.pkg
 
-prompt Install test package UT_PETE_CONFIG_RUNNER_API
-@@ut_pete_config_runner_api.pkg
+prompt Install test package UT_PETE_CONFIG_RUNNER_ADM
+@@ut_pete_config_runner_adm.pkg
 
 @&&run_dir_end

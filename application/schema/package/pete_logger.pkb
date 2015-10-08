@@ -14,7 +14,7 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
     g_object_name_in       pete_run_log.object_name%TYPE;
 
     --------------------------------------------------------------------------------
-    FUNCTION get_package_description(a_package_name_in IN user_procedures.object_name%TYPE)
+    FUNCTION get_package_description(a_package_name_in IN pete_core.typ_object_name)
         RETURN VARCHAR2 IS
         l_call_template CONSTANT VARCHAR2(255) --
         := 'begin :1 := #PackageName#.description; end;';
@@ -136,11 +136,11 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
     END;
 
     --------------------------------------------------------------------------------
-    PROCEDURE log_method_description(a_description_in IN pete_core.typ_description) IS
+    PROCEDURE set_method_description(a_description_in IN pete_core.typ_description) IS
         PRAGMA AUTONOMOUS_TRANSACTION;
     BEGIN
         --
-        trace('LOG_METHOD_DESCRIPTION: ' || 'a_description_in:' ||
+        trace('set_method_description: ' || 'a_description_in:' ||
               NVL(a_description_in, 'NULL'));
         UPDATE pete_run_log
            SET description = a_description_in

@@ -13,4 +13,6 @@ begin
 end;
 /
 
+@&&run_dir grant
+
 @&&run_dir_end

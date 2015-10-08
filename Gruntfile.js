@@ -27,7 +27,7 @@ module.exports = function(grunt) {
         shell: {
             runSuperUserScript : {
                 command: function (script) {
-                    return '<%= sqlTool %> <%= superUserDbConnectString %> @' + script + '.sql'
+                    return '<%= sqlTool %> <%= superUserDbConnectString %> @' + script + '.sql <%= environment %>'
                 }
             },
             runPeteUserScript : {
@@ -47,6 +47,7 @@ module.exports = function(grunt) {
 	    var init = require('./config/init')();
 	    var config = require('./config/config');
 
+        grunt.config.set('environment', process.env.PETE_ENV);
         grunt.config.set('sqlTool', config.sqlTool);
         grunt.config.set('superUserDbConnectString', config.db.superUserDbConnectString);
         grunt.config.set('peteUserDbConnectString', config.db.peteUserDbConnectString);
@@ -57,6 +58,10 @@ module.exports = function(grunt) {
     grunt.registerTask('ct', ['loadConfig', 'watch']);
 
     grunt.registerTask('test', ['loadConfig', 'shell:runPeteUserScript:test']);
+
+    grunt.registerTask('create-dev', ['loadConfig', 'shell:runSuperUserScript:create']);
+
+    grunt.registerTask('drop-dev', ['loadConfig', 'shell:runSuperUserScript:drop']);
 
     grunt.registerTask('install', ['loadConfig', 'shell:runPeteUserScript:install']);
 

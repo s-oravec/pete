@@ -110,7 +110,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         'CREATE OR REPLACE PACKAGE BODY ut_pete_test_cnv_runner AS' || chr(10) ||
         '    PROCEDURE this_should_be_called IS' || chr(10) ||
         '    BEGIN' || chr(10) ||
-        '        pete_logger.log_method_description(''This method should be called'');' || chr(10) ||
+        '        pete.set_method_description(''This method should be called'');' || chr(10) ||
         '        ut_pete_convention_runner.log_call(''CALLED'');' || chr(10) ||
         '    END;' || chr(10) ||
         'END;';
@@ -118,7 +118,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         l_result pete_core.typ_execution_result;
     BEGIN
         --log
-        pete_logger.log_method_description(d);
+        pete.set_method_description(d);
         --prepare
         EXECUTE IMMEDIATE l_package_spec;
         EXECUTE IMMEDIATE l_package_body;
@@ -143,7 +143,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         'CREATE OR REPLACE PACKAGE BODY ut_pete_test_cnv_runner AS' || chr(10) ||
         '    PROCEDURE this_should_be_called(a in integer default 0, b in integer default 1) IS' || chr(10) ||
         '    BEGIN' || chr(10) ||
-        '        pete_logger.log_method_description(''This method should be called'');' || chr(10) ||
+        '        pete.set_method_description(''This method should be called'');' || chr(10) ||
         '        ut_pete_convention_runner.log_call(''CALLED'');' || chr(10) ||
         '    END;' || chr(10) ||
         'END;';
@@ -151,7 +151,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         l_result pete_core.typ_execution_result;
     BEGIN
         --log
-        pete_logger.log_method_description(d);
+        pete.set_method_description(d);
         --prepare
         EXECUTE IMMEDIATE l_package_spec;
         EXECUTE IMMEDIATE l_package_body;
@@ -176,14 +176,14 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         'CREATE OR REPLACE PACKAGE BODY ut_pete_test_cnv_runner AS' || chr(10) ||
         '    PROCEDURE this_should_not_be_called(a in integer) IS' || chr(10) ||
         '    BEGIN' || chr(10) ||
-        '        pete_logger.log_method_description(''This method should not be called'');' || chr(10) ||
+        '        pete.set_method_description(''This method should not be called'');' || chr(10) ||
         '    END;' || chr(10) ||
         'END;';
         -- NoFormat End
         l_result pete_core.typ_execution_result;
     BEGIN
         --log
-        pete_logger.log_method_description(d);
+        pete.set_method_description(d);
         --prepare
         EXECUTE IMMEDIATE l_package_spec;
         EXECUTE IMMEDIATE l_package_body;
@@ -207,7 +207,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         'CREATE OR REPLACE PACKAGE BODY ut_pete_test_cnv_runner AS' || chr(10) ||
         '    FUNCTION this_should_not_be_called return integer IS' || chr(10) ||
         '    BEGIN' || chr(10) ||
-        '        pete_logger.log_method_description(''This method should not be called'');' || chr(10) ||
+        '        pete.set_method_description(''This method should not be called'');' || chr(10) ||
         '        pete_assert.fail;' || chr(10) ||
         '    END;' || chr(10) ||
         'END;'; --
@@ -216,7 +216,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
     BEGIN
     
         --log
-        pete_logger.log_method_description(d);
+        pete.set_method_description(d);
         --prepare
         EXECUTE IMMEDIATE l_package_spec;
         EXECUTE IMMEDIATE l_package_body;
@@ -240,7 +240,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         'CREATE OR REPLACE PACKAGE BODY ut_oopete_test_cnv_runner AS' || chr(10) ||
         '    PROCEDURE this_should_be_called IS' || chr(10) ||
         '    BEGIN' || chr(10) ||
-        '        pete_logger.log_method_description(''This method should be called'');' || chr(10) ||
+        '        pete.set_method_description(''This method should be called'');' || chr(10) ||
         '        ut_pete_convention_runner.log_call(''CALLED'');' || chr(10) ||
         '    END;' || chr(10) ||
         'END;'; --
@@ -254,7 +254,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         'CREATE OR REPLACE PACKAGE BODY ut_pete_test_cnv_runner AS' || chr(10) ||
         '    PROCEDURE this_should_not_be_called IS' || chr(10) ||
         '    BEGIN' || chr(10) ||
-        '        pete_logger.log_method_description(''This method should not be called'');' || chr(10) ||
+        '        pete.set_method_description(''This method should not be called'');' || chr(10) ||
         '        pete_assert.fail;' || chr(10) ||
         '    END;' || chr(10) ||
         'END;';
@@ -262,7 +262,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         l_result pete_core.typ_execution_result;
     BEGIN
         --log
-        pete_logger.log_method_description(d);
+        pete.set_method_description(d);
         --prepare
         EXECUTE IMMEDIATE l_package_spec1;
         EXECUTE IMMEDIATE l_package_body1;
@@ -299,13 +299,13 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         'CREATE OR REPLACE PACKAGE BODY ut_pete_test_cnv_runner AS' || chr(10) ||
         '    PROCEDURE oothis_should_be_called IS' || chr(10) ||
         '    BEGIN' || chr(10) ||
-        '        pete_logger.log_method_description(''This method should be called'');' || chr(10) ||
+        '        pete.set_method_description(''This method should be called'');' || chr(10) ||
         '        ut_pete_convention_runner.log_call(''CALLED'');' || chr(10) ||
         '    END;' || chr(10) ||
         '' || chr(10) ||
         '    PROCEDURE this_should_not_be_called IS' || chr(10) ||
         '    BEGIN' || chr(10) ||
-        '        pete_logger.log_method_description(''This method should not be called'');' || chr(10) ||
+        '        pete.set_method_description(''This method should not be called'');' || chr(10) ||
         '        pete_assert.fail;' || chr(10) ||
         '    END;' || chr(10) ||
         'END;'; --
@@ -313,7 +313,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         l_result pete_core.typ_execution_result;
     BEGIN
         --log
-        pete_logger.log_method_description(d);
+        pete.set_method_description(d);
         --prepare
         EXECUTE IMMEDIATE l_package_spec;
         EXECUTE IMMEDIATE l_package_body;
@@ -347,13 +347,13 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         'CREATE OR REPLACE PACKAGE BODY ut_pete_test_cnv_runner AS' || chr(10) ||
         '    PROCEDURE oothis_should_be_called IS' || chr(10) ||
         '    BEGIN' || chr(10) ||
-        '        pete_logger.log_method_description(''This method should be called'');' || chr(10) ||
+        '        pete.set_method_description(''This method should be called'');' || chr(10) ||
         '        ut_pete_convention_runner.log_call(''CALLED'');' || chr(10) ||
         '    END;' || chr(10) ||
         '' || chr(10) ||
         '    PROCEDURE this_should_not_be_called IS' || chr(10) ||
         '    BEGIN' || chr(10) ||
-        '        pete_logger.log_method_description(''This method should not be called'');' || chr(10) ||
+        '        pete.set_method_description(''This method should not be called'');' || chr(10) ||
         '        pete_assert.fail;' || chr(10) ||
         '    END;' || chr(10) ||
         'END;'; --
@@ -361,7 +361,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         l_result pete_core.typ_execution_result;
     BEGIN
         --log
-        pete_logger.log_method_description(d);
+        pete.set_method_description(d);
         --prepare
         EXECUTE IMMEDIATE l_package_spec;
         EXECUTE IMMEDIATE l_package_body;
@@ -395,13 +395,13 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         'CREATE OR REPLACE PACKAGE BODY ut_oopete_test_cnv_runner AS' || chr(10) ||
         '    PROCEDURE this_should_be_called IS' || chr(10) ||
         '    BEGIN' || chr(10) ||
-        '        pete_logger.log_method_description(''This method should be called'');' || chr(10) ||
+        '        pete.set_method_description(''This method should be called'');' || chr(10) ||
         '        ut_pete_convention_runner.log_call(''CALLED'');' || chr(10) ||
         '    END;' || chr(10) ||
         '' || chr(10) ||
         '    PROCEDURE xxthis_should_not_be_called IS' || chr(10) ||
         '    BEGIN' || chr(10) ||
-        '        pete_logger.log_method_description(''This method should not be called as it is marked as skipped'');' || chr(10) ||
+        '        pete.set_method_description(''This method should not be called as it is marked as skipped'');' || chr(10) ||
         '        pete_assert.fail;' || chr(10) ||
         '    END;' || chr(10) ||
         'END;'; --
@@ -409,7 +409,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         l_result pete_core.typ_execution_result;
     BEGIN
         --log
-        pete_logger.log_method_description(d);
+        pete.set_method_description(d);
         --prepare
         EXECUTE IMMEDIATE l_package_spec;
         EXECUTE IMMEDIATE l_package_body;
@@ -443,13 +443,13 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         'CREATE OR REPLACE PACKAGE BODY ut_pete_test_cnv_runner AS' || chr(10) ||
         '    PROCEDURE this_should_be_called IS' || chr(10) ||
         '    BEGIN' || chr(10) ||
-        '        pete_logger.log_method_description(''This method should be called'');' || chr(10) ||
+        '        pete.set_method_description(''This method should be called'');' || chr(10) ||
         '        ut_pete_convention_runner.log_call(''CALLED'');' || chr(10) ||
         '    END;' || chr(10) ||
         '' || chr(10) ||
         '    PROCEDURE xxthis_should_not_be_called IS' || chr(10) ||
         '    BEGIN' || chr(10) ||
-        '        pete_logger.log_method_description(''This method should not be called as it is marked as skipped'');' || chr(10) ||
+        '        pete.set_method_description(''This method should not be called as it is marked as skipped'');' || chr(10) ||
         '        pete_assert.fail;' || chr(10) ||
         '    END;' || chr(10) ||
         'END;'; --
@@ -457,7 +457,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         l_result pete_core.typ_execution_result;
     BEGIN
         --log
-        pete_logger.log_method_description(d);
+        pete.set_method_description(d);
         --prepare
         EXECUTE IMMEDIATE l_package_spec;
         EXECUTE IMMEDIATE l_package_body;
@@ -496,7 +496,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         '' || chr(10) ||
         '    PROCEDURE this_should_not_be_called IS' || chr(10) ||
         '    BEGIN' || chr(10) ||
-        '        pete_logger.log_method_description(''This method should not be called as before_all has failed'');' || chr(10) ||
+        '        pete.set_method_description(''This method should not be called as before_all has failed'');' || chr(10) ||
         '        ut_pete_convention_runner.log_call(''CALLED'');' || chr(10) ||
         '        pete_assert.fail;' || chr(10) ||
         '    END;' || chr(10) ||
@@ -505,7 +505,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         l_result pete_core.typ_execution_result;
     BEGIN
         --log
-        pete_logger.log_method_description(d);
+        pete.set_method_description(d);
         --prepare
         EXECUTE IMMEDIATE l_package_spec;
         EXECUTE IMMEDIATE l_package_body;
@@ -548,14 +548,14 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         '' || chr(10) ||
         '    PROCEDURE this_should_not_be_called IS' || chr(10) ||
         '    BEGIN' || chr(10) ||
-        '        pete_logger.log_method_description(''This method should not be called as before_each has failed'');' || chr(10) ||
+        '        pete.set_method_description(''This method should not be called as before_each has failed'');' || chr(10) ||
         '        ut_pete_convention_runner.log_call(''CALLED1'');' || chr(10) ||
         '        pete_assert.fail;' || chr(10) ||
         '    END;' || chr(10) ||
         '' || chr(10) ||
         '    PROCEDURE this_should_be_called IS' || chr(10) ||
         '    BEGIN' || chr(10) ||
-        '        pete_logger.log_method_description(''This method should be called as before_each has succeeded'');' || chr(10) ||
+        '        pete.set_method_description(''This method should be called as before_each has succeeded'');' || chr(10) ||
         '        ut_pete_convention_runner.log_call(''CALLED2'');' || chr(10) ||
         '    END;' || chr(10) ||
         '' || chr(10) ||
@@ -568,7 +568,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         l_result pete_core.typ_execution_result;
     BEGIN
         --log
-        pete_logger.log_method_description(d);
+        pete.set_method_description(d);
         --prepare
         EXECUTE IMMEDIATE l_package_spec;
         EXECUTE IMMEDIATE l_package_body;
@@ -605,7 +605,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         '' || chr(10) ||
         '    PROCEDURE this_should_be_called IS' || chr(10) ||
         '    BEGIN' || chr(10) ||
-        '        pete_logger.log_method_description(''This method should be called even after before_all has failed because pete_config overrides it'');' || chr(10) ||
+        '        pete.set_method_description(''This method should be called even after before_all has failed because pete_config overrides it'');' || chr(10) ||
         '        ut_pete_convention_runner.log_call(''CALLED'');' || chr(10) ||
         '    END;' || chr(10) ||
         'END;'; --
@@ -613,7 +613,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         l_result pete_core.typ_execution_result;
     BEGIN
         --log
-        pete_logger.log_method_description(d);
+        pete.set_method_description(d);
         --prepare
         EXECUTE IMMEDIATE l_package_spec;
         EXECUTE IMMEDIATE l_package_body;
@@ -652,13 +652,13 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         '' || chr(10) ||
         '    PROCEDURE this_should_be_called1 IS' || chr(10) ||
         '    BEGIN' || chr(10) ||
-        '        pete_logger.log_method_description(''This method should be called even after before_each has failed because pete_config overrides it'');' || chr(10) ||
+        '        pete.set_method_description(''This method should be called even after before_each has failed because pete_config overrides it'');' || chr(10) ||
         '        ut_pete_convention_runner.log_call(''CALLED1'');' || chr(10) ||
         '    END;' || chr(10) ||
         '' || chr(10) ||
         '    PROCEDURE this_should_be_called2 IS' || chr(10) ||
         '    BEGIN' || chr(10) ||
-        '        pete_logger.log_method_description(''This method should be called as before_each has succeeded'');' || chr(10) ||
+        '        pete.set_method_description(''This method should be called as before_each has succeeded'');' || chr(10) ||
         '        ut_pete_convention_runner.log_call(''CALLED2'');' || chr(10) ||
         '    END;' || chr(10) ||
         '' || chr(10) ||
@@ -671,7 +671,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         l_result pete_core.typ_execution_result;
     BEGIN
         --log
-        pete_logger.log_method_description(d);
+        pete.set_method_description(d);
         --prepare
         EXECUTE IMMEDIATE l_package_spec;
         EXECUTE IMMEDIATE l_package_body;
@@ -694,7 +694,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
     PROCEDURE unknown_package(d IN VARCHAR2 DEFAULT 'Explicitly called package which is not found should throw') IS
         l_result pete_core.typ_execution_result;
     BEGIN
-        pete_logger.log_method_description(d);
+        pete.set_method_description(d);
         --prepare
     
         --test
@@ -714,7 +714,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         l_package_body VARCHAR2(32767) := 'CREATE OR REPLACE PACKAGE BODY ut_pete_test_cnv_runner AS' ||
                                           chr(10) || '    PROCEDURE method IS' ||
                                           chr(10) || '    BEGIN' || chr(10) ||
-                                          '        pete_logger.log_method_description(''This method should be called even if case is mismatched'');' ||
+                                          '        pete.set_method_description(''This method should be called even if case is mismatched'');' ||
                                           chr(10) ||
                                           '        ut_pete_convention_runner.log_call(''CALLED1'');' ||
                                           chr(10) || '    END;' || chr(10) ||
@@ -723,7 +723,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         l_result pete_core.typ_execution_result;
     BEGIN
         --log
-        pete_logger.log_method_description(d);
+        pete.set_method_description(d);
         --prepare
         EXECUTE IMMEDIATE l_package_spec;
         EXECUTE IMMEDIATE l_package_body;
@@ -745,7 +745,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         l_package_body VARCHAR2(32767) := 'CREATE OR REPLACE PACKAGE BODY ut_pete_test_cnv_runner AS' ||
                                           chr(10) || '    PROCEDURE method IS' ||
                                           chr(10) || '    BEGIN' || chr(10) ||
-                                          '        pete_logger.log_method_description(''This method should be called even if case is mismatched'');' ||
+                                          '        pete.set_method_description(''This method should be called even if case is mismatched'');' ||
                                           chr(10) ||
                                           '        ut_pete_convention_runner.log_call(''CALLED1'');' ||
                                           chr(10) || '    END;' || chr(10) ||
@@ -755,7 +755,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         --        l_exception boolean;
     BEGIN
         --log
-        pete_logger.log_method_description(d);
+        pete.set_method_description(d);
         --prepare
         EXECUTE IMMEDIATE l_package_spec;
         EXECUTE IMMEDIATE l_package_body;
@@ -780,7 +780,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         'CREATE OR REPLACE PACKAGE BODY ut_pete_test_cnv_runner AS' || chr(10) ||
         '    PROCEDURE after_all IS' || chr(10) ||
         '    BEGIN' || chr(10) ||
-        '        pete_logger.log_method_description(''This method should be called'');' || chr(10) ||
+        '        pete.set_method_description(''This method should be called'');' || chr(10) ||
         '        ut_pete_convention_runner.log_call(''CALLED'');' || chr(10) ||
         '    END;' || chr(10) ||
         'END;';
@@ -788,7 +788,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         l_result pete_core.typ_execution_result;
     BEGIN
         --log
-        pete_logger.log_method_description(d);
+        pete.set_method_description(d);
         --prepare
         EXECUTE IMMEDIATE l_package_spec;
         EXECUTE IMMEDIATE l_package_body;

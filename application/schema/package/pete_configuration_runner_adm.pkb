@@ -1,4 +1,4 @@
-CREATE OR REPLACE PACKAGE BODY pete_configuration_runner_api IS
+CREATE OR REPLACE PACKAGE BODY pete_configuration_runner_adm IS
 
     -------------------------------------------------------------------------------------------------------------------------------
     PROCEDURE set_plsql_block(a_plsql_block_io IN OUT NOCOPY petet_plsql_block) IS
@@ -715,5 +715,5 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner_api IS
         --
     END;
 
-END pete_configuration_runner_api;
+END pete_configuration_runner_adm;
 /

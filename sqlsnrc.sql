@@ -1,4 +1,5 @@
 --set sqlsn modules path
+set verify off
 define g_sqlsn_modules_path = 'sqlsn/sqlsn_modules'
 
 --init sqlsn-core module

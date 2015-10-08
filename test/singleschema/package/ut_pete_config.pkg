@@ -32,13 +32,13 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_config AS
         'CREATE OR REPLACE PACKAGE BODY ut_pete_test_cnv_runner AS' || chr(10) ||
         '    PROCEDURE this_should_succeed IS' || chr(10) ||
         '    BEGIN' || chr(10) ||
-        '        pete_logger.log_method_description(''This method succeedes'');' || chr(10) ||
+        '        pete.set_method_description(''This method succeedes'');' || chr(10) ||
         '        pete_assert.pass;' || chr(10) ||
         '    END;' || chr(10) ||
         '' || chr(10) ||
         '    PROCEDURE this_should_fail IS' || chr(10) ||
         '    BEGIN' || chr(10) ||
-        '        pete_logger.log_method_description(''This method fails'');' || chr(10) ||
+        '        pete.set_method_description(''This method fails'');' || chr(10) ||
         '        pete_assert.fail(''It expected to fail'');' || chr(10) ||
         '    END;' || chr(10) ||
         'END;'; --
@@ -49,7 +49,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_config AS
         --
     BEGIN
         --log
-        pete_logger.log_method_description(d);
+        pete.set_method_description(d);
         --prepare
         EXECUTE IMMEDIATE l_package_spec;
         EXECUTE IMMEDIATE l_package_body;

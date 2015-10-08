@@ -48,12 +48,12 @@ CREATE OR REPLACE PACKAGE BODY ut_petet_plsql_block AS
         l_plsql_block petet_plsql_block;
     BEGIN
         --log
-        pete_logger.log_method_description(d);
+        pete.set_method_description(d);
         --test
         --with anonymous block
         l_plsql_block := petet_plsql_block(NAME            => l_name,
                                            anonymous_block => g_passthrough_anonymous_block);
-        pete_configuration_runner_api.set_plsql_block(a_plsql_block_io => l_plsql_block);
+        pete_configuration_runner_adm.set_plsql_block(a_plsql_block_io => l_plsql_block);
         --assert
         pete_assert.pass;
     END;
@@ -64,14 +64,14 @@ CREATE OR REPLACE PACKAGE BODY ut_petet_plsql_block AS
         l_plsql_block petet_plsql_block;
     BEGIN
         --log
-        pete_logger.log_method_description(d);
+        pete.set_method_description(d);
         --test
         --with anonymous block
         l_plsql_block := petet_plsql_block(NAME    => l_name,
                                            owner   => USER,
                                            PACKAGE => 'UT_PETET_PLSQL_BLOCK',
                                            method  => 'XX_TEMPORARY_METHOD');
-        pete_configuration_runner_api.set_plsql_block(a_plsql_block_io => l_plsql_block);
+        pete_configuration_runner_adm.set_plsql_block(a_plsql_block_io => l_plsql_block);
         --assert
         pete_assert.pass;
     END;
@@ -82,7 +82,7 @@ CREATE OR REPLACE PACKAGE BODY ut_petet_plsql_block AS
         l_plsql_block petet_plsql_block;
     BEGIN
         --log
-        pete_logger.log_method_description(d);
+        pete.set_method_description(d);
         --test
         BEGIN
             l_plsql_block := petet_plsql_block(NAME => NULL);
@@ -148,7 +148,7 @@ CREATE OR REPLACE PACKAGE BODY ut_petet_plsql_block AS
         l_plsql_block petet_plsql_block;
     BEGIN
         --log
-        pete_logger.log_method_description(d);
+        pete.set_method_description(d);
         --test
         BEGIN
             l_plsql_block := petet_plsql_block(NAME            => 'n',
@@ -221,7 +221,7 @@ CREATE OR REPLACE PACKAGE BODY ut_petet_plsql_block AS
         l_tgt petet_plsql_block;
     BEGIN
         --log
-        pete_logger.log_method_description(d);
+        pete.set_method_description(d);
         --test
         l_src := petet_plsql_block(NAME => 'n', anonymous_block => 'a');
         l_tgt := l_src.copy();
@@ -241,7 +241,7 @@ CREATE OR REPLACE PACKAGE BODY ut_petet_plsql_block AS
         l_tgt petet_plsql_block;
     BEGIN
         --log
-        pete_logger.log_method_description(d);
+        pete.set_method_description(d);
         --test
         l_src := petet_plsql_block(NAME => 'n', method => 'm');
         l_tgt := l_src.copy();
@@ -297,7 +297,7 @@ CREATE OR REPLACE PACKAGE BODY ut_petet_plsql_block AS
         l_block2 petet_plsql_block;
     BEGIN
         --log
-        pete_logger.log_method_description(d);
+        pete.set_method_description(d);
         --prepare
         l_block1 := petet_plsql_block(NAME => 'n', anonymous_block => 'a');
         l_block2 := petet_plsql_block(NAME => 'n', anonymous_block => 'a');
@@ -352,7 +352,7 @@ CREATE OR REPLACE PACKAGE BODY ut_petet_plsql_block AS
         l_block2 petet_plsql_block;
     BEGIN
         --log
-        pete_logger.log_method_description(d);
+        pete.set_method_description(d);
         --method
         --prepare
         l_block1 := petet_plsql_block(NAME => 'n', method => 'm');

@@ -3,6 +3,9 @@
 prompt Dropping package PETE
 drop package pete;
 
+prompt Dropping package PETE_UTILS
+drop package pete_utils;
+
 prompt Dropping package PETE_ASSERT
 drop package pete_assert;
 
@@ -12,8 +15,8 @@ drop package pete_config;
 prompt Dropping package PETE_CONFIGURATION_RUNNER
 drop package pete_configuration_runner;
 
-prompt Dropping package PETE_CONFIGURATION_RUNNER_API
-drop package pete_configuration_runner_api;
+prompt Dropping package pete_configuration_runner_adm
+drop package pete_configuration_runner_adm;
 
 prompt Dropping package PETE_CONVENTION_RUNNER
 drop package pete_convention_runner;

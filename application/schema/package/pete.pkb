@@ -424,5 +424,13 @@ CREATE OR REPLACE PACKAGE BODY pete AS
         --
     END;
 
+    --------------------------------------------------------------------------------
+    procedure set_method_description(a_description_in in varchar2)
+    is
+    begin
+        pete_logger.set_method_description(a_description_in => a_description_in);
+    end;
+
+
 END;
 /

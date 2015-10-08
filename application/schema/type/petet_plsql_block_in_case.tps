@@ -24,7 +24,7 @@ CREATE OR REPLACE TYPE petet_plsql_block_in_case FORCE AS OBJECT
         input_argument     IN petet_input_argument DEFAULT NULL,
         expected_result_id IN INTEGER DEFAULT NULL,
         expected_result    IN petet_expected_result DEFAULT NULL,
-        position           IN NUMBER DEFAULT -1, --pete_configuration_runner_api.g_ORDER_FIRST
+        position           IN NUMBER DEFAULT -1, --pete_configuration_runner_adm.g_ORDER_FIRST
         stop_on_failure    IN VARCHAR2 DEFAULT 'N', --pete_core.g_NO
         run_modifier       IN VARCHAR2 DEFAULT NULL,
         description        IN VARCHAR2 DEFAULT NULL

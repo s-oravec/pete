@@ -7,7 +7,7 @@ create table PETE_RUN_LOG
   test_case_id       INTEGER,
   test_script_id     INTEGER,
   object_type        VARCHAR2(30) not null,
-  object_name        VARCHAR2(92) not null, 
+  object_name        VARCHAR2(386) not null,
   result             INTEGER,
   description        VARCHAR2(4000),
   test_begin         TIMESTAMP(6),

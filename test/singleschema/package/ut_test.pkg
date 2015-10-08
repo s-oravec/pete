@@ -24,7 +24,7 @@ CREATE OR REPLACE PACKAGE BODY ut_test AS
         l_thrown BOOLEAN := FALSE;
     BEGIN
         --log
-        pete_logger.log_method_description(d);
+        pete.set_method_description(d);
         --test
         BEGIN
             EXECUTE IMMEDIATE 'insert into x_child values (1,1)';
@@ -44,7 +44,7 @@ CREATE OR REPLACE PACKAGE BODY ut_test AS
     PROCEDURE ins_child_with_parent_succeeds(d VARCHAR2) IS
     BEGIN
         --log
-        pete_logger.log_method_description(d);
+        pete.set_method_description(d);
         --assert
         EXECUTE IMMEDIATE 'insert into x_parent values (1)';
         EXECUTE IMMEDIATE 'insert into x_child values (1,1)';

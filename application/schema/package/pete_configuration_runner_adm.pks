@@ -1,4 +1,4 @@
-CREATE OR REPLACE PACKAGE pete_configuration_runner_api IS
+CREATE OR REPLACE PACKAGE pete_configuration_runner_adm IS
 
     --
     -- Sets PLSQL Block
@@ -197,5 +197,5 @@ CREATE OR REPLACE PACKAGE pete_configuration_runner_api IS
     ) RETURN petet_test_suite;
     
 
-END pete_configuration_runner_api;
+END pete_configuration_runner_adm;
 /

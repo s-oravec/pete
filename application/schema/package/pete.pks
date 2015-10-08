@@ -197,6 +197,13 @@ CREATE OR REPLACE PACKAGE pete AS
         RETURN pete_core.typ_execution_result;
 
     --
+    --set tested method description in test package implementation
+    --
+    -- %argument a_description_in description
+    --
+    PROCEDURE set_method_description(a_description_in IN varchar2);
+
+    --
     -- init Pete with suppressed log to DBMS_OUTPUT
     --
     -- %argument a_log_to_dbms_output_in - true - log to DBMS_OUTPUT | false - supress logging to DBMS_OUTPUT

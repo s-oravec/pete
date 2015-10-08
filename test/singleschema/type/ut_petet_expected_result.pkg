@@ -22,11 +22,11 @@ CREATE OR REPLACE PACKAGE BODY ut_petet_expected_result AS
         l_expected_result petet_expected_result;
     BEGIN
         --log
-        pete_logger.log_method_description(d);
+        pete.set_method_description(d);
         --test
         --with anonymous expected_result
         l_expected_result := petet_expected_result(NAME            => l_name);
-        pete_configuration_runner_api.set_expected_result(a_expected_result_io => l_expected_result);
+        pete_configuration_runner_adm.set_expected_result(a_expected_result_io => l_expected_result);
         --assert
         pete_assert.pass;
     END;
@@ -37,7 +37,7 @@ CREATE OR REPLACE PACKAGE BODY ut_petet_expected_result AS
         l_expected_result petet_expected_result;
     BEGIN
         --log
-        pete_logger.log_method_description(d);
+        pete.set_method_description(d);
         --test
         BEGIN
             l_expected_result := petet_expected_result(NAME => NULL);
@@ -60,7 +60,7 @@ CREATE OR REPLACE PACKAGE BODY ut_petet_expected_result AS
         l_tgt petet_expected_result;
     BEGIN
         --log
-        pete_logger.log_method_description(d);
+        pete.set_method_description(d);
         --test
         l_src := petet_expected_result(id => 1, NAME => 'n', value => g_xml1, DESCRIPTION => 'd');
         l_tgt := l_src.copy();
@@ -101,7 +101,7 @@ CREATE OR REPLACE PACKAGE BODY ut_petet_expected_result AS
         l_expected_result2 petet_expected_result;
     BEGIN
         --log
-        pete_logger.log_method_description(d);
+        pete.set_method_description(d);
         --prepare
         l_expected_result1 := petet_expected_result(NAME => 'n');
         l_expected_result2 := petet_expected_result(NAME => 'n');

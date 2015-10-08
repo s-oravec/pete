@@ -3,9 +3,9 @@ create table PETE_PLSQL_BLOCK
   id              INTEGER not null,
   name            VARCHAR2(255) not null,
   description     VARCHAR2(255),
-  owner           VARCHAR2(32),
-  package         VARCHAR2(32),
-  method          VARCHAR2(32),
+  owner           VARCHAR2(128),
+  package         VARCHAR2(128),
+  method          VARCHAR2(128),
   anonymous_block CLOB
 )
 ;

@@ -31,7 +31,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete AS
         l_failed BOOLEAN;
     BEGIN
         --log
-        pete_logger.log_method_description(d);
+        pete.set_method_description(d);
         --assert
         BEGIN
             pete.run_test_package(a_package_name_in      => NULL,
@@ -56,7 +56,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete AS
     PROCEDURE run_one_method_only(d VARCHAR2) IS
     BEGIN
         --log
-        pete_logger.log_method_description(d);
+        pete.set_method_description(d);
         --test
         pete.run(a_package_name_in      => 'UT_PETE',
                  a_method_name_in       => 'DUMMY_METHOD',

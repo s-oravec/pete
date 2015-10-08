@@ -22,11 +22,11 @@ CREATE OR REPLACE PACKAGE BODY ut_petet_input_argument AS
         l_input_argument petet_input_argument;
     BEGIN
         --log
-        pete_logger.log_method_description(d);
+        pete.set_method_description(d);
         --test
         --with anonymous input_argument
         l_input_argument := petet_input_argument(NAME            => l_name);
-        pete_configuration_runner_api.set_input_argument(a_input_argument_io => l_input_argument);
+        pete_configuration_runner_adm.set_input_argument(a_input_argument_io => l_input_argument);
         --assert
         pete_assert.pass;
     END;
@@ -37,7 +37,7 @@ CREATE OR REPLACE PACKAGE BODY ut_petet_input_argument AS
         l_input_argument petet_input_argument;
     BEGIN
         --log
-        pete_logger.log_method_description(d);
+        pete.set_method_description(d);
         --test
         BEGIN
             l_input_argument := petet_input_argument(NAME => NULL);
@@ -60,7 +60,7 @@ CREATE OR REPLACE PACKAGE BODY ut_petet_input_argument AS
         l_tgt petet_input_argument;
     BEGIN
         --log
-        pete_logger.log_method_description(d);
+        pete.set_method_description(d);
         --test
         l_src := petet_input_argument(id => 1, NAME => 'n', value => g_xml1, DESCRIPTION => 'd');
         l_tgt := l_src.copy();
@@ -101,7 +101,7 @@ CREATE OR REPLACE PACKAGE BODY ut_petet_input_argument AS
         l_input_argument2 petet_input_argument;
     BEGIN
         --log
-        pete_logger.log_method_description(d);
+        pete.set_method_description(d);
         --prepare
         l_input_argument1 := petet_input_argument(NAME => 'n');
         l_input_argument2 := petet_input_argument(NAME => 'n');

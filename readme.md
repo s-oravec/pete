@@ -1,4 +1,4 @@
-<img src="https://github.com/principal-engineering/pete/blob/master/asssets/logo/Pete.png" height="50px">
+![alt text](assets/logo/Pete.png "Pete")
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->

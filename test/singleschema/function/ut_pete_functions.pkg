@@ -14,7 +14,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_functions AS
         c INTERVAL DAY TO SECOND;
     BEGIN
         --log
-        pete_logger.log_method_description(d);
+        pete.set_method_description(d);
         --test
         SELECT petef_sum_interval(x)
           INTO c

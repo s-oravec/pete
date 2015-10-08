@@ -12,6 +12,8 @@ define g_run_script = uninstall
 prompt uninstall application
 @&&run_dir application
 
+purge recyclebin;
+
 show errors
 
 exit

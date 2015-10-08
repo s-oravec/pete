@@ -1,4 +1,4 @@
-CREATE OR REPLACE PACKAGE ut_oopetet_plsql_block_in_case AS
+CREATE OR REPLACE PACKAGE ut_petet_plsql_block_in_case AS
 
     description pete_core.typ_description := 'PLSQL Block in Test Case Type';
 
@@ -14,7 +14,7 @@ CREATE OR REPLACE PACKAGE ut_oopetet_plsql_block_in_case AS
 
 END;
 /
-CREATE OR REPLACE PACKAGE BODY ut_oopetet_plsql_block_in_case AS
+CREATE OR REPLACE PACKAGE BODY ut_petet_plsql_block_in_case AS
 
     -- NoFormat Start
     g_passthrough_anonymous_block varchar2(32767)
@@ -39,7 +39,7 @@ CREATE OR REPLACE PACKAGE BODY ut_oopetet_plsql_block_in_case AS
     FUNCTION hlp_create_block(a_prefix_in IN varchar2) RETURN petet_plsql_block IS
         l_result petet_plsql_block := hlp_get_block(a_prefix_in => a_prefix_in);
     BEGIN
-        pete_configuration_runner_api.set_plsql_block(a_plsql_block_io => l_result);
+        pete_configuration_runner_adm.set_plsql_block(a_plsql_block_io => l_result);
         RETURN l_result;
     END;
 
@@ -55,7 +55,7 @@ CREATE OR REPLACE PACKAGE BODY ut_oopetet_plsql_block_in_case AS
         RETURN petet_input_argument IS
         l_result petet_input_argument := hlp_get_input_argument(a_prefix_in => a_prefix_in);
     BEGIN
-        pete_configuration_runner_api.set_input_argument(a_input_argument_io => l_result);
+        pete_configuration_runner_adm.set_input_argument(a_input_argument_io => l_result);
         RETURN l_result;
     END;
 
@@ -71,7 +71,7 @@ CREATE OR REPLACE PACKAGE BODY ut_oopetet_plsql_block_in_case AS
         RETURN petet_expected_result IS
         l_result petet_expected_result := hlp_get_expected_result(a_prefix_in => a_prefix_in);
     BEGIN
-        pete_configuration_runner_api.set_expected_result(a_expected_Result_io => l_result);
+        pete_configuration_runner_adm.set_expected_result(a_expected_Result_io => l_result);
         RETURN l_result;
     END;
 
@@ -97,7 +97,7 @@ CREATE OR REPLACE PACKAGE BODY ut_oopetet_plsql_block_in_case AS
         l_plsql_block_in_case petet_plsql_block_in_case;
     BEGIN
         --log
-        pete_logger.log_method_description(d);
+        pete.set_method_description(d);
         --prepare
         l_plsql_block := hlp_create_block(a_prefix_in => l_name);
         --test
@@ -113,7 +113,7 @@ CREATE OR REPLACE PACKAGE BODY ut_oopetet_plsql_block_in_case AS
         l_plsql_block_in_case petet_plsql_block_in_case;
     BEGIN
         --log
-        pete_logger.log_method_description(d);
+        pete.set_method_description(d);
         --prepare
         l_plsql_block := hlp_create_block(a_prefix_in => l_name);
         --test
@@ -130,7 +130,7 @@ CREATE OR REPLACE PACKAGE BODY ut_oopetet_plsql_block_in_case AS
         l_plsql_block_in_case petet_plsql_block_in_case;
     BEGIN
         --log
-        pete_logger.log_method_description(d);
+        pete.set_method_description(d);
         --prepare
         --test
         BEGIN
@@ -161,7 +161,7 @@ CREATE OR REPLACE PACKAGE BODY ut_oopetet_plsql_block_in_case AS
         l_plsql_block_in_case petet_plsql_block_in_case;
     BEGIN
         --log
-        pete_logger.log_method_description(d);
+        pete.set_method_description(d);
         --prepare
         l_plsql_block     := hlp_create_block(a_prefix_in => l_name);
         l_input_argument  := hlp_create_input_argument(a_prefix_in => l_name);
@@ -226,7 +226,7 @@ CREATE OR REPLACE PACKAGE BODY ut_oopetet_plsql_block_in_case AS
         --
     BEGIN
         --log
-        pete_logger.log_method_description(d);
+        pete.set_method_description(d);
         --prepare
         l_src := hlp_get_plsql_block_in_case(a_prefix_in => l_name);
         --test
@@ -246,7 +246,7 @@ CREATE OR REPLACE PACKAGE BODY ut_oopetet_plsql_block_in_case AS
         l_plsql_block_in_case2 petet_plsql_block_in_case;
     BEGIN
         --log
-        pete_logger.log_method_description(d);
+        pete.set_method_description(d);
         --prepare template
         l_plsql_block_in_case_tmpl := hlp_get_plsql_block_in_case(l_name);
         --prepare case - deep
