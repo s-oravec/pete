@@ -1,3 +1,4 @@
+/oradb_modules
 *.DS_Store
 ._.gitignore
 sqlsn/sqlsn_modules/sqlsn-stack/lib/tmp/.stack_path_x.sql

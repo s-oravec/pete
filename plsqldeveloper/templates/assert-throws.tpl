@@ -2,7 +2,7 @@ PROCEDURE &"Method name"(d VARCHAR2) IS
     l_thrown BOOLEAN := FALSE;
 BEGIN
     --log
-    pete_logger.log_method_description(d);
+    pete.set_method_description(d);
     --test
     BEGIN
         [#] --TODO: add method call/expression/...

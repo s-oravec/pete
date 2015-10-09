@@ -56,6 +56,9 @@ rem Packages
 prompt Granting EXECUTE privilege on package PETE
 grant EXECUTE on PETE to PUBLIC;
 
+prompt Granting EXECUTE privilege on package PETE_ASSERT
+grant EXECUTE on PETE_ASSERT to PUBLIC;
+
 prompt Granting EXECUTE privilege on package PETE_CONFIG
 grant EXECUTE on PETE_CONFIG to PUBLIC;
 

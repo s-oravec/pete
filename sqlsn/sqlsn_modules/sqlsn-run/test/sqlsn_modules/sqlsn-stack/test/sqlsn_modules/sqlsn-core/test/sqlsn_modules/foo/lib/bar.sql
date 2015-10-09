@@ -1,1 +1,0 @@
-prompt Executing command [bar]
