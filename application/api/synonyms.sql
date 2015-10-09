@@ -1,4 +1,3 @@
---TODO: make configurable PETE schema name
 prompt Creating synonym for &&g_pete_schema.PETET_PLSQL_BLOCK
 create or replace synonym PETET_PLSQL_BLOCK for &&g_pete_schema.PETET_PLSQL_BLOCK;
 
