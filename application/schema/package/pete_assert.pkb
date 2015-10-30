@@ -3,6 +3,7 @@ CREATE OR REPLACE PACKAGE BODY pete_assert IS
     gc_null     CONSTANT VARCHAR2(4) := 'NULL';
     gc_not_null CONSTANT VARCHAR2(10) := 'NOT NULL';
 
+    gc_diff_window_size constant number := 20;
     --
     -- converts a boolean value to a string representation - 'TRUE', 'FALSE', 'NULL'
     --------------------------------------------------------------------------------
@@ -414,6 +415,68 @@ CREATE OR REPLACE PACKAGE BODY pete_assert IS
         END IF;
     END;
 
+
+    -- 
+    -- helper procedure which finds beginning of difference between char representation
+    -- of two non empty xmltypes. It returns position of first difference
+    FUNCTION get_diff_position
+    (
+        a_xml_in  IN xmltype,
+        a_xml2_in xmltype
+    ) RETURN NUMBER IS
+
+        l_clob   CLOB;
+        l_clob2  CLOB;
+        l_result NUMBER;
+        l_pos    NUMBER;
+        l_max    NUMBER;
+        l_step   NUMBER;
+        l_nahoru BOOLEAN;
+    BEGIN
+
+        l_clob  := a_xml_in.extract('/').getclobval();
+        l_clob2 := a_xml2_in.extract('/').getclobval();
+        l_max   := (length(l_clob) + length(l_clob2)) / 2;
+        --smallest greater power of 2
+        l_max    := power(2, ceil(log(2, l_max)));
+        l_step   := l_max / 2;
+        l_pos    := l_max;
+        l_nahoru := FALSE;
+        WHILE l_step >= 1
+        LOOP
+            IF (l_nahoru)
+            THEN
+                l_pos := l_pos + l_step;
+            ELSE
+                l_pos := l_pos - l_step;
+            END IF;
+            IF (substr(l_clob, 1, l_pos) = substr(l_clob2, 1, l_pos))
+            THEN
+                l_nahoru := TRUE;
+            ELSE
+                l_nahoru := FALSE;
+            END IF;
+            l_step := l_step / 2;
+        END LOOP;
+        IF (l_nahoru)
+        THEN
+            RETURN l_pos + 1;
+        ELSE
+            RETURN l_pos;
+        END IF;
+/*                FOR x IN 1 .. length(l_clob)
+                LOOP
+                    IF (substr(l_clob, x, 1) <> substr(l_clob2, x, 1))
+                    THEN
+                        l_result := x;
+                        EXIT;
+                    END IF;
+                END LOOP;
+*/        
+        RETURN l_result;
+    END;
+
+
     --------------------------------------------------------------------------------
     PROCEDURE eq
     (
@@ -422,18 +485,42 @@ CREATE OR REPLACE PACKAGE BODY pete_assert IS
         a_comment_in  IN VARCHAR2 DEFAULT NULL
     ) IS
         l_this BOOLEAN;
+        l_comment varchar2(500) := a_comment_in;
+        l_diff number;
     BEGIN
         -- NoFormat Start
         l_this := eq(a_expected_in => a_expected_in, a_actual_in => a_actual_in);
         IF l_this
         THEN
-            this(a_value_in   => l_this,
-                 a_comment_in => 'exmpty xmlType equals empty xmlType');
-        ELSE
+            if l_comment is null then
+                if a_expected_in is null then 
+                    l_comment := 'exmpty xmlType equals empty xmlType';
+                else 
+                    l_comment := 'xmlTypes equals each other';
+                end if;
+            end if;
+                this(a_value_in   => l_this,
+                     a_comment_in => l_comment);
+            
+        ELSE   -- not equal
+            if (a_expected_in is null) then 
+                this(a_value_in    => l_this,
+                 a_comment_in  =>  NVL(a_comment_in, substr(a_actual_in.extract('/').getclobval, 1, 100) || '... is expected to be equal to <NULL>'),
+                 a_expected_in => '<NULL>',
+                 a_actual_in   => substr(a_actual_in.extract('/').getclobval, 1, 100) || '...'); 
+            elsif (a_actual_in is null) then
+                this(a_value_in    => l_this,
+                 a_comment_in  =>  NVL(a_comment_in, '<NULL> is expected to be equal to ' || substr(a_actual_in.extract('/').getclobval, 1, 100) || '...'),
+                 a_expected_in => substr(a_actual_in.extract('/').getclobval, 1, 100) || '...',
+                 a_actual_in   => '<NULL>'); 
+            else
+   --         find_difference(a_xml_in => a_expected_in, a_xml2_in => a_actual_in, a_diff_from => l_from, a_diff_to => l_to);
+            l_diff := get_diff_position(a_xml_in => a_expected_in, a_xml2_in => a_actual_in);
             this(a_value_in    => l_this,
-                 a_comment_in  =>  NVL(a_comment_in, a_actual_in.extract('/').getclobval || ' is expected to be equal to ' || a_expected_in.extract('/').getclobval),
-                 a_expected_in => '<doesnt show actual content at the momement>',
-                 a_actual_in   => '<todo>'); --todo: implement xml diff
+                 a_comment_in  =>  NVL(a_comment_in, substr(a_actual_in.extract('/').getclobval, 1, 100) || '...' || chr(10) || 'is expected to be equal to: ' || substr(a_expected_in.extract('/').getclobval, 1, 100) || '...' || chr(10)),
+                 a_expected_in => substr(a_expected_in.extract('/').getclobval, greatest(l_diff - gc_diff_window_size /2, 1) , gc_diff_window_size),
+                 a_actual_in   => substr(a_actual_in.extract('/').getclobval, greatest(l_diff - gc_diff_window_size /2, 1) , gc_diff_window_size) || chr(10) ||'Difference starts at position ' || l_diff ); 
+            end if;
         END IF;
         -- NoFormat End
     END;
