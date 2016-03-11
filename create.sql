@@ -4,6 +4,13 @@ rem
 rem Usage
 rem     sql @create.sql <environment>
 rem
+rem Options
+rem
+rem   environment - development - creates PETE_010000_DEV and PETE_010000_OTH schemas for development and testingf of Pete
+rem                             - see schema/create_development.sql
+rem               - production  - creates PETE_010000 schema
+rem                             - see schema/create_production.sql
+rem
 set verify off
 define g_environment = "&1"
 

@@ -54,7 +54,13 @@ when you want
 
 # Installation
 
-**1. Grant required privileges to target schema**
+**1. Download required Oracle DB modules**
+
+````
+$ git clone https://github.com/principal-engineering/sqlsn.git oradb_modules/sqlsn
+````
+
+**2. Grant required privileges to target schema**
 
 ````
 grant connect to <pete_schema>;  
@@ -65,7 +71,13 @@ grant create sequence to <pete_schema>;
 grant create view to <pete_schema>;
 ````
 
-**2. Connect to target schema and install Pete objects**
+> Optionally create dedicated schema for Pete
+>
+> * first connect to database using privileged user (for granted privileges see `application/create_production.sql`)
+> * then run `@create.sql production` script 
+
+
+**3. Connect to target schema and install Pete objects**
 
 ````
 SQL> @install
@@ -88,7 +100,7 @@ Follow up this simple tutorial which will guide you through.
 ### 1. Create test package with description
 
 * package name has to have prefix `UT_`
-* package description has to be defined in `description` variable of package
+* package description has to be defined in `description` variable in package specification
 * variable have to be either `pete_core.typ_description` or some `varchar2` with less than `4000 bytes`
 
 ````
@@ -129,9 +141,10 @@ END;
 * a testing method has to be a procedure with zero mandatory arguments
 * there is no restriction on name of the method except hook method names - `before_all`, `before_each`, `after_each`, `after_all` which are reserved
 * methods are executed in order, in which they are defined in package specification
-    * just reorder methods in package specification to change execution order
+    * just reorder methods in package specification to change execution order    
 * it is best practice to describe what method does (or Pete makes up something generic like *"Executing method ut_test.method_1"*)
     * it is even better to describe it using `default` value of some input argument (as you can use it in implementation, as you will see later)
+    * describe test only in package specification = do not repeat the default value in package body
 
 ````
 CREATE OR REPLACE PACKAGE ut_test AS
@@ -220,11 +233,11 @@ CREATE OR REPLACE PACKAGE BODY ut_test AS
     END;
 
 END;
-
 /
 ````
 
 ### 5. Run test package
+
 Running tests in Pete is supereasy.
 
 #### SQL*Plus
@@ -232,7 +245,7 @@ Running tests in Pete is supereasy.
 ````
 SQL> set serveroutput on size unlimited
 SQL> set linesize 255
-SQL> set pages 0
+SQL> set pagesize 0
 SQL> 
 SQL> exec pete.run(a_package_name_in => 'UT_TEST');
 
@@ -289,8 +302,7 @@ CREATE OR REPLACE PROCEDURE test_get_salary
     l_result emp.sal%TYPE;
 BEGIN
     --yuk!!!
-    l_result  := get_salary(a_deptno_in => to_number(a_xml_in.extract('/DEPTNO/text()')
-                                                     .getStringVal));
+    l_result  := get_salary(a_deptno_in => to_number(a_xml_in.extract('/DEPTNO/text()').getStringVal));
     a_xml_out := xmltype.createxml('<TOTAL_SAL>' || l_result || '</TOTAL_SAL>');
 END;
 
