@@ -18,9 +18,6 @@ drop sequence petes_test_case;
 prompt Dropping sequence petes_run_log
 drop sequence petes_run_log;
 
-prompt Dropping sequence petes_run_log_detail
-drop sequence petes_run_log_detail;
-
 prompt Dropping sequence petes_test_suite;
 drop sequence petes_test_suite;
 

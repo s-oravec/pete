@@ -12,8 +12,10 @@ CREATE OR REPLACE PACKAGE pete_assert AS
     --
     PROCEDURE this
     (
-        a_value_in   IN BOOLEAN,
-        a_comment_in IN VARCHAR2 DEFAULT NULL
+        a_value_in      IN BOOLEAN,
+        a_comment_in    IN VARCHAR2 DEFAULT NULL,
+        a_plsql_unit_in IN VARCHAR2 DEFAULT NULL,
+        a_plsql_line_in INTEGER DEFAULT NULL
     );
 
     -- 
@@ -21,24 +23,30 @@ CREATE OR REPLACE PACKAGE pete_assert AS
     --
     PROCEDURE is_null
     (
-        a_value_in   IN NUMBER,
-        a_comment_in IN VARCHAR2 DEFAULT NULL
+        a_value_in      IN NUMBER,
+        a_comment_in    IN VARCHAR2 DEFAULT NULL,
+        a_plsql_unit_in IN VARCHAR2 DEFAULT NULL,
+        a_plsql_line_in INTEGER DEFAULT NULL
     );
 
     FUNCTION is_null(a_value_in IN NUMBER) RETURN BOOLEAN;
 
     PROCEDURE is_null
     (
-        a_value_in   IN VARCHAR2,
-        a_comment_in IN VARCHAR2 DEFAULT NULL
+        a_value_in      IN VARCHAR2,
+        a_comment_in    IN VARCHAR2 DEFAULT NULL,
+        a_plsql_unit_in IN VARCHAR2 DEFAULT NULL,
+        a_plsql_line_in INTEGER DEFAULT NULL
     );
 
     FUNCTION is_null(a_value_in IN VARCHAR2) RETURN BOOLEAN;
 
     PROCEDURE is_null
     (
-        a_value_in   IN DATE,
-        a_comment_in IN VARCHAR2 DEFAULT NULL
+        a_value_in      IN DATE,
+        a_comment_in    IN VARCHAR2 DEFAULT NULL,
+        a_plsql_unit_in IN VARCHAR2 DEFAULT NULL,
+        a_plsql_line_in INTEGER DEFAULT NULL
     );
 
     FUNCTION is_null(a_value_in IN DATE) RETURN BOOLEAN;
@@ -48,24 +56,30 @@ CREATE OR REPLACE PACKAGE pete_assert AS
     --
     PROCEDURE is_not_null
     (
-        a_value_in   IN NUMBER,
-        a_comment_in IN VARCHAR2 DEFAULT NULL
+        a_value_in      IN NUMBER,
+        a_comment_in    IN VARCHAR2 DEFAULT NULL,
+        a_plsql_unit_in IN VARCHAR2 DEFAULT NULL,
+        a_plsql_line_in INTEGER DEFAULT NULL
     );
 
     FUNCTION is_not_null(a_value_in IN NUMBER) RETURN BOOLEAN;
 
     PROCEDURE is_not_null
     (
-        a_value_in   IN VARCHAR2,
-        a_comment_in IN VARCHAR2 DEFAULT NULL
+        a_value_in      IN VARCHAR2,
+        a_comment_in    IN VARCHAR2 DEFAULT NULL,
+        a_plsql_unit_in IN VARCHAR2 DEFAULT NULL,
+        a_plsql_line_in INTEGER DEFAULT NULL
     );
 
     FUNCTION is_not_null(a_value_in IN VARCHAR2) RETURN BOOLEAN;
 
     PROCEDURE is_not_null
     (
-        a_value_in   IN DATE,
-        a_comment_in IN VARCHAR2 DEFAULT NULL
+        a_value_in      IN DATE,
+        a_comment_in    IN VARCHAR2 DEFAULT NULL,
+        a_plsql_unit_in IN VARCHAR2 DEFAULT NULL,
+        a_plsql_line_in INTEGER DEFAULT NULL
     );
 
     FUNCTION is_not_null(a_value_in IN DATE) RETURN BOOLEAN;
@@ -74,7 +88,12 @@ CREATE OR REPLACE PACKAGE pete_assert AS
     -- This assert procedure always succeeds. It's usefull to log, that something has
     -- happened if it is difficult to test it's value
     --
-    PROCEDURE pass(a_comment_in IN VARCHAR2 DEFAULT NULL);
+    PROCEDURE pass
+    (
+        a_comment_in    IN VARCHAR2 DEFAULT NULL,
+        a_plsql_unit_in IN VARCHAR2 DEFAULT NULL,
+        a_plsql_line_in INTEGER DEFAULT NULL
+    );
 
     FUNCTION pass RETURN BOOLEAN;
 
@@ -82,7 +101,12 @@ CREATE OR REPLACE PACKAGE pete_assert AS
     -- This assert procedure always fails. It's usefull in a branch of code where the
     -- program should never enter. E.g. in an exception block
     --
-    PROCEDURE fail(a_comment_in IN VARCHAR2 DEFAULT NULL);
+    PROCEDURE fail
+    (
+        a_comment_in    IN VARCHAR2 DEFAULT NULL,
+        a_plsql_unit_in IN VARCHAR2 DEFAULT NULL,
+        a_plsql_line_in INTEGER DEFAULT NULL
+    );
 
     FUNCTION fail RETURN BOOLEAN;
 
@@ -92,9 +116,11 @@ CREATE OR REPLACE PACKAGE pete_assert AS
     --
     PROCEDURE eq
     (
-        a_expected_in IN NUMBER,
-        a_actual_in   IN NUMBER,
-        a_comment_in  IN VARCHAR2 DEFAULT NULL
+        a_expected_in   IN NUMBER,
+        a_actual_in     IN NUMBER,
+        a_comment_in    IN VARCHAR2 DEFAULT NULL,
+        a_plsql_unit_in IN VARCHAR2 DEFAULT NULL,
+        a_plsql_line_in INTEGER DEFAULT NULL
     );
 
     FUNCTION eq
@@ -105,9 +131,11 @@ CREATE OR REPLACE PACKAGE pete_assert AS
 
     PROCEDURE eq
     (
-        a_expected_in IN VARCHAR2,
-        a_actual_in   IN VARCHAR2,
-        a_comment_in  IN VARCHAR2 DEFAULT NULL
+        a_expected_in   IN VARCHAR2,
+        a_actual_in     IN VARCHAR2,
+        a_comment_in    IN VARCHAR2 DEFAULT NULL,
+        a_plsql_unit_in IN VARCHAR2 DEFAULT NULL,
+        a_plsql_line_in INTEGER DEFAULT NULL
     );
 
     FUNCTION eq
@@ -118,9 +146,11 @@ CREATE OR REPLACE PACKAGE pete_assert AS
 
     PROCEDURE eq
     (
-        a_expected_in IN DATE,
-        a_actual_in   IN DATE,
-        a_comment_in  IN VARCHAR2 DEFAULT NULL
+        a_expected_in   IN DATE,
+        a_actual_in     IN DATE,
+        a_comment_in    IN VARCHAR2 DEFAULT NULL,
+        a_plsql_unit_in IN VARCHAR2 DEFAULT NULL,
+        a_plsql_line_in INTEGER DEFAULT NULL
     );
 
     FUNCTION eq
@@ -131,9 +161,11 @@ CREATE OR REPLACE PACKAGE pete_assert AS
 
     PROCEDURE eq
     (
-        a_expected_in IN BOOLEAN,
-        a_actual_in   IN BOOLEAN,
-        a_comment_in  IN VARCHAR2 DEFAULT NULL
+        a_expected_in   IN BOOLEAN,
+        a_actual_in     IN BOOLEAN,
+        a_comment_in    IN VARCHAR2 DEFAULT NULL,
+        a_plsql_unit_in IN VARCHAR2 DEFAULT NULL,
+        a_plsql_line_in INTEGER DEFAULT NULL
     );
 
     FUNCTION eq
@@ -144,9 +176,11 @@ CREATE OR REPLACE PACKAGE pete_assert AS
 
     PROCEDURE eq
     (
-        a_expected_in IN sys.xmltype,
-        a_actual_in   IN sys.xmltype,
-        a_comment_in  IN VARCHAR2 DEFAULT NULL
+        a_expected_in   IN sys.xmltype,
+        a_actual_in     IN sys.xmltype,
+        a_comment_in    IN VARCHAR2 DEFAULT NULL,
+        a_plsql_unit_in IN VARCHAR2 DEFAULT NULL,
+        a_plsql_line_in INTEGER DEFAULT NULL
     );
 
     FUNCTION eq

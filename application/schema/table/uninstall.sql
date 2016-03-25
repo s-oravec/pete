@@ -27,9 +27,6 @@ drop table pete_configuration cascade constraints purge;
 prompt dropping table pete_run_log
 drop table pete_run_log cascade constraints purge;
 
-prompt dropping table pete_run_log_detail
-drop table pete_run_log_detail cascade constraints purge;
-
 prompt dropping table pete_expected_result
 drop table pete_expected_result cascade constraints purge;
 

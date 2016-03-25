@@ -25,14 +25,11 @@ CREATE OR REPLACE PACKAGE BODY pete_config AS
     --------------------------------------------------------------------------------
     FUNCTION get_param
     (
-        a_key_in           IN pete_configuration.key%TYPE,
-        a_default_value_in IN pete_configuration.value%TYPE DEFAULT NULL
-    ) RETURN pete_configuration.value%TYPE IS
+        a_key_in           IN pete_configuration.key%Type,
+        a_default_value_in IN pete_configuration.value%Type DEFAULT NULL
+    ) RETURN pete_configuration.value%Type IS
     BEGIN
-        FOR config IN (SELECT VALUE
-                         FROM pete_configuration c
-                        WHERE key = a_key_in)
-        LOOP
+        FOR config IN (SELECT Value FROM pete_configuration c WHERE Key = a_key_in) LOOP
             RETURN config.value;
         END LOOP;
         --
@@ -43,18 +40,16 @@ CREATE OR REPLACE PACKAGE BODY pete_config AS
     --------------------------------------------------------------------------------
     FUNCTION get_boolean_param
     (
-        a_key_in           IN pete_configuration.key%TYPE,
+        a_key_in           IN pete_configuration.key%Type,
         a_default_value_in IN BOOLEAN
     ) RETURN BOOLEAN IS
-        l_value pete_configuration.value%TYPE;
+        l_Value pete_configuration.value%Type;
     BEGIN
-        l_value := get_param(a_key_in);
+        l_Value := get_param(a_key_in);
     
-        IF (l_value = C_TRUE)
-        THEN
+        IF (l_Value = C_TRUE) THEN
             RETURN TRUE;
-        ELSIF (l_value = C_FALSE)
-        THEN
+        ELSIF (l_Value = C_FALSE) THEN
             RETURN FALSE;
         ELSE
             RETURN a_default_value_in;
@@ -66,18 +61,18 @@ CREATE OR REPLACE PACKAGE BODY pete_config AS
     --------------------------------------------------------------------------------
     PROCEDURE set_param
     (
-        a_key_in   IN pete_configuration.key%TYPE,
-        a_value_in IN pete_configuration.value%TYPE
+        a_key_in   IN pete_configuration.key%Type,
+        a_value_in IN pete_configuration.value%Type
     ) IS
         PRAGMA AUTONOMOUS_TRANSACTION;
     BEGIN
         MERGE INTO pete_configuration c
-        USING (SELECT a_key_in key2, a_value_in value2 FROM dual) d
+        USING (SELECT a_key_in key2, a_value_in value2 FROM dual) D
         ON (c.key = d.key2)
         WHEN MATCHED THEN
             UPDATE SET c.value = d.value2
         WHEN NOT MATCHED THEN
-            INSERT (key, VALUE) VALUES (d.key2, d.value2);
+            INSERT (Key, Value) VALUES (d.key2, d.value2);
         COMMIT;
     END set_param;
 
@@ -85,13 +80,12 @@ CREATE OR REPLACE PACKAGE BODY pete_config AS
     --------------------------------------------------------------------------------
     PROCEDURE set_boolean_param
     (
-        a_key_in   IN pete_configuration.key%TYPE,
+        a_key_in   IN pete_configuration.key%Type,
         a_value_in IN BOOLEAN
     ) IS
         l_table_value VARCHAR2(10);
     BEGIN
-        IF (a_value_in)
-        THEN
+        IF (a_value_in) THEN
             l_table_value := C_TRUE;
         ELSE
             l_table_value := C_FALSE;
@@ -108,8 +102,7 @@ CREATE OR REPLACE PACKAGE BODY pete_config AS
     
     BEGIN
         g_show_asserts := a_value_in;
-        IF (a_set_as_default)
-        THEN
+        IF (a_set_as_default) THEN
             set_param(SHOW_ASSERTS, a_value_in);
         END IF;
     END;
@@ -129,8 +122,7 @@ CREATE OR REPLACE PACKAGE BODY pete_config AS
     
     BEGIN
         g_show_hook_methods := a_value_in;
-        IF (a_set_as_default)
-        THEN
+        IF (a_set_as_default) THEN
             set_boolean_param(SHOW_HOOK_METHODS, a_value_in);
         END IF;
     END;
@@ -150,8 +142,7 @@ CREATE OR REPLACE PACKAGE BODY pete_config AS
     
     BEGIN
         g_show_failures_only := a_value_in;
-        IF (a_set_as_default)
-        THEN
+        IF (a_set_as_default) THEN
             set_boolean_param(SHOW_FAILURES_ONLY, a_value_in);
         END IF;
     END;
@@ -168,11 +159,9 @@ CREATE OR REPLACE PACKAGE BODY pete_config AS
         a_value_in       IN BOOLEAN DEFAULT g_SKIP_IF_BFR_HOOK_FAILS_DFLT,
         a_set_as_default IN BOOLEAN DEFAULT FALSE
     ) IS
-    
     BEGIN
         g_skip_if_before_hook_fails := a_value_in;
-        IF (a_set_as_default)
-        THEN
+        IF (a_set_as_default) THEN
             set_boolean_param(SKIP_IF_BEFORE_HOOK_FAILS, a_value_in);
         END IF;
     END;
@@ -191,8 +180,7 @@ CREATE OR REPLACE PACKAGE BODY pete_config AS
     ) IS
     BEGIN
         g_test_package_prefix := a_value_in;
-        IF a_set_as_default
-        THEN
+        IF a_set_as_default THEN
             set_param(TEST_PACKAGE_PREFIX, a_value_in);
         END IF;
     END;
@@ -211,8 +199,7 @@ CREATE OR REPLACE PACKAGE BODY pete_config AS
     ) IS
     BEGIN
         g_date_format := a_value_in;
-        IF a_set_as_default
-        THEN
+        IF a_set_as_default THEN
             set_param(DATE_FORMAT, a_value_in);
         END IF;
     END;
@@ -227,25 +214,20 @@ CREATE OR REPLACE PACKAGE BODY pete_config AS
     PROCEDURE init IS
     BEGIN
         --show asserts
-        g_show_asserts := get_param(a_key_in           => SHOW_ASSERTS,
-                                    a_default_value_in => g_SHOW_ASSERTS_DEFAULT);
+        g_show_asserts := get_param(a_key_in => SHOW_ASSERTS, a_default_value_in => g_SHOW_ASSERTS_DEFAULT);
         --show hook methods
-        g_show_hook_methods := get_boolean_param(a_key_in           => SHOW_HOOK_METHODS,
-                                                 a_default_value_in => g_SHOW_HOOK_METHODS_DEFAULT);
+        g_show_hook_methods := get_boolean_param(a_key_in => SHOW_HOOK_METHODS, a_default_value_in => g_SHOW_HOOK_METHODS_DEFAULT);
         --show failures only
-        g_show_failures_only := get_boolean_param(a_key_in           => SHOW_FAILURES_ONLY,
-                                                  a_default_value_in => g_SHOW_FAILURES_ONLY_DEFAULT);
+        g_show_failures_only := get_boolean_param(a_key_in => SHOW_FAILURES_ONLY, a_default_value_in => g_SHOW_FAILURES_ONLY_DEFAULT);
     
         --show failures only
         g_skip_if_before_hook_fails := get_boolean_param(a_key_in           => SKIP_IF_BEFORE_HOOK_FAILS,
                                                          a_default_value_in => g_SKIP_IF_BFR_HOOK_FAILS_DFLT);
     
         --test package prefix
-        g_test_package_prefix := get_param(a_key_in           => TEST_PACKAGE_PREFIX,
-                                           a_default_value_in => g_TEST_PACKAGE_PREFIX_DEFAULT);
+        g_test_package_prefix := get_param(a_key_in => TEST_PACKAGE_PREFIX, a_default_value_in => g_TEST_PACKAGE_PREFIX_DEFAULT);
         --date format
-        g_date_format := get_param(a_key_in           => DATE_FORMAT,
-                                   a_default_value_in => g_DATE_FORMAT_DEFAULT);
+        g_date_format := get_param(a_key_in => DATE_FORMAT, a_default_value_in => g_DATE_FORMAT_DEFAULT);
     END init;
 
 BEGIN

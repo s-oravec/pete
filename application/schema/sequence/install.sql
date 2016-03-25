@@ -18,9 +18,6 @@ prompt Creating sequence PETES_TEST_CASE
 prompt Creating sequence PETES_RUN_LOG
 @@petes_run_log.sql
 
-prompt Creating sequence PETES_RUN_LOG_DETAIL
-@@petes_run_log_detail.sql
-
 prompt Creating SEQUENCE PETES_TEST_SUITE
 @@petes_test_suite.sql
 

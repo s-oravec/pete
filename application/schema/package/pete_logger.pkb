@@ -9,22 +9,20 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
     --log record for method is already created
     g_run_log_id           INTEGER;
     g_output_run_log_id    INTEGER;
+    g_show_failures_only   typ_integer_boolean;
     g_parent_run_log_id_in INTEGER;
-    g_object_type_in       pete_run_log.object_type%TYPE;
-    g_object_name_in       pete_run_log.object_name%TYPE;
+    g_object_type_in       pete_run_log.object_type%Type;
+    g_object_name_in       pete_run_log.object_name%Type;
 
     --------------------------------------------------------------------------------
-    FUNCTION get_package_description(a_package_name_in IN pete_core.typ_object_name)
-        RETURN VARCHAR2 IS
+    FUNCTION get_package_description(a_package_name_in IN pete_core.typ_object_name) RETURN VARCHAR2 IS
         l_call_template CONSTANT VARCHAR2(255) --
         := 'begin :1 := #PackageName#.description; end;';
-        l_result VARCHAR(255);
+        l_Result VARCHAR(255);
     BEGIN
-        EXECUTE IMMEDIATE REPLACE(l_call_template,
-                                  '#PackageName#',
-                                  a_package_name_in)
-            USING OUT l_result;
-        RETURN l_result;
+        EXECUTE IMMEDIATE REPLACE(l_call_template, '#PackageName#', a_package_name_in)
+            USING OUT l_Result;
+        RETURN l_Result;
     EXCEPTION
         WHEN OTHERS THEN
             RETURN NULL;
@@ -42,30 +40,25 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
     --------------------------------------------------------------------------------
     PROCEDURE init(a_log_to_dbms_output_in IN BOOLEAN DEFAULT TRUE) IS
     BEGIN
-        g_log_to_dbms_output := nvl(a_log_to_dbms_output_in,
-                                    gc_LOG_TO_DBMS_OUTPUT);
+        g_log_to_dbms_output := nvl(a_log_to_dbms_output_in, gc_LOG_TO_DBMS_OUTPUT);
     END init;
 
     --------------------------------------------------------------------------------
     PROCEDURE log_start
     (
-        a_run_log_id_in        IN pete_run_log.id%TYPE,
-        a_parent_run_log_id_in IN pete_run_log.parent_id%TYPE,
-        a_description_in       IN pete_run_log.description%TYPE,
-        a_object_type_in       IN pete_run_log.object_type%TYPE,
-        a_object_name_in       IN pete_run_log.object_name%TYPE
+        a_run_log_id_in        IN pete_run_log.id%Type,
+        a_parent_run_log_id_in IN pete_run_log.parent_id%Type,
+        a_description_in       IN pete_run_log.description%Type,
+        a_object_type_in       IN pete_run_log.object_type%Type,
+        a_object_name_in       IN pete_run_log.object_name%Type
     ) IS
         lrec_pete_run_log pete_run_log%ROWTYPE;
         PRAGMA AUTONOMOUS_TRANSACTION;
     BEGIN
         --
-        trace('LOG_START: ' || 'a_run_log_id_in:' ||
-              NVL(to_char(a_run_log_id_in), 'NULL') || ', ' ||
-              'a_parent_run_log_id_in:' ||
-              NVL(to_char(a_parent_run_log_id_in), 'NULL') || ', ' ||
-              'a_description_in:' || NVL(a_description_in, 'NULL') || ', ' ||
-              'a_object_type_in:' || NVL(a_object_type_in, 'NULL') || ', ' ||
-              'a_object_name_in:' || NVL(a_object_name_in, 'NULL'));
+        trace('LOG_START: ' || 'a_run_log_id_in:' || NVL(to_char(a_run_log_id_in), 'NULL') || ', ' || 'a_parent_run_log_id_in:' ||
+              NVL(to_char(a_parent_run_log_id_in), 'NULL') || ', ' || 'a_description_in:' || NVL(a_description_in, 'NULL') || ', ' ||
+              'a_object_type_in:' || NVL(a_object_type_in, 'NULL') || ', ' || 'a_object_name_in:' || NVL(a_object_name_in, 'NULL'));
     
         g_run_log_id           := a_run_log_id_in;
         g_parent_run_log_id_in := a_parent_run_log_id_in;
@@ -81,19 +74,15 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
         --
         CASE a_object_type_in
             WHEN pete_core.g_OBJECT_TYPE_PACKAGE THEN
-                lrec_pete_run_log.description := get_package_description(a_package_name_in => a_object_name_in) ||
-                                                 a_description_in;
+                lrec_pete_run_log.description := get_package_description(a_package_name_in => a_object_name_in) || a_description_in;
             WHEN pete_core.g_OBJECT_TYPE_SUITE THEN
-                lrec_pete_run_log.description := get_suite_description(a_suite_name_in => a_object_name_in) ||
-                                                 a_description_in;
+                lrec_pete_run_log.description := get_suite_description(a_suite_name_in => a_object_name_in) || a_description_in;
             ELSE
                 lrec_pete_run_log.description := a_description_in;
         END CASE;
         --
         lrec_pete_run_log.description := nvl(lrec_pete_run_log.description,
-                                             'Testing ' ||
-                                             lower(a_object_type_in) || ' ' ||
-                                             upper(a_object_name_in));
+                                             'Testing ' || lower(a_object_type_in) || ' ' || upper(a_object_name_in));
         --
         INSERT INTO pete_run_log VALUES lrec_pete_run_log;
         --
@@ -104,24 +93,21 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
     --------------------------------------------------------------------------------
     PROCEDURE log_end
     (
-        a_run_log_id_in      IN pete_run_log.id%TYPE,
-        a_result_in          IN pete_run_log.result%TYPE,
-        a_xml_in_in          IN pete_run_log.xml_in%TYPE,
-        a_xml_out_in         IN pete_run_log.xml_out%TYPE,
-        a_error_code_in      IN pete_run_log.error_code%TYPE,
-        a_error_stack_in     IN pete_run_log.error_stack%TYPE,
-        a_error_backtrace_in IN pete_run_log.error_backtrace%TYPE
+        a_run_log_id_in      IN pete_run_log.id%Type,
+        a_result_in          IN pete_run_log.result%Type,
+        a_xml_in_in          IN pete_run_log.xml_in%Type,
+        a_xml_out_in         IN pete_run_log.xml_out%Type,
+        a_error_code_in      IN pete_run_log.error_code%Type,
+        a_error_stack_in     IN pete_run_log.error_stack%Type,
+        a_error_backtrace_in IN pete_run_log.error_backtrace%Type
     ) IS
         PRAGMA AUTONOMOUS_TRANSACTION;
     BEGIN
         --
-        trace('LOG_END: ' || 'a_run_log_id_in:' ||
-              NVL(to_char(a_run_log_id_in), 'NULL') || ', ' || 'a_result_in:' ||
-              NVL(to_char(a_result_in), 'NULL') || ', ' || 'a_error_code_in:' ||
-              NVL(to_char(a_error_code_in), 'NULL') || ', ' ||
-              'a_error_stack_in:' || NVL(a_error_stack_in, 'NULL') || ', ' ||
-              'a_error_backtrace_in:' || NVL(a_error_backtrace_in, 'NULL'));
-        UPDATE pete_run_log p
+        trace('LOG_END: ' || 'a_run_log_id_in:' || NVL(to_char(a_run_log_id_in), 'NULL') || ', ' || 'a_result_in:' ||
+              NVL(to_char(a_result_in), 'NULL') || ', ' || 'a_error_code_in:' || NVL(to_char(a_error_code_in), 'NULL') || ', ' ||
+              'a_error_stack_in:' || NVL(a_error_stack_in, 'NULL') || ', ' || 'a_error_backtrace_in:' || NVL(a_error_backtrace_in, 'NULL'));
+        UPDATE pete_run_log P
            SET p.result          = a_result_in,
                p.test_end        = systimestamp,
                p.xml_in          = a_xml_in_in,
@@ -129,7 +115,7 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
                p.error_code      = a_error_code_in,
                p.error_stack     = a_error_stack_in,
                p.error_backtrace = a_error_backtrace_in
-         WHERE id = a_run_log_id_in;
+         WHERE ID = a_run_log_id_in;
         --
         COMMIT;
         --
@@ -140,11 +126,8 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
         PRAGMA AUTONOMOUS_TRANSACTION;
     BEGIN
         --
-        trace('set_method_description: ' || 'a_description_in:' ||
-              NVL(a_description_in, 'NULL'));
-        UPDATE pete_run_log
-           SET description = a_description_in
-         WHERE id = g_run_log_id; --set to package session variable on start of method execution
+        trace('set_method_description: ' || 'a_description_in:' || NVL(a_description_in, 'NULL'));
+        UPDATE pete_run_log SET Description = a_description_in WHERE ID = g_run_log_id; --set to package session variable on start of method execution
         --
         COMMIT;
         --
@@ -153,8 +136,10 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
     --------------------------------------------------------------------------------
     PROCEDURE log_assert
     (
-        a_result_in  BOOLEAN,
-        a_comment_in VARCHAR2
+        a_result_in     IN BOOLEAN,
+        a_comment_in    IN VARCHAR2,
+        a_plsql_unit_in IN VARCHAR2 DEFAULT NULL,
+        a_plsql_line_in IN INTEGER DEFAULT NULL
     ) IS
         PRAGMA AUTONOMOUS_TRANSACTION;
         lrec_pete_run_log pete_run_log%ROWTYPE;
@@ -167,8 +152,9 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
         lrec_pete_run_log.test_begin  := systimestamp;
         lrec_pete_run_log.test_end    := systimestamp;
         lrec_pete_run_log.description := a_comment_in;
-        IF (a_result_in)
-        THEN
+        lrec_pete_run_log.plsql_unit  := a_plsql_unit_in;
+        lrec_pete_run_log.plsql_line  := a_plsql_line_in;
+        IF (a_result_in) THEN
             lrec_pete_run_log.result := pete_core.g_SUCCESS;
         ELSE
             lrec_pete_run_log.result := pete_core.g_FAILURE;
@@ -186,8 +172,7 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
     --------------------------------------------------------------------------------
     PROCEDURE trace(a_trace_message_in VARCHAR2) IS
     BEGIN
-        IF (g_trace)
-        THEN
+        IF (g_trace) THEN
             dbms_output.put_line('TRACE> ' || a_trace_message_in); --enhancement  --konfigurovatelne globalne
         END IF;
     END trace;
@@ -201,46 +186,34 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
     END set_trace;
 
     --------------------------------------------------------------------------------
-    FUNCTION get_output_run_log_id RETURN pete_run_log.id%TYPE IS
+    FUNCTION get_output_run_log_id RETURN pete_run_log.id%Type IS
     BEGIN
         RETURN g_output_run_log_id;
     END;
 
     --------------------------------------------------------------------------------
-    FUNCTION do_output(a_log_line_in IN petev_output_run_log%ROWTYPE)
-        RETURN BOOLEAN IS
+    FUNCTION do_output(a_log_line_in IN petev_output_run_log%ROWTYPE) RETURN BOOLEAN IS
     BEGIN
         --
         -- hook methods
-        IF (NOT pete_config.get_show_hook_methods AND
-           a_log_line_in.object_type = pete_core.g_OBJECT_TYPE_HOOK)
-        THEN
-            pete_logger.trace('not printing hook methods - ' ||
-                              a_log_line_in.log);
+        IF (NOT pete_config.get_show_hook_methods AND a_log_line_in.object_type = pete_core.g_OBJECT_TYPE_HOOK) THEN
+            pete_logger.trace('not printing hook methods - ' || a_log_line_in.log);
             RETURN FALSE;
         END IF;
         --
         -- asserts
-        IF a_log_line_in.object_type = pete_core.g_OBJECT_TYPE_ASSERT
-        THEN
-            IF (pete_config.get_show_asserts = pete_config.g_ASSERTS_NONE)
-            THEN
-                pete_logger.trace('not printing asserts - ' ||
-                                  a_log_line_in.log);
+        IF a_log_line_in.object_type = pete_core.g_OBJECT_TYPE_ASSERT THEN
+            IF (pete_config.get_show_asserts = pete_config.g_ASSERTS_NONE) THEN
+                pete_logger.trace('not printing asserts - ' || a_log_line_in.log);
                 RETURN FALSE;
-            ELSIF (pete_config.get_show_asserts = pete_config.g_ASSERTS_FAILED AND
-                  a_log_line_in.result = pete_core.g_SUCCESS)
-            THEN
-                pete_logger.trace('not printing success asserts - ' ||
-                                  a_log_line_in.log);
+            ELSIF (pete_config.get_show_asserts = pete_config.g_ASSERTS_FAILED AND a_log_line_in.result = pete_core.g_SUCCESS) THEN
+                pete_logger.trace('not printing success asserts - ' || a_log_line_in.log);
                 RETURN FALSE;
             END IF;
         END IF;
         --
         -- failures only
-        IF (pete_config.get_show_failures_only AND
-           a_log_line_in.result = pete_core.g_SUCCESS)
-        THEN
+        IF (pete_config.get_show_failures_only AND a_log_line_in.result = pete_core.g_SUCCESS) THEN
             RETURN FALSE;
         END IF;
         --
@@ -252,8 +225,7 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
     PROCEDURE print_top_level_result(a_result_in IN pete_core.typ_execution_result) IS
     BEGIN
         dbms_output.put_line('.');
-        IF a_result_in = pete_core.g_SUCCESS
-        THEN
+        IF a_result_in = pete_core.g_SUCCESS THEN
             dbms_output.put_line('.   SSSS   U     U   CCC     CCC   EEEEEEE   SSSS     SSSS   ');
             dbms_output.put_line('.  S    S  U     U  C   C   C   C  E        S    S   S    S  ');
             dbms_output.put_line('. S        U     U C     C C     C E       S        S        ');
@@ -277,26 +249,28 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
     END;
 
     --------------------------------------------------------------------------------
-    PROCEDURE output_log(a_run_log_id_in IN pete_run_log.id%TYPE) IS
+    PROCEDURE output_log
+    (
+        a_run_log_id_in         IN pete_run_log.id%Type,
+        a_show_failures_only_in IN typ_integer_boolean DEFAULT g_FALSE
+    ) IS
         l_top_level_result pete_core.typ_execution_result;
     BEGIN
-        trace('OUTPUT_LOG: ' || 'a_run_log_id_in:' ||
-              NVL(to_char(a_run_log_id_in), 'NULL'));
-        g_output_run_log_id := a_run_log_id_in;
+        trace('OUTPUT_LOG: ' || 'a_run_log_id_in:' || NVL(to_char(a_run_log_id_in), 'NULL'));
+        --
+        g_output_run_log_id  := a_run_log_id_in;
+        g_show_failures_only := a_show_failures_only_in;
+        --
         dbms_output.put_line(chr(10));
-        FOR log_line IN (SELECT * FROM petev_output_run_log)
-        LOOP
+        FOR log_line IN (SELECT * FROM petev_output_run_log) LOOP
             --first record in the view is the top level one
-            IF (l_top_level_result IS NULL)
-            THEN
+            IF (l_top_level_result IS NULL) THEN
                 l_top_level_result := log_line.result;
             END IF;
         
-            IF (do_output(a_log_line_in => log_line))
-            THEN
+            IF (do_output(a_log_line_in => log_line)) THEN
                 --TODO: move to petev_output_run_log
-                IF log_line.object_type = pete_core.g_OBJECT_TYPE_PACKAGE
-                THEN
+                IF log_line.object_type = pete_core.g_OBJECT_TYPE_PACKAGE THEN
                     dbms_output.put_line('.');
                 END IF;
                 dbms_output.put_line('.' || log_line.log);
@@ -308,20 +282,29 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
     END;
 
     --------------------------------------------------------------------------------                 
-    FUNCTION display_log(a_run_log_id_in IN pete_run_log.id%TYPE)
-        RETURN petet_log_tab
+    FUNCTION display_log
+    (
+        a_run_log_id_in         IN pete_run_log.id%Type,
+        a_show_failures_only_in IN typ_integer_boolean DEFAULT g_FALSE
+    ) RETURN petet_log_tab
         PIPELINED IS
     BEGIN
-        trace('DISPLAY_LOG: ' || 'a_run_log_id_in:' ||
-              NVL(to_char(a_run_log_id_in), 'NULL'));
-        g_output_run_log_id := a_run_log_id_in;
-        FOR log_line IN (SELECT * FROM petev_output_run_log)
-        LOOP
-            IF do_output(log_line)
-            THEN
+        trace('DISPLAY_LOG: ' || 'a_run_log_id_in:' || NVL(to_char(a_run_log_id_in), 'NULL'));
+        --
+        g_output_run_log_id  := a_run_log_id_in;
+        g_show_failures_only := a_show_failures_only_in;
+        --
+        FOR log_line IN (SELECT * FROM petev_output_run_log) LOOP
+            IF do_output(log_line) THEN
                 PIPE ROW(petet_log(log_line.log));
             END IF;
         END LOOP;
+    END;
+
+    --------------------------------------------------------------------------------    
+    FUNCTION get_show_failures_only RETURN typ_integer_boolean IS
+    BEGIN
+        RETURN g_show_failures_only;
     END;
 
 BEGIN

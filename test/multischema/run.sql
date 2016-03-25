@@ -1,6 +1,8 @@
 @&&run_dir_begin
 
-@&&run_script ../../application/example/synonyms.sql
+rem TODO: get pete schema from some common config
+define g_pete_schema = PETE_010000_DEV
+@&&run_script ../../application/api/synonyms.sql
 
 prompt g_run_path &&g_run_path
 @&&run_dir package

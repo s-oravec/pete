@@ -18,11 +18,11 @@ CREATE OR REPLACE PACKAGE pete_logger AS
     --------------------------------------------------------------------------------      
     PROCEDURE log_start
     (
-        a_run_log_id_in        IN pete_run_log.id%TYPE,
-        a_parent_run_log_id_in IN pete_run_log.parent_id%TYPE,
-        a_description_in       IN pete_run_log.description%TYPE,
-        a_object_type_in       IN pete_run_log.object_type%TYPE,
-        a_object_name_in       IN pete_run_log.object_name%TYPE
+        a_run_log_id_in        IN pete_run_log.id%Type,
+        a_parent_run_log_id_in IN pete_run_log.parent_id%Type,
+        a_description_in       IN pete_run_log.description%Type,
+        a_object_type_in       IN pete_run_log.object_type%Type,
+        a_object_name_in       IN pete_run_log.object_name%Type
     );
 
     --
@@ -39,27 +39,39 @@ CREATE OR REPLACE PACKAGE pete_logger AS
     --------------------------------------------------------------------------------
     PROCEDURE log_end
     (
-        a_run_log_id_in      IN pete_run_log.id%TYPE,
-        a_result_in          IN pete_run_log.result%TYPE,
-        a_xml_in_in          IN pete_run_log.xml_in%TYPE,
-        a_xml_out_in         IN pete_run_log.xml_out%TYPE,
-        a_error_code_in      IN pete_run_log.error_code%TYPE,
-        a_error_stack_in     IN pete_run_log.error_stack%TYPE,
-        a_error_backtrace_in IN pete_run_log.error_backtrace%TYPE
+        a_run_log_id_in      IN pete_run_log.id%Type,
+        a_result_in          IN pete_run_log.result%Type,
+        a_xml_in_in          IN pete_run_log.xml_in%Type,
+        a_xml_out_in         IN pete_run_log.xml_out%Type,
+        a_error_code_in      IN pete_run_log.error_code%Type,
+        a_error_stack_in     IN pete_run_log.error_stack%Type,
+        a_error_backtrace_in IN pete_run_log.error_backtrace%Type
     );
 
     --------------------------------------------------------------------------------
     -- TODO: public
     -- formatting methods
     --------------------------------------------------------------------------------
-    PROCEDURE output_log(a_run_log_id_in IN pete_run_log.id%TYPE);
+    SUBTYPE typ_integer_boolean IS PLS_INTEGER RANGE 0 .. 1;
+    g_TRUE  CONSTANT typ_integer_boolean := 1;
+    g_FALSE CONSTANT typ_integer_boolean := 0;
 
-    FUNCTION display_log(a_run_log_id_in IN pete_run_log.id%TYPE)
-        RETURN petet_log_tab
+    PROCEDURE output_log
+    (
+        a_run_log_id_in         IN pete_run_log.id%Type,
+        a_show_failures_only_in IN typ_integer_boolean DEFAULT g_FALSE
+    );
+
+    FUNCTION display_log
+    (
+        a_run_log_id_in         IN pete_run_log.id%Type,
+        a_show_failures_only_in IN typ_integer_boolean DEFAULT g_FALSE
+    ) RETURN petet_log_tab
         PIPELINED;
 
     -- TODO: private
-    FUNCTION get_output_run_log_id RETURN pete_run_log.id%TYPE;
+    FUNCTION get_output_run_log_id RETURN pete_run_log.id%Type;
+    FUNCTION get_show_failures_only RETURN typ_integer_boolean; -- 1 - true | 0 - false
 
     --
     -- TODO: public
@@ -74,8 +86,10 @@ CREATE OR REPLACE PACKAGE pete_logger AS
     -- 
     PROCEDURE log_assert
     (
-        a_result_in  BOOLEAN,
-        a_comment_in VARCHAR2
+        a_result_in     IN BOOLEAN,
+        a_comment_in    IN VARCHAR2,
+        a_plsql_unit_in IN VARCHAR2 DEFAULT NULL,
+        a_plsql_line_in IN INTEGER DEFAULT NULL
     );
 
     --------------------------------------------------------------------------------

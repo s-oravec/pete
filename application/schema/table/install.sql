@@ -24,11 +24,8 @@ prompt Creating table PETE_TEST_CASE_IN_CASE
 prompt Creating table PETE_CONFIGURATION
 @@pete_configuration.sql
 
-prompt Creating table PETE_LOG
+prompt Creating table PETE_RUN_LOG
 @@pete_run_log.sql
-
-prompt Creating table PETE_LOG_DETAIL
-@@pete_run_log_detail.sql
 
 prompt Creating table PETE_EXPECTED_RESULT
 @@pete_expected_result.sql

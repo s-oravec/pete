@@ -25,9 +25,7 @@ CREATE OR REPLACE PACKAGE BODY pete AS
                                                               a_object_type_in || ':' ||
                                                               a_object_name_in,
                                     a_object_type_in       => pete_core.g_OBJECT_TYPE_PETE,
-                                    a_description_in       => nvl(a_description_in,
-                                                                  'Pete run @ ' ||
-                                                                  to_char(systimestamp)),
+                                    a_description_in       => a_description_in,
                                     a_parent_run_log_id_in => a_parent_run_log_id_in);
     END;
 
