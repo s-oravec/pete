@@ -103,7 +103,7 @@ CREATE OR REPLACE PACKAGE pete_configuration_runner_adm IS
     FUNCTION get_plsql_block_in_case
     (
         a_id_in                 IN pete_plsql_block_in_case.id%TYPE,
-        a_cascade_subobjects_in IN pete_core.typ_YES_NO DEFAULT pete_core.g_NO
+        a_cascade_subobjects_in IN pete_types.typ_YES_NO DEFAULT pete_core.g_NO
     ) RETURN petet_plsql_block_in_case;
 
     --
@@ -161,7 +161,7 @@ CREATE OR REPLACE PACKAGE pete_configuration_runner_adm IS
     FUNCTION get_test_case
     (
         a_id_in                 IN pete_test_case.id%TYPE,
-        a_cascade_subobjects_in IN pete_core.typ_YES_NO DEFAULT pete_core.g_NO
+        a_cascade_subobjects_in IN pete_types.typ_YES_NO DEFAULT pete_core.g_NO
     ) RETURN petet_test_case;
     
     --
@@ -193,7 +193,7 @@ CREATE OR REPLACE PACKAGE pete_configuration_runner_adm IS
     FUNCTION get_test_suite
     (
         a_id_in                 IN pete_test_suite.id%TYPE,
-        a_cascade_subobjects_in IN pete_core.typ_YES_NO DEFAULT pete_core.g_NO
+        a_cascade_subobjects_in IN pete_types.typ_YES_NO DEFAULT pete_core.g_NO
     ) RETURN petet_test_suite;
     
 

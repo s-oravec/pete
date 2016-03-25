@@ -36,7 +36,7 @@ CREATE OR REPLACE TYPE petet_plsql_block_in_case FORCE AS OBJECT
     (
         a_obj_in  IN petet_plsql_block_in_case,
         a_deep_in IN VARCHAR2 DEFAULT 'N' --pete_core.g_NO
-    ) RETURN VARCHAR2 --pete_core.typ_YES_NO
+    ) RETURN VARCHAR2 --pete_types.typ_YES_NO
 
 )
 /

@@ -118,7 +118,7 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
     (
         a_block_instance_in_case_in IN gcur_test_case_instance%ROWTYPE,
         a_parent_run_log_id_in      IN pete_run_log.parent_id%TYPE DEFAULT NULL
-    ) RETURN pete_core.typ_execution_result IS
+    ) RETURN pete_types.typ_execution_result IS
         --
     
         l_plsql_block_template  VARCHAR2(32767) --
@@ -132,7 +132,7 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
         l_xml_out xmltype;
         --
         l_run_log_id pete_run_log.id%TYPE;
-        l_result     pete_core.typ_execution_result := pete_core.g_SUCCESS;
+        l_result     pete_types.typ_execution_result := pete_core.g_SUCCESS;
     BEGIN
         -- create anonymous plsql block
         pete_logger.trace('RUN_BLOCK: ' || 'a_parent_run_log_id_in:' ||
@@ -203,9 +203,9 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
     (
         a_test_case_in         IN gcur_test_case_in_test_suite%ROWTYPE,
         a_parent_run_log_id_in IN pete_run_log.parent_id%TYPE DEFAULT NULL
-    ) RETURN pete_core.typ_execution_result IS
+    ) RETURN pete_types.typ_execution_result IS
         l_run_log_id pete_run_log.id%TYPE;
-        l_result     pete_core.typ_execution_result := pete_core.g_SUCCESS;
+        l_result     pete_types.typ_execution_result := pete_core.g_SUCCESS;
     BEGIN
         l_run_log_id := pete_core.begin_test(a_object_name_in       => a_test_case_in.name,
                                              a_object_type_in       => pete_core.g_OBJECT_TYPE_CASE,
@@ -239,9 +239,9 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
     --------------------------------------------------------------------------------  
     FUNCTION run_case
     (
-        a_case_name_in         IN pete_core.typ_object_name,
+        a_case_name_in         IN pete_types.typ_object_name,
         a_parent_run_log_id_in IN pete_run_log.parent_id%TYPE DEFAULT NULL
-    ) RETURN pete_core.typ_execution_result IS
+    ) RETURN pete_types.typ_execution_result IS
         lrec_test_case gcur_test_case_in_test_suite%ROWTYPE;
     BEGIN
         SELECT pete_test_case.*, g_NO AS stop_on_failure
@@ -259,8 +259,8 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
     (
         a_test_suite_in        IN pete_test_suite%ROWTYPE,
         a_parent_run_log_id_in IN pete_run_log.parent_id%TYPE DEFAULT NULL
-    ) RETURN pete_core.typ_execution_result IS
-        l_result     pete_core.typ_execution_result := pete_core.g_SUCCESS;
+    ) RETURN pete_types.typ_execution_result IS
+        l_result     pete_types.typ_execution_result := pete_core.g_SUCCESS;
         l_run_log_id pete_run_log.id%TYPE;
     BEGIN
         l_run_log_id := pete_core.begin_test(a_object_name_in       => a_test_suite_in.name,
@@ -294,9 +294,9 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
     -------------------------------------------------------------------------------------------------------------------------------
     FUNCTION run_suite
     (
-        a_suite_name_in        IN pete_core.typ_object_name,
+        a_suite_name_in        IN pete_types.typ_object_name,
         a_parent_run_log_id_in IN pete_run_log.parent_id%TYPE DEFAULT NULL
-    ) RETURN pete_core.typ_execution_result IS
+    ) RETURN pete_types.typ_execution_result IS
         lrec_test_suite pete_test_suite%ROWTYPE;
     BEGIN
         SELECT *
@@ -311,8 +311,8 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
 
     -------------------------------------------------------------------------------------------------------------------------------
     FUNCTION run_all_test_suites(a_parent_run_log_id_in IN pete_run_log.parent_id%TYPE DEFAULT NULL)
-        RETURN pete_core.typ_execution_result IS
-        l_result pete_core.typ_execution_result := pete_core.g_SUCCESS;
+        RETURN pete_types.typ_execution_result IS
+        l_result pete_types.typ_execution_result := pete_core.g_SUCCESS;
     BEGIN
         <<test_suites_in_configuration>>
         FOR test_suite IN gcur_test_suites

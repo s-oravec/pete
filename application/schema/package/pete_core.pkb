@@ -5,10 +5,10 @@ CREATE OR REPLACE PACKAGE BODY pete_core AS
     --------------------------------------------------------------------------------
     FUNCTION begin_test
     (
-        a_object_name_in       IN typ_object_name,
-        a_object_type_in       IN typ_object_type,
+        a_object_name_in       IN pete_types.typ_object_name,
+        a_object_type_in       IN pete_types.typ_object_type,
         a_parent_run_log_id_in IN pete_run_log.parent_id%Type DEFAULT NULL,
-        a_description_in       IN typ_description DEFAULT NULL
+        a_description_in       IN pete_types.typ_description DEFAULT NULL
     ) RETURN pete_run_log.id%Type IS
     
     BEGIN
@@ -44,7 +44,7 @@ CREATE OR REPLACE PACKAGE BODY pete_core AS
     PROCEDURE end_test
     (
         a_run_log_id_in       IN pete_run_log.id%Type,
-        a_execution_result_in IN typ_execution_result DEFAULT g_SUCCESS,
+        a_execution_result_in IN pete_types.typ_execution_result DEFAULT g_SUCCESS,
         a_xml_in_in           IN pete_run_log.xml_in%Type DEFAULT NULL,
         a_xml_out_in          IN pete_run_log.xml_out%Type DEFAULT NULL,
         a_error_code_in       IN pete_run_log.error_code%Type DEFAULT NULL

@@ -1,5 +1,8 @@
 @&&run_dir_begin
 
+prompt Dropping package PETE_TYPES
+drop package pete_types;
+
 prompt Dropping package PETE
 drop package pete;
 

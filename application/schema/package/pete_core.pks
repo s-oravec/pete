@@ -5,56 +5,43 @@ CREATE OR REPLACE PACKAGE pete_core AS
     -- Constants, types and core methods
     --
 
-    -- testing object type subtype
-    SUBTYPE typ_object_type IS pete_run_log.object_type%TYPE;
     -- testing object type constants
     -- top level object
-    g_OBJECT_TYPE_PETE CONSTANT typ_object_type := 'PETE';
+    g_OBJECT_TYPE_PETE CONSTANT pete_types.typ_object_type := 'PETE';
     -- test suite
-    g_OBJECT_TYPE_SUITE CONSTANT typ_object_type := 'SUITE';
+    g_OBJECT_TYPE_SUITE CONSTANT pete_types.typ_object_type := 'SUITE';
     -- test case
-    g_OBJECT_TYPE_CASE CONSTANT typ_object_type := 'CASE';
+    g_OBJECT_TYPE_CASE CONSTANT pete_types.typ_object_type := 'CASE';
     -- PL/SQL block
-    g_OBJECT_TYPE_BLOCK CONSTANT typ_object_type := 'BLOCK';
+    g_OBJECT_TYPE_BLOCK CONSTANT pete_types.typ_object_type := 'BLOCK';
     -- PL/SQL package
-    g_OBJECT_TYPE_PACKAGE CONSTANT typ_object_type := 'PACKAGE';
+    g_OBJECT_TYPE_PACKAGE CONSTANT pete_types.typ_object_type := 'PACKAGE';
     -- PL/SQL pacakge method
-    g_OBJECT_TYPE_METHOD CONSTANT typ_object_type := 'METHOD';
+    g_OBJECT_TYPE_METHOD CONSTANT pete_types.typ_object_type := 'METHOD';
     -- Assert
-    g_OBJECT_TYPE_ASSERT CONSTANT typ_object_type := 'ASSERT';
+    g_OBJECT_TYPE_ASSERT CONSTANT pete_types.typ_object_type := 'ASSERT';
     -- PL/SQL package hook method
-    g_OBJECT_TYPE_HOOK CONSTANT typ_object_type := 'HOOK';
+    g_OBJECT_TYPE_HOOK CONSTANT pete_types.typ_object_type := 'HOOK';
 
-    -- execution result subtype
-    SUBTYPE typ_execution_result IS PLS_INTEGER;
-    g_SUCCESS CONSTANT typ_execution_result := 0;
-    g_FAILURE CONSTANT typ_execution_result := 1;
+    -- execution result constants
+    g_SUCCESS CONSTANT pete_types.typ_execution_result := 0;
+    g_FAILURE CONSTANT pete_types.typ_execution_result := 1;
 
-    -- object name
-    SUBTYPE typ_object_name IS pete_run_log.object_name%TYPE;
+    -- yes/no constants
+    g_YES CONSTANT pete_types.typ_YES_NO := 'Y';
+    g_NO  CONSTANT pete_types.typ_YES_NO := 'N';
 
-    -- description subtype
-    SUBTYPE typ_description IS VARCHAR2(4000);
-
-    -- Boolean - YES/NO subtype
-    subtype typ_YES_NO is varchar2(1);
-    g_YES constant typ_YES_NO := 'Y';
-    g_NO constant typ_YES_NO := 'N';
-
-    -- Run modifier subytpe
-    subtype typ_run_modifier is pete_plsql_block_in_case.RUN_MODIFIER%type;
-    g_SKIP constant typ_run_modifier := 'SKIP';
-    g_ONLY constant typ_run_modifier := 'ONLY';
+    -- run modifier constants
+    g_SKIP CONSTANT pete_types.typ_run_modifier := 'SKIP';
+    g_ONLY CONSTANT pete_types.typ_run_modifier := 'ONLY';
 
     --
     -- Order constants
-    --
     -- Order first
-    g_ORDER_FIRST CONSTANT pete_plsql_block_in_case.position%TYPE := -1;
+    g_ORDER_FIRST CONSTANT pete_plsql_block_in_case.position%Type := -1;
     --
     -- Order last
-    g_ORDER_LAST CONSTANT pete_plsql_block_in_case.position%TYPE := -2;
-
+    g_ORDER_LAST CONSTANT pete_plsql_block_in_case.position%Type := -2;
 
     --
     -- Core begin test implementation
@@ -70,11 +57,11 @@ CREATE OR REPLACE PACKAGE pete_core AS
     --
     FUNCTION begin_test
     (
-        a_object_name_in       IN typ_object_name,
-        a_object_type_in       IN typ_object_type,
-        a_parent_run_log_id_in IN pete_run_log.parent_id%TYPE DEFAULT NULL,
-        a_description_in       IN typ_description DEFAULT NULL
-    ) RETURN pete_run_log.id%TYPE;
+        a_object_name_in       IN pete_types.typ_object_name,
+        a_object_type_in       IN pete_types.typ_object_type,
+        a_parent_run_log_id_in IN pete_run_log.parent_id%Type DEFAULT NULL,
+        a_description_in       IN pete_types.typ_description DEFAULT NULL
+    ) RETURN pete_run_log.id%Type;
 
     --
     -- Core end test implementation
@@ -89,11 +76,11 @@ CREATE OR REPLACE PACKAGE pete_core AS
     --
     PROCEDURE end_test
     (
-        a_run_log_id_in       IN pete_run_log.id%TYPE,
-        a_execution_result_in IN typ_execution_result DEFAULT g_SUCCESS,
-        a_xml_in_in           IN pete_run_log.xml_in%TYPE DEFAULT NULL,
-        a_xml_out_in          IN pete_run_log.xml_out%TYPE DEFAULT NULL,
-        a_error_code_in       IN pete_run_log.error_code%TYPE DEFAULT NULL
+        a_run_log_id_in       IN pete_run_log.id%Type,
+        a_execution_result_in IN pete_types.typ_execution_result DEFAULT g_SUCCESS,
+        a_xml_in_in           IN pete_run_log.xml_in%Type DEFAULT NULL,
+        a_xml_out_in          IN pete_run_log.xml_out%Type DEFAULT NULL,
+        a_error_code_in       IN pete_run_log.error_code%Type DEFAULT NULL
     );
 
     --
@@ -103,7 +90,7 @@ CREATE OR REPLACE PACKAGE pete_core AS
     --
     -- %return last PETE_RUN_LOG.ID
     --
-    FUNCTION get_last_run_log_id RETURN pete_run_log.id%TYPE;
+    FUNCTION get_last_run_log_id RETURN pete_run_log.id%Type;
 
 END;
 /

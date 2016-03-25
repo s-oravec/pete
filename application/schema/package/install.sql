@@ -1,5 +1,8 @@
 @&&run_dir_begin
 
+prompt Creating package PETE_TYPES
+@@pete_types.pks
+
 prompt Creating package PETE_EXCEPTION
 @@pete_exception.pks
 

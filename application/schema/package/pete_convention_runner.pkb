@@ -38,10 +38,10 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
 
     --------------------------------------------------------------------------------
     -- returns true if package exists. Case sensitive
-    FUNCTION package_exists(a_package_name_in IN pete_core.typ_object_name)
+    FUNCTION package_exists(a_package_name_in IN pete_types.typ_object_name)
         RETURN BOOLEAN IS
-        l_owner        pete_core.typ_object_name;
-        l_package_name pete_core.typ_object_name;
+        l_owner        pete_types.typ_object_name;
+        l_package_name pete_types.typ_object_name;
     BEGIN
         -- NoFormat Start
         pete_logger.trace('PACKAGE_EXISTS: ' ||
@@ -68,12 +68,12 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
     --------------------------------------------------------------------------------
     FUNCTION package_has_method
     (
-        a_package_name_in IN pete_core.typ_object_name,
-        a_method_name_in  IN pete_core.typ_object_name
+        a_package_name_in IN pete_types.typ_object_name,
+        a_method_name_in  IN pete_types.typ_object_name
     ) RETURN BOOLEAN IS
-        l_owner        pete_core.typ_object_name;
-        l_package_name pete_core.typ_object_name;
-        l_method_name  pete_core.typ_object_name;
+        l_owner        pete_types.typ_object_name;
+        l_package_name pete_types.typ_object_name;
+        l_method_name  pete_types.typ_object_name;
     BEGIN
         -- NoFormat Start
         pete_logger.trace('PACKAGE_HAS_METHOD: ' ||
@@ -103,10 +103,10 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
     --------------------------------------------------------------------------------
     FUNCTION run_hook_method
     (
-        a_package_name_in      IN pete_core.typ_object_name,
-        a_hook_method_name_in  IN pete_core.typ_object_name,
+        a_package_name_in      IN pete_types.typ_object_name,
+        a_hook_method_name_in  IN pete_types.typ_object_name,
         a_parent_run_log_id_in IN pete_run_log.parent_id%TYPE
-    ) RETURN pete_core.typ_execution_result IS
+    ) RETURN pete_types.typ_execution_result IS
     BEGIN
         -- NoFormat Start
         pete_logger.trace('RUN_HOOK_METHOD: ' ||
@@ -132,15 +132,15 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
     --------------------------------------------------------------------------------
     FUNCTION run_method
     (
-        a_package_name_in      IN pete_core.typ_object_name,
-        a_method_name_in       IN pete_core.typ_object_name,
-        a_object_type_in       IN pete_core.typ_object_type,
-        a_description_in       IN pete_core.typ_description DEFAULT NULL,
+        a_package_name_in      IN pete_types.typ_object_name,
+        a_method_name_in       IN pete_types.typ_object_name,
+        a_object_type_in       IN pete_types.typ_object_type,
+        a_description_in       IN pete_types.typ_description DEFAULT NULL,
         a_parent_run_log_id_in IN pete_run_log.parent_id%TYPE DEFAULT NULL
-    ) RETURN pete_core.typ_execution_result IS
+    ) RETURN pete_types.typ_execution_result IS
         l_sql        VARCHAR2(500);
         l_run_log_id INTEGER;
-        l_result     pete_core.typ_execution_result := pete_core.g_SUCCESS;
+        l_result     pete_types.typ_execution_result := pete_core.g_SUCCESS;
         l_dummy      VARCHAR2(93);
     BEGIN
         l_run_log_id := pete_core.begin_test(a_object_name_in       => a_package_name_in || '.' ||
@@ -173,29 +173,29 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
     --------------------------------------------------------------------------------
     FUNCTION run_package
     (
-        a_package_name_in      IN pete_core.typ_object_name,
-        a_method_name_like_in  IN pete_core.typ_object_name DEFAULT NULL,
-        a_description_in       IN pete_core.typ_description DEFAULT NULL,
+        a_package_name_in      IN pete_types.typ_object_name,
+        a_method_name_like_in  IN pete_types.typ_object_name DEFAULT NULL,
+        a_description_in       IN pete_types.typ_description DEFAULT NULL,
         a_parent_run_log_id_in IN pete_run_log.parent_id%TYPE DEFAULT NULL
-    ) RETURN pete_core.typ_execution_result IS
-        l_result     pete_core.typ_execution_result := pete_core.g_SUCCESS;
+    ) RETURN pete_types.typ_execution_result IS
+        l_result     pete_types.typ_execution_result := pete_core.g_SUCCESS;
         l_run_log_id INTEGER;
         --
         --l_method_only_regexp varchar2(255) := get_method_name_only_regexp;
         --l_method_skip_regexp varchar2(255) := get_method_name_skip_regexp;
         --
-        l_before_all_result  pete_core.typ_execution_result := pete_core.g_SUCCESS;
-        l_before_each_result pete_core.typ_execution_result := pete_core.g_SUCCESS;
+        l_before_all_result  pete_types.typ_execution_result := pete_core.g_SUCCESS;
+        l_before_each_result pete_types.typ_execution_result := pete_core.g_SUCCESS;
         --
         l_something_run BOOLEAN := FALSE;
         --
-        --l_owner pete_core.typ_object_name;
-        --l_package_name pete_core.typ_object_name;
+        --l_owner pete_types.typ_object_name;
+        --l_package_name pete_types.typ_object_name;
         --
         CURSOR lcrs_tested_methods
         (
-            a_owner              IN pete_core.typ_object_name,
-            a_package_name       IN pete_core.typ_object_name,
+            a_owner              IN pete_types.typ_object_name,
+            a_package_name       IN pete_types.typ_object_name,
             a_method_only_regexp IN VARCHAR2,
             a_method_skip_regexp IN VARCHAR2
         ) IS
@@ -360,11 +360,11 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
     --------------------------------------------------------------------------------    
     FUNCTION run_suite
     (
-        a_suite_name_in        IN pete_core.typ_object_name DEFAULT USER,
-        a_description_in       IN pete_core.typ_description DEFAULT NULL,
+        a_suite_name_in        IN pete_types.typ_object_name DEFAULT USER,
+        a_description_in       IN pete_types.typ_description DEFAULT NULL,
         a_parent_run_log_id_in IN pete_run_log.parent_id%TYPE DEFAULT NULL
-    ) RETURN pete_core.typ_execution_result IS
-        l_result     pete_core.typ_execution_result := pete_core.g_SUCCESS;
+    ) RETURN pete_types.typ_execution_result IS
+        l_result     pete_types.typ_execution_result := pete_core.g_SUCCESS;
         l_run_log_id INTEGER;
         --
         --l_tst_pkg_only_regexp varchar2(255) := get_tst_pkg_only_regexp;
@@ -374,7 +374,7 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
         --
         -- NoFormat Start
         CURSOR lcrs_tested_packages(
-            a_owner_in            in pete_core.typ_object_name,
+            a_owner_in            in pete_types.typ_object_name,
             a_tst_pkg_regexp      in varchar2,
             a_tst_pkg_only_regexp in varchar2,
             a_method_only_regexp  in varchar2,

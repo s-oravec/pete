@@ -37,7 +37,7 @@ CREATE OR REPLACE TYPE BODY petet_expected_result AS
     (
         a_obj_in  IN petet_expected_result,
         a_deep_in IN VARCHAR2 DEFAULT 'N' --pete_core.g_NO
-    ) RETURN VARCHAR2 --pete_core.typ_YES_NO
+    ) RETURN VARCHAR2 --pete_types.typ_YES_NO
      IS
     BEGIN
         --

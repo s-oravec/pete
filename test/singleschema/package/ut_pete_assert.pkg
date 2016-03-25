@@ -1,6 +1,6 @@
 CREATE OR REPLACE PACKAGE ut_pete_assert AS
 
-    Description pete_core.typ_description := 'Pete_assert package tests';
+    Description pete_types.typ_description := 'Pete_assert package tests';
 
     -- this
     --------------------------------------------------------------------------------  

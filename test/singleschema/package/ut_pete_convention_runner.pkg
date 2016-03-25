@@ -1,6 +1,6 @@
 CREATE OR REPLACE PACKAGE ut_pete_convention_runner AS
 
-    description pete_core.typ_description := 'Pete Convention Runner';
+    description pete_types.typ_description := 'Pete Convention Runner';
 
     PROCEDURE before_each;
 
@@ -115,7 +115,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         '    END;' || chr(10) ||
         'END;';
         -- NoFormat End
-        l_result pete_core.typ_execution_result;
+        l_result pete_types.typ_execution_result;
     BEGIN
         --log
         pete.set_method_description(d);
@@ -148,7 +148,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         '    END;' || chr(10) ||
         'END;';
         -- NoFormat End
-        l_result pete_core.typ_execution_result;
+        l_result pete_types.typ_execution_result;
     BEGIN
         --log
         pete.set_method_description(d);
@@ -180,7 +180,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         '    END;' || chr(10) ||
         'END;';
         -- NoFormat End
-        l_result pete_core.typ_execution_result;
+        l_result pete_types.typ_execution_result;
     BEGIN
         --log
         pete.set_method_description(d);
@@ -212,7 +212,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         '    END;' || chr(10) ||
         'END;'; --
         -- NoFormat End
-        l_result pete_core.typ_execution_result;
+        l_result pete_types.typ_execution_result;
     BEGIN
     
         --log
@@ -259,7 +259,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         '    END;' || chr(10) ||
         'END;';
         -- NoFormat End
-        l_result pete_core.typ_execution_result;
+        l_result pete_types.typ_execution_result;
     BEGIN
         --log
         pete.set_method_description(d);
@@ -310,7 +310,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         '    END;' || chr(10) ||
         'END;'; --
         -- NoFormat End
-        l_result pete_core.typ_execution_result;
+        l_result pete_types.typ_execution_result;
     BEGIN
         --log
         pete.set_method_description(d);
@@ -358,7 +358,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         '    END;' || chr(10) ||
         'END;'; --
         -- NoFormat End
-        l_result pete_core.typ_execution_result;
+        l_result pete_types.typ_execution_result;
     BEGIN
         --log
         pete.set_method_description(d);
@@ -406,7 +406,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         '    END;' || chr(10) ||
         'END;'; --
         -- NoFormat End
-        l_result pete_core.typ_execution_result;
+        l_result pete_types.typ_execution_result;
     BEGIN
         --log
         pete.set_method_description(d);
@@ -454,7 +454,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         '    END;' || chr(10) ||
         'END;'; --
         -- NoFormat End
-        l_result pete_core.typ_execution_result;
+        l_result pete_types.typ_execution_result;
     BEGIN
         --log
         pete.set_method_description(d);
@@ -502,7 +502,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         '    END;' || chr(10) ||
         'END;'; --
         -- NoFormat End
-        l_result pete_core.typ_execution_result;
+        l_result pete_types.typ_execution_result;
     BEGIN
         --log
         pete.set_method_description(d);
@@ -565,7 +565,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         '    END;' || chr(10) ||
         'END;'; --
         -- NoFormat End
-        l_result pete_core.typ_execution_result;
+        l_result pete_types.typ_execution_result;
     BEGIN
         --log
         pete.set_method_description(d);
@@ -610,7 +610,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         '    END;' || chr(10) ||
         'END;'; --
         -- NoFormat End
-        l_result pete_core.typ_execution_result;
+        l_result pete_types.typ_execution_result;
     BEGIN
         --log
         pete.set_method_description(d);
@@ -668,7 +668,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         '    END;' || chr(10) ||
         'END;'; --
         -- NoFormat End
-        l_result pete_core.typ_execution_result;
+        l_result pete_types.typ_execution_result;
     BEGIN
         --log
         pete.set_method_description(d);
@@ -692,7 +692,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
 
     --------------------------------------------------------------------------------
     PROCEDURE unknown_package(d IN VARCHAR2 DEFAULT 'Explicitly called package which is not found should throw') IS
-        l_result pete_core.typ_execution_result;
+        l_result pete_types.typ_execution_result;
     BEGIN
         pete.set_method_description(d);
         --prepare
@@ -720,7 +720,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
                                           chr(10) || '    END;' || chr(10) ||
                                           'END;'; --
         -- NoFormat End
-        l_result pete_core.typ_execution_result;
+        l_result pete_types.typ_execution_result;
     BEGIN
         --log
         pete.set_method_description(d);
@@ -751,7 +751,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
                                           chr(10) || '    END;' || chr(10) ||
                                           'END;'; --
         -- NoFormat End
-        l_result pete_core.typ_execution_result;
+        l_result pete_types.typ_execution_result;
         --        l_exception boolean;
     BEGIN
         --log
@@ -785,7 +785,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_convention_runner AS
         '    END;' || chr(10) ||
         'END;';
         -- NoFormat End
-        l_result pete_core.typ_execution_result;
+        l_result pete_types.typ_execution_result;
     BEGIN
         --log
         pete.set_method_description(d);

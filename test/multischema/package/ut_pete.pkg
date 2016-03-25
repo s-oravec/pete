@@ -1,6 +1,6 @@
 CREATE OR REPLACE PACKAGE ut_pete AS
 
-    description pete_core.typ_description := 'Pete package tests';
+    description pete_types.typ_description := 'Pete package tests';
 
     procedure call_pete(d in varchar2 := 'call pete works');
 

@@ -32,7 +32,7 @@ CREATE OR REPLACE PACKAGE pete_logger AS
     -- %argument a_description_in method description
     --
     --------------------------------------------------------------------------------  
-    PROCEDURE set_method_description(a_description_in IN pete_core.typ_description);
+    PROCEDURE set_method_description(a_description_in IN pete_types.typ_description);
 
     --
     -- TODO: private

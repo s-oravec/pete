@@ -74,7 +74,7 @@ CREATE OR REPLACE PACKAGE pete AS
         a_case_name_in          IN VARCHAR2 DEFAULT NULL,
         a_style_conventional_in IN BOOLEAN DEFAULT NULL,
         a_parent_run_log_id_in  IN INTEGER DEFAULT NULL
-    ) RETURN pete_core.typ_execution_result;
+    ) RETURN pete_types.typ_execution_result;
 
     -- Thrown if the input can't be clearly interpreted
     ge_ambiguous_input EXCEPTION;
@@ -108,7 +108,7 @@ CREATE OR REPLACE PACKAGE pete AS
     -- %argument a_style_conventional
     -- %argument a_parent_run_log_id_in Specify parent run_log_id for recursive execution - used for testing of Pete
     --
-    -- %returns pete_core.typ_execution_result execution result
+    -- %returns pete_types.typ_execution_result execution result
     --
     -- %throws ge_ambiguous_input If the input can't be clearly interpreted
     --
@@ -117,7 +117,7 @@ CREATE OR REPLACE PACKAGE pete AS
         a_suite_name_in         IN VARCHAR2 DEFAULT NULL,
         a_style_conventional_in IN BOOLEAN DEFAULT TRUE,
         a_parent_run_log_id_in  IN INTEGER DEFAULT NULL
-    ) RETURN pete_core.typ_execution_result;
+    ) RETURN pete_types.typ_execution_result;
 
     --
     -- Runs a test case identified by name
@@ -137,13 +137,13 @@ CREATE OR REPLACE PACKAGE pete AS
     -- %argument a_case_name_in name of the test case to be run
     -- %argument a_parent_run_log_id_in Specify parent run_log_id for recursive execution - used for testing of Pete
     --
-    -- %returns pete_core.typ_execution_result execution result
+    -- %returns pete_types.typ_execution_result execution result
     --
     FUNCTION run_test_case
     (
         a_case_name_in         IN VARCHAR2,
         a_parent_run_log_id_in IN INTEGER DEFAULT NULL
-    ) RETURN pete_core.typ_execution_result;
+    ) RETURN pete_types.typ_execution_result;
 
     --
     -- Runs tests for a given package. Such tests are in a test package which can be derived from the given one.    
@@ -168,14 +168,14 @@ CREATE OR REPLACE PACKAGE pete AS
     -- %argument a_method_name_like_in 
     -- %argument a_parent_run_log_id_in Specify parent run_log_id for recursive execution - used for testing of Pete
     --
-    -- %returns pete_core.typ_execution_result execution result
+    -- %returns pete_types.typ_execution_result execution result
     --
     FUNCTION run_test_package
     (
         a_package_name_in      IN VARCHAR2,
         a_method_name_like_in  IN VARCHAR2 DEFAULT NULL,
         a_parent_run_log_id_in IN INTEGER DEFAULT NULL
-    ) RETURN pete_core.typ_execution_result;
+    ) RETURN pete_types.typ_execution_result;
 
     --
     -- Runs all availaible tests. That means all configured test suites from table pete_suite and all
@@ -191,10 +191,10 @@ CREATE OR REPLACE PACKAGE pete AS
     --
     -- %argument a_parent_run_log_id_in Specify parent run_log_id for recursive execution - used for testing of Pete
     --
-    -- %returns pete_core.typ_execution_result execution result
+    -- %returns pete_types.typ_execution_result execution result
     --
     FUNCTION run_all_tests(a_parent_run_log_id_in IN INTEGER DEFAULT NULL)
-        RETURN pete_core.typ_execution_result;
+        RETURN pete_types.typ_execution_result;
 
     --
     --set tested method description in test package implementation

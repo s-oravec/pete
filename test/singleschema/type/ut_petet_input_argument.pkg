@@ -1,6 +1,6 @@
 CREATE OR REPLACE PACKAGE ut_petet_input_argument AS
 
-    description pete_core.typ_description := 'Input Argument Type';
+    description pete_types.typ_description := 'Input Argument Type';
 
     PROCEDURE after_each;
 

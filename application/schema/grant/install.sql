@@ -53,6 +53,9 @@ prompt Granting SELECT priviledge on view PETEV_PLSQL_BLOCK to PUBLIC
 grant SELECT on PETEV_PLSQL_BLOCK to PUBLIC;
 
 rem Packages
+prompt Grantint EXECUTE privilege on package PETE_TYPES
+grant EXECUTE on PETE_TYPES to PUBLIC;
+
 prompt Granting EXECUTE privilege on package PETE
 grant EXECUTE on PETE to PUBLIC;
 

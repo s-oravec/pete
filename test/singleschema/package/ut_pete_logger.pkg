@@ -1,6 +1,6 @@
 CREATE OR REPLACE PACKAGE ut_pete_logger AS
 
-    description pete_core.typ_description := 'Pete_logger package tests';
+    description pete_types.typ_description := 'Pete_logger package tests';
 
     PROCEDURE log_assert(d VARCHAR2 DEFAULT 'log assert should write FAILURE when test fails');
 

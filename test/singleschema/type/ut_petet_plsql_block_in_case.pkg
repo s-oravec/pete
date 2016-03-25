@@ -1,6 +1,6 @@
 CREATE OR REPLACE PACKAGE ut_petet_plsql_block_in_case AS
 
-    description pete_core.typ_description := 'PLSQL Block in Test Case Type';
+    description pete_types.typ_description := 'PLSQL Block in Test Case Type';
 
     PROCEDURE ctor_with_block_id(d varchar2 := 'constructor with block as block id works');
     PROCEDURE ctor_with_block(d varchar2 := 'constructor with block as object works');

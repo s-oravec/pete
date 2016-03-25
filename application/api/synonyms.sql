@@ -1,3 +1,4 @@
+prompt Synoynms for types
 prompt Creating synonym for &&g_pete_schema..PETET_PLSQL_BLOCK
 create or replace synonym PETET_PLSQL_BLOCK for &&g_pete_schema..PETET_PLSQL_BLOCK;
 
@@ -25,6 +26,8 @@ create or replace synonym PETET_TEST_CASES_IN_SUITE for &&g_pete_schema..PETET_T
 prompt Creating synonym for &&g_pete_schema..PETET_TEST_SUITE
 create or replace synonym PETET_TEST_SUITE for &&g_pete_schema..PETET_TEST_SUITE;
 
+
+prompt Synonyms for views
 prompt Creating synonym for &&g_pete_schema..PETEV_PLSQL_BLOCK
 create or replace synonym PETEV_PLSQL_BLOCK for &&g_pete_schema..PETEV_PLSQL_BLOCK;
 
@@ -45,6 +48,11 @@ create or replace synonym PETEV_TEST_CASE_IN_SUITE for &&g_pete_schema..PETEV_TE
 
 prompt Creating synonym for &&g_pete_schema..PETEV_TEST_SUITE
 create or replace synonym PETEV_TEST_SUITE for &&g_pete_schema..PETEV_TEST_SUITE;
+
+
+prompt Synonyms for packages
+prompt Creating synonym for &&g_pete_schema..PETE_TYPES
+create or replace synonym PETE_TYPES for &&g_pete_schema..PETE_TYPES;
 
 prompt Creating synonym for &&g_pete_schema..PETE_CONFIG
 create or replace synonym PETE_CONFIG for &&g_pete_schema..PETE_CONFIG;

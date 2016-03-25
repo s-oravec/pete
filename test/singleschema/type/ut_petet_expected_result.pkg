@@ -1,6 +1,6 @@
 CREATE OR REPLACE PACKAGE ut_petet_expected_result AS
 
-    description pete_core.typ_description := 'Expected Result Type';
+    description pete_types.typ_description := 'Expected Result Type';
 
     PROCEDURE ctor(d VARCHAR2 := 'minimal constructor works');
     PROCEDURE ctor_without_mandatory(d VARCHAR2 := 'constructor without mandatory attributes fails');

@@ -1,6 +1,6 @@
 CREATE OR REPLACE PACKAGE ut_pete AS
 
-    description pete_core.typ_description := 'Pete package tests';
+    description pete_types.typ_description := 'Pete package tests';
 
     PROCEDURE log_call(a_value_in IN VARCHAR2);
 

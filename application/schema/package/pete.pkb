@@ -2,7 +2,7 @@ CREATE OR REPLACE PACKAGE BODY pete AS
 
     TYPE typ_run_result IS RECORD(
         run_log_id pete_run_log.id%TYPE,
-        RESULT     pete_core.typ_execution_result);
+        RESULT     pete_types.typ_execution_result);
 
     --------------------------------------------------------------------------------
     PROCEDURE init(a_log_to_dbms_output_in IN BOOLEAN DEFAULT TRUE) IS
@@ -32,7 +32,7 @@ CREATE OR REPLACE PACKAGE BODY pete AS
     --------------------------------------------------------------------------------
     PROCEDURE end_test
     (
-        a_result_in     IN pete_core.typ_execution_result,
+        a_result_in     IN pete_types.typ_execution_result,
         a_run_log_id_in IN pete_run_log.id%TYPE
     ) IS
     BEGIN
@@ -105,7 +105,7 @@ CREATE OR REPLACE PACKAGE BODY pete AS
         a_suite_name_in         IN VARCHAR2 DEFAULT NULL,
         a_style_conventional_in IN BOOLEAN DEFAULT TRUE,
         a_parent_run_log_id_in  IN INTEGER DEFAULT NULL
-    ) RETURN pete_core.typ_execution_result IS
+    ) RETURN pete_types.typ_execution_result IS
         l_impl_call_result typ_run_result;
     BEGIN
         l_impl_call_result := run_test_suite_impl(a_suite_name_in         => a_suite_name_in,
@@ -170,7 +170,7 @@ CREATE OR REPLACE PACKAGE BODY pete AS
     (
         a_case_name_in         IN VARCHAR2,
         a_parent_run_log_id_in IN INTEGER DEFAULT NULL
-    ) RETURN pete_core.typ_execution_result IS
+    ) RETURN pete_types.typ_execution_result IS
         l_impl_call_result typ_run_result;
     BEGIN
         l_impl_call_result := run_test_case_impl(a_case_name_in         => a_case_name_in,
@@ -241,7 +241,7 @@ CREATE OR REPLACE PACKAGE BODY pete AS
         a_package_name_in      IN VARCHAR2,
         a_method_name_like_in  IN VARCHAR2 DEFAULT NULL,
         a_parent_run_log_id_in IN INTEGER DEFAULT NULL
-    ) RETURN pete_core.typ_execution_result IS
+    ) RETURN pete_types.typ_execution_result IS
         l_impl_call_result typ_run_result;
     BEGIN
         l_impl_call_result := run_test_package_impl(a_package_name_in      => a_package_name_in,
@@ -294,7 +294,7 @@ CREATE OR REPLACE PACKAGE BODY pete AS
 
     --------------------------------------------------------------------------------
     FUNCTION run_all_tests(a_parent_run_log_id_in IN INTEGER DEFAULT NULL)
-        RETURN pete_core.typ_execution_result IS
+        RETURN pete_types.typ_execution_result IS
         l_impl_call_result typ_run_result;
     BEGIN
         l_impl_call_result := run_all_tests_impl(a_parent_run_log_id_in => a_parent_run_log_id_in);
@@ -408,7 +408,7 @@ CREATE OR REPLACE PACKAGE BODY pete AS
         a_case_name_in          IN VARCHAR2 DEFAULT NULL,
         a_style_conventional_in IN BOOLEAN DEFAULT NULL,
         a_parent_run_log_id_in  IN INTEGER DEFAULT NULL
-    ) RETURN pete_core.typ_execution_result IS
+    ) RETURN pete_types.typ_execution_result IS
         l_impl_call_result typ_run_result;
     BEGIN
         l_impl_call_result := run_impl(a_suite_name_in         => a_suite_name_in,

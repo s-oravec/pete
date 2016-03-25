@@ -1,6 +1,6 @@
 CREATE OR REPLACE PACKAGE ut_pete_savepoint AS
 
-    description pete_core.typ_description := 'Savepoint in convention test packages should not be modified by Pete';
+    description pete_types.typ_description := 'Savepoint in convention test packages should not be modified by Pete';
 
     PROCEDURE cross_method_savepoint_before(d VARCHAR2 := 'Should create savepoint');
 

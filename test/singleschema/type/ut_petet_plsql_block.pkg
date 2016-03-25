@@ -1,6 +1,6 @@
 CREATE OR REPLACE PACKAGE ut_petet_plsql_block AS
 
-    description pete_core.typ_description := 'PLSQL Block Type';
+    description pete_types.typ_description := 'PLSQL Block Type';
 
     PROCEDURE xx_temporary_method
     (

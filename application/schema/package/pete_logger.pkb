@@ -15,7 +15,7 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
     g_object_name_in       pete_run_log.object_name%Type;
 
     --------------------------------------------------------------------------------
-    FUNCTION get_package_description(a_package_name_in IN pete_core.typ_object_name) RETURN VARCHAR2 IS
+    FUNCTION get_package_description(a_package_name_in IN pete_types.typ_object_name) RETURN VARCHAR2 IS
         l_call_template CONSTANT VARCHAR2(255) --
         := 'begin :1 := #PackageName#.description; end;';
         l_Result VARCHAR(255);
@@ -122,7 +122,7 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
     END;
 
     --------------------------------------------------------------------------------
-    PROCEDURE set_method_description(a_description_in IN pete_core.typ_description) IS
+    PROCEDURE set_method_description(a_description_in IN pete_types.typ_description) IS
         PRAGMA AUTONOMOUS_TRANSACTION;
     BEGIN
         --
@@ -222,7 +222,7 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
     END;
 
     --------------------------------------------------------------------------------
-    PROCEDURE print_top_level_result(a_result_in IN pete_core.typ_execution_result) IS
+    PROCEDURE print_top_level_result(a_result_in IN pete_types.typ_execution_result) IS
     BEGIN
         dbms_output.put_line('.');
         IF a_result_in = pete_core.g_SUCCESS THEN
@@ -254,7 +254,7 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
         a_run_log_id_in         IN pete_run_log.id%Type,
         a_show_failures_only_in IN typ_integer_boolean DEFAULT g_FALSE
     ) IS
-        l_top_level_result pete_core.typ_execution_result;
+        l_top_level_result pete_types.typ_execution_result;
     BEGIN
         trace('OUTPUT_LOG: ' || 'a_run_log_id_in:' || NVL(to_char(a_run_log_id_in), 'NULL'));
         --

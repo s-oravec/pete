@@ -56,11 +56,11 @@ CREATE OR REPLACE TYPE BODY petet_test_case AS
     (
         a_obj_in  IN petet_test_case,
         a_deep_in IN VARCHAR2 DEFAULT 'N' --pete_core.g_NO
-    ) RETURN VARCHAR2 --pete_core.typ_YES_NO
+    ) RETURN VARCHAR2 --pete_types.typ_YES_NO
      IS
-        l_deep_in            pete_core.typ_YES_NO := nvl(a_deep_in,
+        l_deep_in            pete_types.typ_YES_NO := nvl(a_deep_in,
                                                          pete_core.g_NO);
-        l_plsql_block_equals pete_core.typ_YES_NO;
+        l_plsql_block_equals pete_types.typ_YES_NO;
     BEGIN
         --
         IF (self.id IS NULL AND a_obj_in.id IS NOT NULL)

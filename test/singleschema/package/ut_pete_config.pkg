@@ -1,6 +1,6 @@
 CREATE OR REPLACE PACKAGE ut_pete_config AS
 
-    description pete_core.typ_description := 'Pete config';
+    description pete_types.typ_description := 'Pete config';
 
     PROCEDURE show_failures_only_works(d IN VARCHAR2 := 'Show only failures when show_failures_only is set to true');
 
@@ -43,7 +43,7 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_config AS
         '    END;' || chr(10) ||
         'END;'; --
         -- NoFormat End
-        l_result     pete_core.typ_execution_result;
+        l_result     pete_types.typ_execution_result;
         l_run_log_id pete_run_log.id%TYPE;
         l_cnt        INTEGER;
         --
