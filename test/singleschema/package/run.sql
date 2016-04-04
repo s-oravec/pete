@@ -27,4 +27,7 @@ prompt Install test package UT_PETE_CONFIG
 prompt Install test package UT_PETE_CONFIG_RUNNER_ADM
 @@ut_pete_config_runner_adm.pkg
 
+prompt Install test package UT_PETE_CAMELCASE
+@@ut_pete_camelcase.pkg
+
 @&&run_dir_end
