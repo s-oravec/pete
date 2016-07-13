@@ -1,16 +1,16 @@
-CREATE OR REPLACE TYPE BODY petet_test_case_in_suite AS
+CREATE OR REPLACE TYPE BODY petet_test_case_in_case AS
 
     -------------------------------------------------------------------------------------------------
-    CONSTRUCTOR FUNCTION petet_test_case_in_suite
+    CONSTRUCTOR FUNCTION petet_test_case_in_case
     (
-        id              IN INTEGER DEFAULT NULL,
-        test_suite_id   IN INTEGER DEFAULT NULL,
-        test_case_id    IN INTEGER DEFAULT NULL,
-        test_case       IN petet_test_case DEFAULT NULL,
-        position        IN NUMBER DEFAULT -1,
-        stop_on_failure IN VARCHAR2 DEFAULT 'N',
-        run_modifier    IN VARCHAR2 DEFAULT NULL,
-        description     IN VARCHAR2 DEFAULT NULL
+        id                  IN INTEGER DEFAULT NULL,
+        parent_test_case_id IN INTEGER DEFAULT NULL,
+        test_case_id        IN INTEGER DEFAULT NULL,
+        test_case           IN petet_test_case DEFAULT NULL,
+        position            IN NUMBER DEFAULT -1,
+        stop_on_failure     IN VARCHAR2 DEFAULT 'N',
+        run_modifier        IN VARCHAR2 DEFAULT NULL,
+        description         IN VARCHAR2 DEFAULT NULL
     ) RETURN SELF AS RESULT IS
     BEGIN
         --
@@ -18,18 +18,18 @@ CREATE OR REPLACE TYPE BODY petet_test_case_in_suite AS
         --test_case or test_case_id should be not null
         pete_assert.this(a_value_in   => test_case_id IS NOT NULL OR
                                          test_case IS NOT NULL,
-                         a_comment_in => 'Either PETET_TEST_CASE_IN_SUITE.TEST_CASE_ID or PETET_TEST_CASE_IN_SUITE.TEST_CASE should be not null');
+                         a_comment_in => 'Either PETET_TEST_CASE_IN_CASE.TEST_CASE_ID or PETET_TEST_CASE_IN_CASE.TEST_CASE should be not null');
         --
         --if both test_case and test_case_id are defined then test_case.id should be set and should be same as test_case_id
         IF test_case IS NOT NULL
            AND test_case_id IS NOT NULL
         THEN
             pete_assert.this(a_value_in   => test_case_id = test_case.id,
-                             a_comment_in => 'PETET_TEST_CASE_IN_SUITE.TEST_CASE_ID and PETET_TEST_CASE_IN_SUITE.TEST_CASE.ID should be same');
+                             a_comment_in => 'PETET_TEST_CASE_IN_CASE.TEST_CASE_ID and PETET_TEST_CASE_IN_CASE.TEST_CASE.ID should be same');
         END IF;
         --
         self.id            := id;
-        self.test_suite_id := test_suite_id;
+        self.parent_test_case_id := parent_test_case_id;
         --
         self.test_case := test_case;
         IF test_case IS NOT NULL
@@ -49,23 +49,23 @@ CREATE OR REPLACE TYPE BODY petet_test_case_in_suite AS
     END;
 
     --------------------------------------------------------------------------------
-    MEMBER FUNCTION copy RETURN petet_test_case_in_suite IS
+    MEMBER FUNCTION copy RETURN petet_test_case_in_case IS
     BEGIN
-        RETURN NEW petet_test_case_in_suite(self.id,
-                                            self.test_suite_id,
-                                            self.test_case_id,
-                                            CASE WHEN self.test_case IS NULL THEN NULL ELSE
-                                            self.test_case.copy() END,
-                                            self.position,
-                                            self.stop_on_failure,
-                                            self.run_modifier,
-                                            self.description);
+        RETURN NEW petet_test_case_in_case(self.id,
+                                           self.parent_test_case_id,
+                                           self.test_case_id,
+                                           CASE WHEN self.test_case IS NULL THEN NULL ELSE
+                                           self.test_case.copy() END,
+                                           self.position,
+                                           self.stop_on_failure,
+                                           self.run_modifier,
+                                           self.description);
     END;
 
     --------------------------------------------------------------------------------
     MEMBER FUNCTION equals
     (
-        a_obj_in  IN petet_test_case_in_suite,
+        a_obj_in  IN petet_test_case_in_case,
         a_deep_in IN VARCHAR2 DEFAULT 'N' --pete_core.g_NO
     ) RETURN VARCHAR2 --pete_types.typ_YES_NO
      IS
@@ -79,10 +79,10 @@ CREATE OR REPLACE TYPE BODY petet_test_case_in_suite AS
             RETURN pete_core.g_NO;
         END IF;
         --
-        IF (self.test_suite_id IS NULL AND a_obj_in.test_suite_id IS NOT NULL)
+        IF (self.parent_test_case_id IS NULL AND a_obj_in.parent_test_case_id IS NOT NULL)
            OR
-           (self.test_suite_id IS NOT NULL AND a_obj_in.test_suite_id IS NULL)
-           OR (self.test_suite_id != a_obj_in.test_suite_id)
+           (self.parent_test_case_id IS NOT NULL AND a_obj_in.parent_test_case_id IS NULL)
+           OR (self.parent_test_case_id != a_obj_in.parent_test_case_id)
         THEN
             RETURN pete_core.g_NO;
         END IF;

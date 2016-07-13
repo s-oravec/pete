@@ -48,19 +48,16 @@ prompt Creating type petet_test_case
 prompt Creating type body petet_test_case
 @@petet_test_case.tpb
 
-prompt Creating type petet_test_case_in_suite
-@@petet_test_case_in_suite.tps
+prompt Creating type petet_test_case_in_case
+@@petet_test_case_in_case.tps
 
-prompt Creating type body petet_test_case_in_suite
-@@petet_test_case_in_suite.tpb
+prompt Creating type body petet_test_case_in_case
+@@petet_test_case_in_case.tpb
 
-prompt Creating type petet_test_cases_in_suite
-@@petet_test_cases_in_suite.tps
+prompt Creating type petet_test_cases_in_case
+@@petet_test_cases_in_case.tps
 
-prompt Creating type petet_test_suite
-@@petet_test_suite.tps
-
-prompt Creating type body petet_test_suite
-@@petet_test_suite.tpb
+prompt Creating type petet_test_case_ids_in_case
+@@petet_test_case_ids_in_case.tps
 
 @&&run_dir_end

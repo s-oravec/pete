@@ -5,7 +5,7 @@ create table PETE_PLSQL_BLOCK_IN_CASE
   plsql_block_id     INTEGER not null,
   input_argument_id  INTEGER,
   expected_result_id INTEGER,
-  position        NUMBER not null,
+  position           NUMBER not null,
   stop_on_failure    VARCHAR2(1) default 'N' not null,
   run_modifier       VARCHAR2(30),
   description        VARCHAR2(4000)

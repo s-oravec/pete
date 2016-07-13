@@ -1,9 +1,9 @@
 create table PETE_TEST_CASE_IN_CASE
 (
   id                  INTEGER not null,
-  parent_test_case_id INTEGER not null,
+  parent_test_case_id INTEGER,
   test_case_id        INTEGER not null,
-  position          NUMBER not null,
+  position            NUMBER not null,
   stop_on_failure     VARCHAR2(1) default 'N' not null,
   run_modifier        VARCHAR2(30),
   description         VARCHAR2(4000)
@@ -15,7 +15,7 @@ comment on table PETE_TEST_CASE_IN_CASE
 comment on column PETE_TEST_CASE_IN_CASE.id
   is 'Test case in Test case surrogate identifier';
 comment on column PETE_TEST_CASE_IN_CASE.parent_test_case_id
-  is 'Test case identifier';
+  is 'Parent Test case identifier';
 comment on column PETE_TEST_CASE_IN_CASE.test_case_id
   is 'Test case identifier';
 comment on column PETE_TEST_CASE_IN_CASE.position
@@ -33,7 +33,12 @@ create index PETE_TEST_CASE_IN_CASE_FK02 on PETE_TEST_CASE_IN_CASE (TEST_CASE_ID
 alter table PETE_TEST_CASE_IN_CASE
   add constraint PETE_TEST_CASE_IN_CASE_PK primary key (ID);
 alter table PETE_TEST_CASE_IN_CASE
-  add constraint PETE_TEST_CASE_IN_CASE_FK01 foreign key (PARENT_TEST_CASE_ID)
+  add constraint PETE_TEST_CASE_IN_CASE_UK1 unique (parent_test_case_id, test_case_id);
+alter table PETE_TEST_CASE_IN_CASE
+  add constraint PETE_TEST_CASE_IN_CASE_UK2 unique (parent_test_case_id, position);
+
+alter table PETE_TEST_CASE_IN_CASE
+  add constraint PETE_TEST_CASE_IN_CASE_FK01 foreign key (parent_test_case_id)
   references PETE_TEST_CASE (ID);
 alter table PETE_TEST_CASE_IN_CASE
   add constraint PETE_TEST_CASE_IN_CASE_FK02 foreign key (TEST_CASE_ID)

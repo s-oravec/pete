@@ -17,14 +17,14 @@ create or replace synonym PETET_PLSQL_BLOCKS_IN_CASE for &&g_pete_schema..PETET_
 prompt Creating synonym for &&g_pete_schema..PETET_TEST_CASE
 create or replace synonym PETET_TEST_CASE for &&g_pete_schema..PETET_TEST_CASE;
 
-prompt Creating synonym for &&g_pete_schema..PETET_TEST_CASE_IN_SUITE
-create or replace synonym PETET_TEST_CASE_IN_SUITE for &&g_pete_schema..PETET_TEST_CASE_IN_SUITE;
+prompt Creating synonym for &&g_pete_schema..PETET_TEST_CASE_IN_CASE
+create or replace synonym PETET_TEST_CASE_IN_CASE for &&g_pete_schema..PETET_TEST_CASE_IN_CASE;
 
-prompt Creating synonym for &&g_pete_schema..PETET_TEST_CASES_IN_SUITE
-create or replace synonym PETET_TEST_CASES_IN_SUITE for &&g_pete_schema..PETET_TEST_CASES_IN_SUITE;
+prompt Creating synonym for &&g_pete_schema..PETET_TEST_CASES_IN_CASE
+create or replace synonym PETET_TEST_CASES_IN_CASE for &&g_pete_schema..PETET_TEST_CASES_IN_CASE;
 
-prompt Creating synonym for &&g_pete_schema..PETET_TEST_SUITE
-create or replace synonym PETET_TEST_SUITE for &&g_pete_schema..PETET_TEST_SUITE;
+prompt Creating synonym for &&g_pete_schema..PETET_TEST_CASE_IDS_IN_CASE
+create or replace synonym PETET_TEST_CASE_IDS_IN_CASE for &&g_pete_schema..PETET_TEST_CASE_IDS_IN_CASE;
 
 
 prompt Synonyms for views
@@ -43,11 +43,8 @@ create or replace synonym PETEV_PLSQL_BLOCK_IN_CASE for &&g_pete_schema..PETEV_P
 prompt Creating synonym for &&g_pete_schema..PETEV_TEST_CASE
 create or replace synonym PETEV_TEST_CASE for &&g_pete_schema..PETEV_TEST_CASE;
 
-prompt Creating synonym for &&g_pete_schema..PETEV_TEST_CASE_IN_SUITE
-create or replace synonym PETEV_TEST_CASE_IN_SUITE for &&g_pete_schema..PETEV_TEST_CASE_IN_SUITE;
-
-prompt Creating synonym for &&g_pete_schema..PETEV_TEST_SUITE
-create or replace synonym PETEV_TEST_SUITE for &&g_pete_schema..PETEV_TEST_SUITE;
+prompt Creating synonym for &&g_pete_schema..PETEV_TEST_CASE_IN_CASE
+create or replace synonym PETEV_TEST_CASE_IN_CASE for &&g_pete_schema..PETEV_TEST_CASE_IN_CASE;
 
 
 prompt Synonyms for packages

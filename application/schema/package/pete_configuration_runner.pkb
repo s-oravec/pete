@@ -1,9 +1,5 @@
 CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
 
-    --TODO: move to pete_core???
-    g_YES CONSTANT VARCHAR2(1) := 'Y';
-    g_NO  CONSTANT VARCHAR2(1) := 'N';
-
     -- Cursor used to find PLSQL block in test case
     -- NoFormat Start
     CURSOR gcur_test_case_instance(p_test_case_id NUMBER) IS
@@ -21,13 +17,13 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
                  bic.run_modifier,
                  inarg.value AS input,
                  er.value AS expected_output,
-                 SUM(CASE WHEN bic.run_modifier = 'ONLY' THEN 1 ELSE 0 END) OVER() AS overall_block_only
+                 SUM(CASE WHEN bic.run_modifier = pete_core.g_ONLY THEN 1 ELSE 0 END) OVER() AS overall_block_only
             FROM pete_plsql_block_in_case bic,
                  pete_plsql_block         blk,
                  pete_input_argument      inarg,
                  pete_expected_result     er
            WHERE bic.test_case_id = p_test_case_id
-             AND (bic.run_modifier != 'SKIP' OR bic.run_modifier IS NULL)
+             AND (bic.run_modifier != pete_core.g_SKIP OR bic.run_modifier IS NULL)
              AND inarg.id(+) = bic.input_argument_id
              AND er.id(+) = bic.expected_result_id
              AND blk.id = bic.plsql_block_id)
@@ -45,13 +41,13 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
          WHERE -- no ONLY run modifiers
                (overall_block_only = 0)
                -- or block has only modifier
-            OR (run_modifier = 'ONLY')
+            OR (run_modifier = pete_core.g_ONLY)
          ORDER BY position;
         -- NoFormat End
 
     --TODO: add cursor for case in case for test case hierarchies
 
-    -- Cursor used to find test case in test script
+    -- Cursor used to find test case in test suite
     -- NoFormat Start
     CURSOR gcur_test_case_in_test_suite(p_test_suite_id NUMBER) IS
         WITH test_cases AS
@@ -60,16 +56,16 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
                    cis.position,
                    cis.stop_on_failure,
                    cis.run_modifier,
-                   SUM(CASE WHEN cis.run_modifier = 'ONLY' THEN 1 ELSE 0 END) OVER() AS overall_case_only,
-                   SUM(CASE WHEN bic.run_modifier = 'ONLY' THEN 1 ELSE 0 END) OVER() AS overall_block_only,
-                   SUM(CASE WHEN bic.run_modifier = 'ONLY' THEN 1 ELSE 0 END) OVER(PARTITION BY tc.id) AS case_has_block_only
+                   SUM(CASE WHEN cis.run_modifier = pete_core.g_ONLY THEN 1 ELSE 0 END) OVER() AS overall_case_only,
+                   SUM(CASE WHEN bic.run_modifier = pete_core.g_ONLY THEN 1 ELSE 0 END) OVER() AS overall_block_only,
+                   SUM(CASE WHEN bic.run_modifier = pete_core.g_ONLY THEN 1 ELSE 0 END) OVER(PARTITION BY tc.id) AS case_has_block_only
             FROM pete_test_case_in_suite  cis,
                  pete_test_case           tc, --TODO: add case_in_case for test case hierarchies
                  pete_plsql_block_in_case bic
            WHERE cis.test_suite_id = p_test_suite_id
-             AND (cis.run_modifier != 'SKIP' OR cis.run_modifier IS NULL)
+             AND (cis.run_modifier != pete_core.g_SKIP OR cis.run_modifier IS NULL)
              AND bic.test_case_id = cis.test_case_id
-             AND (bic.run_modifier != 'SKIP' OR bic.run_modifier IS NULL)
+             AND (bic.run_modifier != pete_core.g_SKIP OR bic.run_modifier IS NULL)
              AND tc.id = cis.test_case_id
            ORDER BY cis.position)
         SELECT id, NAME, description, stop_on_failure
@@ -77,7 +73,7 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
          WHERE --no ONLY run modifiers
                (overall_case_only = 0 AND overall_block_only = 0)
                --or case or its blocks have ONLY run modifier 
-            OR (run_modifier = 'ONLY' OR case_has_block_only > 0)
+            OR (run_modifier = pete_core.g_ONLY OR case_has_block_only > 0)
          ORDER BY position;
         -- NoFormat End
 
@@ -87,19 +83,19 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
         WITH test_suites AS
          (SELECT /*+ materialize */ 
         DISTINCT ts.*,
-                 SUM(CASE WHEN ts.run_modifier  = 'ONLY' THEN 1 ELSE 0 END) OVER() AS overall_suite_only,
-                 SUM(CASE WHEN cis.run_modifier = 'ONLY' THEN 1 ELSE 0 END) OVER() AS overall_case_only,
-                 SUM(CASE WHEN bic.run_modifier = 'ONLY' THEN 1 ELSE 0 END) OVER() AS overall_block_only,
-                 SUM(CASE WHEN cis.run_modifier = 'ONLY' THEN 1 ELSE 0 END) OVER (PARTITION BY ts.id) AS suite_has_case_only,
-                 SUM(CASE WHEN bic.run_modifier = 'ONLY' THEN 1 ELSE 0 END) OVER (PARTITION BY ts.id) AS suite_has_block_only
+                 SUM(CASE WHEN ts.run_modifier  = pete_core.g_ONLY THEN 1 ELSE 0 END) OVER() AS overall_suite_only,
+                 SUM(CASE WHEN cis.run_modifier = pete_core.g_ONLY THEN 1 ELSE 0 END) OVER() AS overall_case_only,
+                 SUM(CASE WHEN bic.run_modifier = pete_core.g_ONLY THEN 1 ELSE 0 END) OVER() AS overall_block_only,
+                 SUM(CASE WHEN cis.run_modifier = pete_core.g_ONLY THEN 1 ELSE 0 END) OVER (PARTITION BY ts.id) AS suite_has_case_only,
+                 SUM(CASE WHEN bic.run_modifier = pete_core.g_ONLY THEN 1 ELSE 0 END) OVER (PARTITION BY ts.id) AS suite_has_block_only
             FROM pete_test_suite         ts,
                  pete_test_case_in_suite cis, --TODO: add case_in_case for test case hierarchies
                  pete_plsql_block_in_case bic
-           WHERE (ts.run_modifier != 'SKIP' OR ts.run_modifier IS NULL)
+           WHERE (ts.run_modifier != pete_core.g_SKIP OR ts.run_modifier IS NULL)
              AND cis.test_suite_id = ts.id
-             AND (cis.run_modifier != 'SKIP' OR cis.run_modifier IS NULL)
+             AND (cis.run_modifier != pete_core.g_SKIP OR cis.run_modifier IS NULL)
              AND bic.test_case_id = cis.test_case_id
-             AND (bic.run_modifier != 'SKIP' OR bic.run_modifier IS NULL)
+             AND (bic.run_modifier != pete_core.g_SKIP OR bic.run_modifier IS NULL)
          )
         SELECT id, 
                name, 
@@ -110,7 +106,7 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
          WHERE --no ONLY run modifiers
                (overall_suite_only = 0 AND overall_case_only = 0 AND overall_block_only = 0)
                --or suite or its case/block have ONLY run modifier
-            OR (run_modifier = 'ONLY' OR suite_has_case_only > 0 OR suite_has_block_only > 0);
+            OR (run_modifier = pete_core.g_ONLY OR suite_has_case_only > 0 OR suite_has_block_only > 0);
     -- NoFormat End
 
     -------------------------------------------------------------------------------------------------------------------------------
@@ -220,7 +216,7 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
                                       a_parent_run_log_id_in      => l_run_log_id)) +
                         abs(l_result);
             --
-            IF plblock_instance_in_test_case.stop_on_failure = g_YES
+            IF plblock_instance_in_test_case.stop_on_failure = pete_core.g_YES
                AND NOT l_result = pete_core.g_SUCCESS
             THEN
                 pete_logger.trace('RUN_CASE: stopping on failure');
@@ -244,7 +240,7 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
     ) RETURN pete_types.typ_execution_result IS
         lrec_test_case gcur_test_case_in_test_suite%ROWTYPE;
     BEGIN
-        SELECT pete_test_case.*, g_NO AS stop_on_failure
+        SELECT pete_test_case.*, pete_core.g_NO AS stop_on_failure
           INTO lrec_test_case
           FROM pete_test_case
          WHERE NAME = a_case_name_in;
@@ -275,7 +271,7 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
                                      a_parent_run_log_id_in => l_run_log_id)) +
                         abs(l_result);
             --
-            IF test_case_in_test_suite.stop_on_failure = g_YES
+            IF test_case_in_test_suite.stop_on_failure = pete_core.g_YES
                AND NOT l_result = pete_core.g_SUCCESS
             THEN
                 pete_logger.trace('RUN_SCRIPT: stopping on failure');
@@ -320,7 +316,7 @@ CREATE OR REPLACE PACKAGE BODY pete_configuration_runner IS
             l_result := abs(run_suite(a_test_suite_in        => test_suite,
                                       a_parent_run_log_id_in => a_parent_run_log_id_in)) +
                         abs(l_result);
-            IF test_suite.stop_on_failure = g_YES
+            IF test_suite.stop_on_failure = pete_core.g_YES
                AND NOT l_result = pete_core.g_SUCCESS
             THEN
                 pete_logger.trace('RUN_ALL_TEST_SCRIPTS: stopping on failure');

@@ -25,10 +25,7 @@ prompt Creating view PETEV_PLSQL_BLOCK_IN_CASE
 prompt Creating view PETEV_TEST_CASE
 @@petev_test_case.vw
 
-prompt Creating view PETEV_TEST_CASE_IN_SUITE
-@@petev_test_case_in_suite.vw
-
-prompt Creating view PETEV_TEST_SUITE
-@@petev_test_suite.vw
+prompt Creating view PETEV_TEST_CASE_IN_CASE
+@@petev_test_case_in_case.vw
 
 @&&run_dir_end

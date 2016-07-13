@@ -27,13 +27,13 @@ drop type petet_plsql_blocks_in_case force;
 prompt Dropping type petet_test_case
 drop type petet_test_case force;
 
-prompt Dropping type petet_test_case_in_suite
-drop type petet_test_case_in_suite force;
+prompt Dropping type petet_test_case_in_case
+drop type petet_test_case_in_case force;
 
-prompt Dropping type petet_test_cases_in_suite
-drop type petet_test_cases_in_suite force;
+prompt Dropping type petet_test_cases_in_case
+drop type petet_test_cases_in_case force;
 
-prompt Dropping type petet_test_suite
-drop type petet_test_suite force;
+prompt Dropping type petet_test_case_ids_in_case
+drop type petet_test_case_ids_in_case force;
 
 @&&run_dir_end

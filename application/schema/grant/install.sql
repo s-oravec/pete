@@ -19,23 +19,19 @@ grant EXECUTE on PETET_PLSQL_BLOCKS_IN_CASE to PUBLIC;
 prompt Granting EXECUTE priviledge on type PETET_TEST_CASE to PUBLIC
 grant EXECUTE on PETET_TEST_CASE to PUBLIC;
 
-prompt Granting EXECUTE priviledge on type PETET_TEST_CASE_IN_SUITE to PUBLIC
-grant EXECUTE on PETET_TEST_CASE_IN_SUITE to PUBLIC;
+prompt Granting EXECUTE priviledge on type PETET_TEST_CASE_IN_CASE to PUBLIC
+grant EXECUTE on PETET_TEST_CASE_IN_CASE to PUBLIC;
 
-prompt Granting EXECUTE priviledge on type PETET_TEST_CASES_IN_SUITE to PUBLIC
-grant EXECUTE on PETET_TEST_CASES_IN_SUITE to PUBLIC;
+prompt Granting EXECUTE priviledge on type PETET_TEST_CASES_IN_CASE to PUBLIC
+grant EXECUTE on PETET_TEST_CASES_IN_CASE to PUBLIC;
 
-prompt Granting EXECUTE priviledge on type PETET_TEST_SUITE to PUBLIC
-grant EXECUTE on PETET_TEST_SUITE to PUBLIC;
-
+prompt Granting EXECUTE priviledge on type PETET_TEST_CASE_IDS_IN_CASE to PUBLIC
+grant EXECUTE on PETET_TEST_CASE_IDS_IN_CASE to PUBLIC;
 
 rem Views
 --TODO: ALL/USER/DBA ???
-prompt Granting SELECT priviledge on view PETEV_TEST_SUITE to PUBLIC
-grant SELECT on PETEV_TEST_SUITE to PUBLIC;
-
-prompt Granting SELECT priviledge on view PETEV_TEST_CASE_IN_SUITE to PUBLIC
-grant SELECT on PETEV_TEST_CASE_IN_SUITE to PUBLIC;
+prompt Granting SELECT priviledge on view PETEV_TEST_CASE_IN_CASE to PUBLIC
+grant SELECT on PETEV_TEST_CASE_IN_CASE to PUBLIC;
 
 prompt Granting SELECT priviledge on view PETEV_PLSQL_BLOCK_IN_CASE to PUBLIC
 grant SELECT on PETEV_PLSQL_BLOCK_IN_CASE to PUBLIC;
