@@ -150,7 +150,7 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
                                              a_parent_run_log_id_in => a_parent_run_log_id_in);
         --
         l_dummy := dbms_assert.SQL_OBJECT_NAME(a_package_name_in);
-    
+
         l_sql := 'begin ' || a_package_name_in || '.' || a_method_name_in ||
                  ';end;';
         execute_sql(a_sql_in => l_sql);
@@ -200,14 +200,16 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
             a_method_skip_regexp IN VARCHAR2
         ) IS
             -- NoFormat Start
-            WITH convention_runner_procedures AS
+            WITH
+            allProcedures as (select /*+ materialize */ * from all_procedures where owner = a_owner and object_name = a_package_name),
+            allArguments  as (select /*+ materialize */ * from all_arguments  where owner = a_owner and package_name = a_package_name),
+            convention_runner_procedures AS
              (SELECT /*+ materialize */
                      procedure_name,
                      subprogram_id,
                      SUM(CASE WHEN REGEXP_LIKE(UPPER(procedure_name), upper(a_method_only_regexp)) THEN 1 ELSE 0 END) over() AS oo_method
-                FROM all_procedures up
-               WHERE owner = a_owner
-                 AND object_name = a_package_name
+                FROM allProcedures up
+               WHERE 1 = 1
                  --ignore hooks
                  AND procedure_name NOT IN ('BEFORE_ALL', 'BEFORE_EACH', 'AFTER_ALL', 'AFTER_EACH')
                  --a_method_name_like_in filter
@@ -219,10 +221,8 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
                     -- or a procedure in argument without default value
                  AND NOT EXISTS
                (SELECT 1
-                  FROM all_arguments ua
-                 WHERE ua.owner = up.owner
-                   AND ua.object_name = up.procedure_name
-                   AND ua.package_name = up.object_name
+                  FROM allArguments ua
+                 WHERE ua.object_name = up.procedure_name
                    AND ( --function result or out, in/out argument in procedure
                         (ua.in_out IN ('OUT', 'IN/OUT')) OR
                        --procedure argument without default value
@@ -330,26 +330,26 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
                                       dbms_utility.format_error_backtrace);
                     l_result := pete_core.g_FAILURE;
             END test;
-        
+
             --after all hook
             l_result := abs(l_result) +
                         abs(run_hook_method(a_package_name_in      => a_package_name_in,
                                             a_hook_method_name_in  => 'AFTER_ALL',
                                             a_parent_run_log_id_in => l_run_log_id));
-        
+
         ELSE
             pete_logger.trace('unknown package  ' || a_package_name_in);
             l_result := pete_core.g_FAILURE;
         END IF;
-    
+
         IF (NOT l_something_run AND a_method_name_like_in IS NOT NULL)
         THEN
             pete_logger.trace('nothing executed, even if I wanted -> failure');
             l_result := pete_core.g_FAILURE;
         END IF;
-    
+
         pete_logger.trace('l_result: ' || l_result);
-    
+
         pete_core.end_test(a_run_log_id_in       => l_run_log_id,
                            a_execution_result_in => l_result);
         --
@@ -357,7 +357,7 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
         --
     END run_package;
 
-    --------------------------------------------------------------------------------    
+    --------------------------------------------------------------------------------
     FUNCTION run_suite
     (
         a_suite_name_in        IN pete_types.typ_object_name DEFAULT USER,
@@ -380,17 +380,18 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
             a_method_only_regexp  in varchar2,
             a_method_skip_regexp  in varchar2
         ) IS
-            WITH convention_runner_procedures AS
+            WITH
+                 allProcedures as (select * from all_procedures where owner = a_owner_in and REGEXP_LIKE(object_name, a_tst_pkg_regexp)),
+                 allArguments  as (select * from all_arguments  where owner = a_owner_in and REGEXP_LIKE(package_name, a_tst_pkg_regexp)),
+                 convention_runner_procedures AS
                  (SELECT /*+ materialize */
                          owner,
                          object_name,
                          procedure_name,
                          SUM(CASE WHEN REGEXP_LIKE(object_name, a_tst_pkg_only_regexp) THEN 1 ELSE 0 END) OVER() AS oo_package,
                          SUM(CASE WHEN REGEXP_LIKE(procedure_name, a_method_only_regexp) THEN 1 ELSE 0 END) OVER() AS oo_method
-                    FROM all_procedures up
-                   WHERE up.owner = a_owner_in
-                     AND REGEXP_LIKE(up.object_name, a_tst_pkg_regexp)
-                     AND procedure_name IS NOT NULL
+                    FROM allProcedures up
+                   WHERE procedure_name IS NOT NULL
                      --skipped methods
                      --AND procedure_name NOT LIKE 'XX%'
                      AND NOT REGEXP_LIKE(procedure_name, a_method_skip_regexp)
@@ -398,9 +399,8 @@ CREATE OR REPLACE PACKAGE BODY pete_convention_runner AS
                         -- or a procedure in argument without default value
                      AND NOT EXISTS
                    (SELECT 1
-                      FROM all_arguments ua
-                     WHERE ua.owner = up.owner
-                       AND ua.object_name = up.procedure_name
+                      FROM allArguments ua
+                     WHERE ua.object_name = up.procedure_name
                        AND ua.package_name = up.object_name
                        AND ( --function result or out, in/out argument in procedure
                             (ua.in_out IN ('OUT', 'IN/OUT')) OR
