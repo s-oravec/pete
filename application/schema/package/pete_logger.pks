@@ -52,6 +52,7 @@ CREATE OR REPLACE PACKAGE pete_logger AS
     -- TODO: public
     -- formatting methods
     --------------------------------------------------------------------------------
+    -- TODO: move to pete types
     SUBTYPE typ_integer_boolean IS PLS_INTEGER RANGE 0 .. 1;
     g_TRUE  CONSTANT typ_integer_boolean := 1;
     g_FALSE CONSTANT typ_integer_boolean := 0;
@@ -68,10 +69,6 @@ CREATE OR REPLACE PACKAGE pete_logger AS
         a_show_failures_only_in IN typ_integer_boolean DEFAULT g_FALSE
     ) RETURN petet_log_tab
         PIPELINED;
-
-    -- TODO: private
-    FUNCTION get_output_run_log_id RETURN pete_run_log.id%Type;
-    FUNCTION get_show_failures_only RETURN typ_integer_boolean; -- 1 - true | 0 - false
 
     --
     -- TODO: public

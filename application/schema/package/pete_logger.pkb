@@ -224,27 +224,27 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
     --------------------------------------------------------------------------------
     PROCEDURE print_top_level_result(a_result_in IN pete_types.typ_execution_result) IS
     BEGIN
-        dbms_output.put_line('.');
+        dbms_output.put_line(null);
         IF a_result_in = pete_core.g_SUCCESS THEN
-            dbms_output.put_line('.   SSSS   U     U   CCC     CCC   EEEEEEE   SSSS     SSSS   ');
-            dbms_output.put_line('.  S    S  U     U  C   C   C   C  E        S    S   S    S  ');
-            dbms_output.put_line('. S        U     U C     C C     C E       S        S        ');
-            dbms_output.put_line('.  S       U     U C       C       E        S        S       ');
-            dbms_output.put_line('.   SSSS   U     U C       C       EEEE      SSSS     SSSS   ');
-            dbms_output.put_line('.       S  U     U C       C       E             S        S  ');
-            dbms_output.put_line('.        S U     U C     C C     C E              S        S ');
-            dbms_output.put_line('.  S    S   U   U   C   C   C   C  E        S    S   S    S  ');
-            dbms_output.put_line('.   SSSS     UUU     CCC     CCC   EEEEEEE   SSSS     SSSS   ');
+            dbms_output.put_line('    SSSS   U     U   CCC     CCC   EEEEEEE   SSSS     SSSS   ');
+            dbms_output.put_line('   S    S  U     U  C   C   C   C  E        S    S   S    S  ');
+            dbms_output.put_line('  S        U     U C     C C     C E       S        S        ');
+            dbms_output.put_line('   S       U     U C       C       E        S        S       ');
+            dbms_output.put_line('    SSSS   U     U C       C       EEEE      SSSS     SSSS   ');
+            dbms_output.put_line('        S  U     U C       C       E             S        S  ');
+            dbms_output.put_line('         S U     U C     C C     C E              S        S ');
+            dbms_output.put_line('   S    S   U   U   C   C   C   C  E        S    S   S    S  ');
+            dbms_output.put_line('    SSSS     UUU     CCC     CCC   EEEEEEE   SSSS     SSSS   ');
         ELSE
-            dbms_output.put_line('. FFFFFFF   AA     III  L      U     U RRRRR   EEEEEEE ');
-            dbms_output.put_line('. F        A  A     I   L      U     U R    R  E       ');
-            dbms_output.put_line('. F       A    A    I   L      U     U R     R E       ');
-            dbms_output.put_line('. F      A      A   I   L      U     U R     R E       ');
-            dbms_output.put_line('. FFFF   A      A   I   L      U     U RRRRRR  EEEE    ');
-            dbms_output.put_line('. F      AAAAAAAA   I   L      U     U R   R   E       ');
-            dbms_output.put_line('. F      A      A   I   L      U     U R    R  E       ');
-            dbms_output.put_line('. F      A      A   I   L       U   U  R     R E       ');
-            dbms_output.put_line('. F      A      A  III  LLLLLLL  UUU   R     R EEEEEEE ');
+            dbms_output.put_line('  FFFFFFF   AA     III  L      U     U RRRRR   EEEEEEE ');
+            dbms_output.put_line('  F        A  A     I   L      U     U R    R  E       ');
+            dbms_output.put_line('  F       A    A    I   L      U     U R     R E       ');
+            dbms_output.put_line('  F      A      A   I   L      U     U R     R E       ');
+            dbms_output.put_line('  FFFF   A      A   I   L      U     U RRRRRR  EEEE    ');
+            dbms_output.put_line('  F      AAAAAAAA   I   L      U     U R   R   E       ');
+            dbms_output.put_line('  F      A      A   I   L      U     U R    R  E       ');
+            dbms_output.put_line('  F      A      A   I   L       U   U  R     R E       ');
+            dbms_output.put_line('  F      A      A  III  LLLLLLL  UUU   R     R EEEEEEE ');
         END IF;
     END;
 
@@ -262,21 +262,20 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
         g_show_failures_only := a_show_failures_only_in;
         --
         dbms_output.put_line(chr(10));
-        FOR log_line IN (SELECT * FROM petev_output_run_log) LOOP
+        FOR log_line IN (SELECT * FROM petev_output_run_log WHERE run_log_id = a_run_log_id_in) LOOP
             --first record in the view is the top level one
             IF (l_top_level_result IS NULL) THEN
                 l_top_level_result := log_line.result;
             END IF;
         
             IF (do_output(a_log_line_in => log_line)) THEN
-                --TODO: move to petev_output_run_log
+                -- additional empty line before package
                 IF log_line.object_type = pete_core.g_OBJECT_TYPE_PACKAGE THEN
-                    dbms_output.put_line('.');
+                    dbms_output.put_line(null);
                 END IF;
-                dbms_output.put_line('.' || log_line.log);
+                dbms_output.put_line(log_line.log);
             END IF;
         END LOOP;
-    
         print_top_level_result(l_top_level_result);
         dbms_output.put_line(chr(10) || chr(10));
     END;
@@ -294,7 +293,11 @@ CREATE OR REPLACE PACKAGE BODY pete_logger AS
         g_output_run_log_id  := a_run_log_id_in;
         g_show_failures_only := a_show_failures_only_in;
         --
-        FOR log_line IN (SELECT * FROM petev_output_run_log) LOOP
+        FOR log_line IN (SELECT * FROM petev_output_run_log WHERE run_log_id = a_run_log_id_in) LOOP
+            IF log_line.object_type = pete_core.g_OBJECT_TYPE_PACKAGE THEN
+                -- pipe aditional empty line before package
+                PIPE ROW(petet_log(null));
+            END IF;
             IF do_output(log_line) THEN
                 PIPE ROW(petet_log(log_line.log));
             END IF;
