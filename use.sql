@@ -1,3 +1,12 @@
+rem
+rem Run from your schema to use specific Pete installation (scheam)
+rem
+rem Usage
+rem     sql @use.sql <Pete schema>
+rem
+set verify off
+define g_pete_schema = "&1"
+
 prompt init sqlsn
 @sqlsnrc
 
