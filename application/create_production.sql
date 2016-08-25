@@ -13,8 +13,8 @@ accept g_pete_prod_temp_tbspc   prompt "Pete temp tablespace [&&g_pete_prod_temp
 declare
   lc_error_message constant varchar2(255) := 'ERROR: Zero-length password not permitted.';
 begin
-  dbms_output.put_line(lc_error_message);
   if '&&g_pete_prod_schema_pwd' is null then
+    dbms_output.put_line(lc_error_message);
     raise_application_error(-20000, lc_error_message);
   end if;
 end;
