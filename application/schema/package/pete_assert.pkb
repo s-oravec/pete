@@ -25,7 +25,7 @@ CREATE OR REPLACE PACKAGE BODY pete_assert IS
         l_stack    VARCHAR2(32767);
         l_from_pos NUMBER;
         --TODO: use precompiler directives here to get package name or set as literal during installation      
-        lc_ASSERT_PACKAGE CONSTANT VARCHAR2(30) := USER || '.PETE_ASSERT';
+        lc_ASSERT_PACKAGE CONSTANT VARCHAR2(61) := USER || '.PETE_ASSERT';
         l_Result VARCHAR2(32767);
     BEGIN
         pete_logger.trace('GET_CALL_STACK_BEFORE_ASSERT');

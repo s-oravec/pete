@@ -30,9 +30,9 @@ module.exports = function(grunt) {
                     return '<%= sqlTool %> <%= superUserDbConnectString %> @' + script + '.sql <%= environment %>'
                 }
             },
-            runPeteUserScript : {
+            runAppUserScript : {
                 command: function (script) {
-                    return '<%= sqlTool %> <%= peteUserDbConnectString %> @' + script + '.sql'
+                    return '<%= sqlTool %> <%= appUserDbConnectString %> @' + script + '.sql'
                 }
             }
         }
@@ -50,23 +50,23 @@ module.exports = function(grunt) {
         grunt.config.set('environment', process.env.PETE_ENV);
         grunt.config.set('sqlTool', config.sqlTool);
         grunt.config.set('superUserDbConnectString', config.db.superUserDbConnectString);
-        grunt.config.set('peteUserDbConnectString', config.db.peteUserDbConnectString);
+        grunt.config.set('appUserDbConnectString', config.db.appUserDbConnectString);
     });
 
     grunt.registerTask('ci', ['loadConfig', 'reinstall', 'test', 'watch']);
 
     grunt.registerTask('ct', ['loadConfig', 'watch']);
 
-    grunt.registerTask('test', ['loadConfig', 'shell:runPeteUserScript:test']);
+    grunt.registerTask('test', ['loadConfig', 'shell:runAppUserScript:test']);
 
     grunt.registerTask('create', ['loadConfig', 'shell:runSuperUserScript:create']);
 
     grunt.registerTask('drop', ['loadConfig', 'shell:runSuperUserScript:drop']);
 
-    grunt.registerTask('install', ['loadConfig', 'shell:runPeteUserScript:install']);
+    grunt.registerTask('install', ['loadConfig', 'shell:runAppUserScript:install']);
 
-    grunt.registerTask('uninstall', ['loadConfig', 'shell:runPeteUserScript:uninstall']);
+    grunt.registerTask('uninstall', ['loadConfig', 'shell:runAppUserScript:uninstall']);
 
-    grunt.registerTask('reinstall', ['loadConfig', 'shell:runPeteUserScript:uninstall', 'shell:runPeteUserScript:install']);
+    grunt.registerTask('reinstall', ['loadConfig', 'shell:runAppUserScript:uninstall', 'shell:runPeteUserScript:install']);
 
 }

@@ -1,5 +1,5 @@
 rem
-rem Run from your schema to use specific Pete installation (scheam)
+rem Run from your schema to use specific Pete installation (schema)
 rem
 rem Usage
 rem     sql @use.sql <Pete schema>
@@ -18,7 +18,7 @@ prompt define action and script
 define g_run_action = use
 define g_run_script = use
 
-prompt install application
+prompt Use Pete schema
 @&&run_dir application
 
 show errors
