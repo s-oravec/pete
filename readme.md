@@ -57,7 +57,7 @@ when you want
 **1. Download required Oracle DB modules**
 
 ````
-$ git clone https://github.com/principal-engineering/sqlsn.git oradb_modules/sqlsn
+$ git clone https://github.com/s-oravec/sqlsn.git oradb_modules/sqlsn
 ````
 
 **2. Grant required privileges to target schema**
@@ -71,9 +71,9 @@ grant create sequence to <pete_schema>;
 grant create view to <pete_schema>;
 ````
 
-> Optionally create dedicated schema for Pete
+> Optionally create dedicated schema for Pete using supplied [create.sql](create.sql) script
 >
-> * first connect to database using privileged user (for granted privileges see `application/create_production.sql`)
+> * first connect to database using privileged user (for granted privileges see `[application/create_production.sql](application/create_production.sql)`)
 > * then run `@create.sql production` script 
 
 
@@ -95,13 +95,14 @@ Follow up this simple tutorial which will guide you through.
 2. Declare hooks
 3. Declare testing methods
 3. Implement hooks and testing methods
+4. Optionaly grant Pete privilege to execute your test package
 5. Run test package
 
 ### 1. Create test package with description
 
-* package name has to have prefix `UT_`
+* package name has to have prefix `UT_` (this is configurable using `pete_config.set_test_package_prefix` method)
 * package description has to be defined in `description` variable in package specification
-* variable have to be either `pete_core.typ_description` or some `varchar2` with less than `4000 bytes`
+* variable have to be either `pete_types.typ_description` or some `varchar2` with less than `4000 bytes`
 
 ````
 CREATE OR REPLACE PACKAGE ut_test AS
@@ -182,7 +183,7 @@ CREATE OR REPLACE PACKAGE BODY ut_test AS
 ````
 
 * implement first test method
-    * call `pete_logger.log_method_description(d)` to set method description
+    * call `pete.set_method_description(d)` to set method description
     * implement test, that inserts into child table without existence of a referenced parent - it should fail
     
 ````
@@ -190,7 +191,7 @@ CREATE OR REPLACE PACKAGE BODY ut_test AS
         l_thrown BOOLEAN := FALSE;
     BEGIN
         --log
-        pete_logger.log_method_description(d);
+        pete.set_method_description(d);
         --test
         BEGIN
             EXECUTE IMMEDIATE 'insert into x_child values (1,1)';
@@ -216,7 +217,7 @@ CREATE OR REPLACE PACKAGE BODY ut_test AS
     PROCEDURE ins_child_with_parent_succeeds(d VARCHAR2) IS
     BEGIN
         --log
-        pete_logger.log_method_description(d);
+        pete.set_method_description(d);
         --assert
         EXECUTE IMMEDIATE 'insert into x_parent values (1)';
         EXECUTE IMMEDIATE 'insert into x_child values (1,1)';
