@@ -1,5 +1,3 @@
-@&&run_dir_begin
-
 prompt Dropping package PETE_TYPES
 drop package pete_types;
 
@@ -32,7 +30,5 @@ drop package pete_logger;
 
 prompt Dropping package PETE_EXCEPTION
 drop package pete_exception;
-
-@&&run_dir_end
 
 

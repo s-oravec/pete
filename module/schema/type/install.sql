@@ -1,5 +1,3 @@
-@&&run_dir_begin
-
 rem Pete logging
 prompt Creating type petet_log
 @@petet_log.tps
@@ -62,5 +60,3 @@ prompt Creating type petet_test_suite
 
 prompt Creating type body petet_test_suite
 @@petet_test_suite.tpb
-
-@&&run_dir_end

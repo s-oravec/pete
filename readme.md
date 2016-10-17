@@ -73,7 +73,7 @@ grant create view to <pete_schema>;
 
 > Optionally create dedicated schema for Pete using supplied [create.sql](create.sql) script
 >
-> * first connect to database using privileged user (for granted privileges see `[application/create_production.sql](application/create_production.sql)`)
+> * first connect to database using privileged user (for granted privileges see `[module/create_production.sql](module/create_production.sql)`)
 > * then run `@create.sql production` script 
 
 

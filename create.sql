@@ -6,7 +6,7 @@ rem     sql @create.sql <environment>
 rem
 rem Options
 rem
-rem   environment - development - creates PETE_<version>_DEV and PETE_<version>_OTH schemas for development and testingf of Pete
+rem   environment - development - creates PETE_<version>_DEV and PETE_<version>_OTH schemas for development and testing of Pete
 rem                             - see schema/create_development.sql
 rem               - production  - creates PETE_<version> schema
 rem                             - see schema/create_production.sql
@@ -25,8 +25,8 @@ prompt define action and script
 define g_run_action = create
 define g_run_script = create_&&g_environment..sql
 
-prompt install application
-@&&run_dir application
+prompt create module schema
+@&&run_dir module
 
 show errors
 

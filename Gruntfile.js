@@ -7,7 +7,7 @@ module.exports = function(grunt) {
 
         watch: {
             scripts: {
-                files: ['application/**/*.sql'],
+                files: ['module/**/*.sql'],
                 tasks: ['loadConfig', 'reinstall', 'test'],
                 options: {
                     reload: true,

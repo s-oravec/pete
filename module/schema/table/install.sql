@@ -1,5 +1,3 @@
-@&&run_dir_begin
-
 prompt Creating table PETE_TEST_SUITE
 @@pete_test_suite.sql
 
@@ -30,4 +28,3 @@ prompt Creating table PETE_RUN_LOG
 prompt Creating table PETE_EXPECTED_RESULT
 @@pete_expected_result.sql
 
-@&&run_dir_end

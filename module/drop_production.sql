@@ -1,4 +1,4 @@
-define g_pete_prod_schema_def = "PETE_&&g_version."
+define g_pete_prod_schema_def = "PETE_&&g_version"
 
 accept g_pete_prod_schema prompt "Pete schema [&&g_pete_prod_schema_def] : " default "&&g_pete_prod_schema_def"
 

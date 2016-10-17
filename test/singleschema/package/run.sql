@@ -1,5 +1,3 @@
-@&&run_dir_begin
-
 prompt Install test package UT_PETE_UTILS
 @@ut_pete_utils.pkg
 
@@ -29,5 +27,3 @@ prompt Install test package UT_PETE_CONFIG_RUNNER_ADM
 
 prompt Install test package UT_PETE_CAMELCASE
 @@ut_pete_camelcase.pkg
-
-@&&run_dir_end

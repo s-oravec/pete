@@ -9,8 +9,8 @@ prompt define action and script
 define g_run_action = uninstall
 define g_run_script = uninstall
 
-prompt uninstall application
-@&&run_dir application
+prompt uninstall module
+@&&run_dir module
 
 purge recyclebin;
 

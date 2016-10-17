@@ -1,5 +1,3 @@
-@&&run_dir_begin
-
 prompt dropping table pete_test_suite
 drop table pete_test_suite cascade constraints purge;
 
@@ -29,5 +27,3 @@ drop table pete_run_log cascade constraints purge;
 
 prompt dropping table pete_expected_result
 drop table pete_expected_result cascade constraints purge;
-
-@&&run_dir_end

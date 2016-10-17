@@ -1,5 +1,3 @@
-@&&run_dir_begin
-
 @&&run_script ../drop_all_test_packages.sql
 
 prompt Recreate all test packages
@@ -8,6 +6,4 @@ prompt Recreate all test packages
 @&&run_dir type
 
 @&&run_script ../recompile_schema_with_debug.sql
-@&&run_Script ../run_test_suite_from_user.sql
-
-@&&run_dir_end
+@&&run_script ../run_test_suite_from_user.sql

@@ -9,8 +9,8 @@ prompt define action and script
 define g_run_action = install
 define g_run_script = install
 
-prompt install application
-@&&run_dir application
+prompt install module
+@&&run_dir module
 
 show errors
 

@@ -18,8 +18,8 @@ prompt define action and script
 define g_run_action = drop
 define g_run_script = drop_&&g_environment..sql
 
-prompt install application
-@&&run_dir application
+prompt drop module schema 
+@&&run_dir module
 
 show errors
 

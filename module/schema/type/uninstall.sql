@@ -1,5 +1,3 @@
-@&&run_dir_begin
-
 prompt Dropping type petet_log
 drop type petet_log force;
 
@@ -35,5 +33,3 @@ drop type petet_test_cases_in_suite force;
 
 prompt Dropping type petet_test_suite
 drop type petet_test_suite force;
-
-@&&run_dir_end

@@ -1,5 +1,3 @@
-@&&run_dir_begin
-
 @&&run_dir table
 @&&run_dir sequence
 @&&run_dir type
@@ -13,4 +11,3 @@ begin
 end;
 /
 
-@&&run_dir_end

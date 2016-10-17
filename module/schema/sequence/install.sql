@@ -1,5 +1,3 @@
-@&&run_dir_begin
-
 prompt Creating sequence PETES_INPUT_ARGUMENT
 @@petes_input_argument.sql
 
@@ -23,5 +21,3 @@ prompt Creating SEQUENCE PETES_TEST_SUITE
 
 prompt Creating SEQUENCE PETES_TEST_CASE_IN_SUITE
 @@petes_test_case_in_suite.sql
-
-@&&run_dir_end

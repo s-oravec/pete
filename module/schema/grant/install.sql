@@ -1,5 +1,3 @@
-@&&run_dir_begin
-
 rem Types
 prompt Granting EXECUTE priviledge on type PETET_EXPECTED_RESULT to PUBLIC
 grant EXECUTE on PETET_EXPECTED_RESULT to PUBLIC;
@@ -30,7 +28,7 @@ grant EXECUTE on PETET_TEST_SUITE to PUBLIC;
 
 
 rem Views
---TODO: ALL/USER/DBA ???
+--TODO: ALL/USER/DBA
 prompt Granting SELECT priviledge on view PETEV_TEST_SUITE to PUBLIC
 grant SELECT on PETEV_TEST_SUITE to PUBLIC;
 
@@ -68,4 +66,3 @@ grant EXECUTE on PETE_CONFIG to PUBLIC;
 prompt Granting EXECUTE privilege on package PETE_CONFIGURATION_RUNNER_ADM
 grant EXECUTE on PETE_CONFIGURATION_RUNNER_ADM to PUBLIC;
 
-@&&run_dir_end

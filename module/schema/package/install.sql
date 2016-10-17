@@ -1,5 +1,3 @@
-@&&run_dir_begin
-
 prompt Creating package PETE_TYPES
 @@pete_types.pks
 
@@ -60,7 +58,5 @@ prompt Creating package body PETE_CORE
 prompt Creating package body PETE_LOGGER
 @@pete_logger.pkb
 
-
-@&&run_dir_end
 
 

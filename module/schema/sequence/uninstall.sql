@@ -1,5 +1,3 @@
-@&&run_dir_begin
-
 prompt Dropping sequence petes_input_argument
 drop sequence petes_input_argument;
 
@@ -23,5 +21,3 @@ drop sequence petes_test_suite;
 
 prompt Dropping sequence petes_test_case_in_suite;
 drop sequence petes_test_case_in_suite;
-
-@&&run_dir_end

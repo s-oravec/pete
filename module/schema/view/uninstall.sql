@@ -1,5 +1,3 @@
-@&&run_dir_begin
-
 rem drop view petev_test_case_run;
 rem drop view petev_test_script_run;
 
@@ -27,5 +25,3 @@ drop view petev_test_case_in_suite;
 
 prompt Dropping view PETEV_TEST_SUITE
 drop view petev_test_suite;
-
-@&&run_dir_end

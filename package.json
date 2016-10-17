@@ -5,7 +5,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Stefan Oravec, Principal Engineering",
+  "author": "Stefan Oravec",
   "license": "MIT",
   "devDependencies": {
     "chalk": "^1.0.0",
