@@ -1,7 +1,6 @@
 whenever sqlerror exit 1 rollback
 
-rem Pete 1.0.0
-define g_pete_prod_schema_def       = "PETE_010000"
+define g_pete_prod_schema_def       = "PETE_&&g_version"
 define g_pete_prod_schema_tbspc_def = "USERS"
 define g_pete_prod_temp_tbspc_def   = "TEMP"
 

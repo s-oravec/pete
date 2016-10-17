@@ -1,11 +1,10 @@
 @&&run_dir_begin
 
-rem connected as PETE_010000_OTH
+rem connected as PETE_<version>_OTH
 
-rem TODO: get pete schema from some common config
-define g_pete_schema = PETE_010000_DEV
+define g_pete_schema = PETE_&&g_version._DEV
 
-prompt Create synonyms for Pete objects in PETE_010000_OTH
+prompt Create synonyms for Pete objects in PETE_&&g_version._OTH
 @&&run_script ../../application/api/synonyms.sql
 
 @&&run_script ../drop_all_test_packages.sql

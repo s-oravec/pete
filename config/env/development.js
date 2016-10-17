@@ -3,7 +3,7 @@
 module.exports = {
     db: {
         superUserDbConnectString:    'sys/oracle@local as sysdba',
-        appUserDbConnectString:     'PETE_010000_DEV/PETE_010000_DEV@local',
-        testedSchemaDbConnectString: 'PETE_010000_OTH/PETE_010000_OTH@local'
+        appUserDbConnectString:     'PETE_000200_DEV/PETE_000200_DEV@local',
+        testedSchemaDbConnectString: 'PETE_000200_OTH/PETE_000200_OTH@local'
     },
 };

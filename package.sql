@@ -1,1 +1,1 @@
-define g_version = "010000"
+define g_version = "000200"

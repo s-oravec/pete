@@ -1,6 +1,6 @@
 {
   "name": "pete",
-  "version": "1.0.0",
+  "version": "0.2.0",
   "description": "Pete",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

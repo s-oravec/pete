@@ -1,3 +1,6 @@
+0.2.0 ???
+- internal naming convention hidden from API
+
 0.1.1 20.5.2015
 features
  - printing of asssert results (configurable)
