@@ -33,7 +33,7 @@
 
 # Pete
 
-Pete is simple, yet powerful PL/SQL testing suite. Pete allows you to choose the right approach for your PL/SQL  code testing needs
+Pete is simple, yet powerful PL/SQL testing suite. Pete allows you to choose the right approach for your PL/SQL code testing needs
 
 With Pete you can choose from 2 different approaches
 
@@ -50,7 +50,7 @@ when you want
 when you want
 
 * run test on different data sets - reusable test cases/scripts
-* split responsibilities for creation of data and code
+* split responsibilities for creation of test data and code
 
 # Installation
 
@@ -63,19 +63,18 @@ $ git clone https://github.com/s-oravec/sqlsn.git oradb_modules/sqlsn
 **2. Grant required privileges to target schema**
 
 ````
-grant connect to <pete_schema>;  
-grant create table to <pete_schema>;
+grant connect          to <pete_schema>;
+grant create table     to <pete_schema>;
 grant create procedure to <pete_schema>;
-grant create type to <pete_schema>;
-grant create sequence to <pete_schema>;
-grant create view to <pete_schema>;
+grant create type      to <pete_schema>;
+grant create sequence  to <pete_schema>;
+grant create view      to <pete_schema>;
 ````
 
 > Optionally create dedicated schema for Pete using supplied [create.sql](create.sql) script
 >
 > * first connect to database using privileged user (for granted privileges see `[module/create_production.sql](module/create_production.sql)`)
-> * then run `@create.sql production` script 
-
+> * then run `@create.sql production` script
 
 **3. Connect to target schema and install Pete objects**
 
@@ -474,4 +473,15 @@ Execute the Test Case again and now it succeeds!!!
 
 
 ````
+
+# Pete configuration
+
+You can change default Pete behaviour using `pete_config` package
+
+- `set_show_asserts` - change level of information of `pete_assert` call results in log displayed - all, failed or none (all assert results are stored, but using config you can change what you see by default)
+- `set_show_hook_methods` - changes whether result of hook method calls is displayed in log
+- `set_show_failures_only` - enables/disables display of success calls
+- `set_skip_if_before_hook_fails` - enable/disable skip of method call if before hook fails
+- `set_test_package_prefix` - change test package prefix - for some reason you may not want default `UT_` prefix
+- `set_date_format` - set date format used by Pete in reports
 
