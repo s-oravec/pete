@@ -1,9 +1,11 @@
+rem
+rem Uninstalls Pete objects
+rem
+rem Usage
+rem     sql @uninstall.sql
+rem
 prompt init sqlsn
 @sqlsnrc
-
---we need sqlsn run module to traverse directory tree during uninstall
-prompt require sqlsn-run module
-@&&sqlsn_require sqlsn-run
 
 prompt define action and script
 define g_run_action = uninstall

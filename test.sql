@@ -1,8 +1,11 @@
+rem
+rem Tests Pete, using Pete
+rem
+rem Usage
+rem     sql @test.sql
+rem
 prompt init sqlsn
 @sqlsnrc
-
-prompt require sqlsn-run module
-@&&sqlsn_require sqlsn-run
 
 prompt define test action and script
 define g_run_action = run

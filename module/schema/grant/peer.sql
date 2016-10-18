@@ -1,0 +1,1 @@
+prompt Nothing is granted as Pete is installed as peer module

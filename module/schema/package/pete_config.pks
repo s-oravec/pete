@@ -134,7 +134,7 @@ CREATE OR REPLACE PACKAGE pete_config AS
     g_DATE_FORMAT_DEFAULT CONSTANT VARCHAR2(30) := 'yyyy-mm-dd hh24:mi:ss';
 
     --
-    -- Sets prefix for test packages
+    -- sets date format used by Pete
     --
     -- %argument a_value_in
     -- %argument a_set_as_default if true then the a_value_in is stored in config table PETE_CONFIGURATION and becomes sesssion default
@@ -146,7 +146,7 @@ CREATE OR REPLACE PACKAGE pete_config AS
     );
 
     --
-    -- returns current settings of show_hook_methods system parameter
+    -- returns current settings of date_format system parameter
     --
     FUNCTION get_date_format RETURN VARCHAR2;
 

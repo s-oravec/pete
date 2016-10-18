@@ -1,5 +1,5 @@
-define g_pete_dev_schema       = "PETE_&&g_version._DEV"
-define g_pete_dev_other_schema = "PETE_&&g_version._OTH"
+define g_pete_dev_schema       = "PETE_&&g_sql_version._DEV"
+define g_pete_dev_other_schema = "PETE_&&g_sql_version._OTH"
 
 rem Pete Development Schema
 prompt create new &&g_pete_dev_schema user

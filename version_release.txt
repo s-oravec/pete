@@ -1,5 +1,7 @@
-0.2.0 ???
+0.2.0-alpha ???
+features
 - internal naming convention hidden from API
+- peer vs. public privileges as install parameter
 
 0.1.1 20.5.2015
 features

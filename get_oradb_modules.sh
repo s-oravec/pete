@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
 
-#TODO isn't it already moved?
-
-git clone https://github.com/principal-engineering/sqlsn.git oradb_modules/sqlsn
+git clone https://github.com/s-oravec/sqlsn.git oradb_modules/sqlsn
+rm -rf oradb_modules/sqlsn/.git
