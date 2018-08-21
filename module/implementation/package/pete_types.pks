@@ -1,22 +1,22 @@
-CREATE OR REPLACE PACKAGE pete_types AS
+create or replace package pete_types as
 
     -- testing object type subtype
-    SUBTYPE typ_object_type IS pete_run_log.object_type%Type;
+    subtype typ_object_type is pete_run_log.object_type%type;
 
     -- execution result of test subtype
-    SUBTYPE typ_execution_result IS PLS_INTEGER;
+    subtype typ_execution_result is pls_integer;
 
     -- object name subtype
-    SUBTYPE typ_object_name IS pete_run_log.object_name%Type;
+    subtype typ_object_name is pete_run_log.object_name%type;
 
     -- description subtype
-    SUBTYPE typ_description IS VARCHAR2(4000);
+    subtype typ_description is varchar2(4000);
 
     -- Boolean - YES/NO subtype
-    SUBTYPE typ_YES_NO IS VARCHAR2(1);
-    
-    -- string - SKIP | ONLY
-    SUBTYPE typ_RUN_MODIFIER is varchar2(10);
+    subtype typ_YES_NO is varchar2(1);
 
-END;
+    -- string - SKIP | ONLY
+    subtype typ_RUN_MODIFIER is varchar2(10);
+
+end;
 /

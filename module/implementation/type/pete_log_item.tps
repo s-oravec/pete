@@ -1,6 +1,6 @@
-CREATE OR REPLACE TYPE pete_log_item FORCE AS OBJECT
+create or replace type pete_log_item FORCE as object
 (
-    log VARCHAR2(4000)
+    log varchar2(4000)
 )
 ;
 /

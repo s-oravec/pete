@@ -1,4 +1,4 @@
-CREATE OR REPLACE PACKAGE pete_logger AS
+create or replace package pete_logger as
 
     --
     -- Pete logging package
@@ -16,13 +16,13 @@ CREATE OR REPLACE PACKAGE pete_logger AS
     --
     -- TODO: private
     --------------------------------------------------------------------------------      
-    PROCEDURE log_start
+    procedure log_start
     (
-        a_run_log_id_in        IN pete_run_log.id%Type,
-        a_parent_run_log_id_in IN pete_run_log.parent_id%Type,
-        a_description_in       IN pete_run_log.description%Type,
-        a_object_type_in       IN pete_run_log.object_type%Type,
-        a_object_name_in       IN pete_run_log.object_name%Type
+        a_run_log_id_in        in pete_run_log.id%type,
+        a_parent_run_log_id_in in pete_run_log.parent_id%type,
+        a_description_in       in pete_run_log.description%type,
+        a_object_type_in       in pete_run_log.object_type%type,
+        a_object_name_in       in pete_run_log.object_name%type
     );
 
     --
@@ -32,18 +32,18 @@ CREATE OR REPLACE PACKAGE pete_logger AS
     -- %argument a_description_in method description
     --
     --------------------------------------------------------------------------------  
-    PROCEDURE set_method_description(a_description_in IN pete_types.typ_description);
+    procedure set_method_description(a_description_in in pete_types.typ_description);
 
     --
     -- TODO: private
     --------------------------------------------------------------------------------
-    PROCEDURE log_end
+    procedure log_end
     (
-        a_run_log_id_in      IN pete_run_log.id%Type,
-        a_result_in          IN pete_run_log.result%Type,
-        a_error_code_in      IN pete_run_log.error_code%Type,
-        a_error_stack_in     IN pete_run_log.error_stack%Type,
-        a_error_backtrace_in IN pete_run_log.error_backtrace%Type
+        a_run_log_id_in      in pete_run_log.id%type,
+        a_result_in          in pete_run_log.result%type,
+        a_error_code_in      in pete_run_log.error_code%type,
+        a_error_stack_in     in pete_run_log.error_stack%type,
+        a_error_backtrace_in in pete_run_log.error_backtrace%type
     );
 
     --------------------------------------------------------------------------------
@@ -51,40 +51,40 @@ CREATE OR REPLACE PACKAGE pete_logger AS
     -- formatting methods
     --------------------------------------------------------------------------------
     -- TODO: move to pete types
-    SUBTYPE typ_integer_boolean IS PLS_INTEGER RANGE 0 .. 1;
-    g_TRUE  CONSTANT typ_integer_boolean := 1;
-    g_FALSE CONSTANT typ_integer_boolean := 0;
+    subtype typ_integer_boolean is pls_integer range 0 .. 1;
+    g_TRUE  constant typ_integer_boolean := 1;
+    g_FALSE constant typ_integer_boolean := 0;
 
-    PROCEDURE output_log
+    procedure output_log
     (
-        a_run_log_id_in         IN pete_run_log.id%Type,
-        a_show_failures_only_in IN typ_integer_boolean DEFAULT g_FALSE
+        a_run_log_id_in         in pete_run_log.id%type,
+        a_show_failures_only_in in typ_integer_boolean default g_FALSE
     );
 
-    FUNCTION display_log
+    function display_log
     (
-        a_run_log_id_in         IN pete_run_log.id%Type,
-        a_show_failures_only_in IN typ_integer_boolean DEFAULT g_FALSE
-    ) RETURN pete_log_items
-        PIPELINED;
+        a_run_log_id_in         in pete_run_log.id%type,
+        a_show_failures_only_in in typ_integer_boolean default g_FALSE
+    ) return pete_log_items
+        pipelined;
 
     --
     -- TODO: public
     -- inits a logger
     -- 
     --------------------------------------------------------------------------------  
-    PROCEDURE init(a_log_to_dbms_output_in IN BOOLEAN DEFAULT TRUE);
+    procedure init(a_log_to_dbms_output_in in boolean default true);
 
     --
     -- TODO: private
     -- logs assert result
     -- 
-    PROCEDURE log_assert
+    procedure log_assert
     (
-        a_result_in     IN BOOLEAN,
-        a_comment_in    IN VARCHAR2,
-        a_plsql_unit_in IN VARCHAR2 DEFAULT NULL,
-        a_plsql_line_in IN INTEGER DEFAULT NULL
+        a_result_in     in boolean,
+        a_comment_in    in varchar2,
+        a_plsql_unit_in in varchar2 default null,
+        a_plsql_line_in in integer default null
     );
 
     --------------------------------------------------------------------------------
@@ -96,14 +96,14 @@ CREATE OR REPLACE PACKAGE pete_logger AS
     -- wrapper for trace log
     --
     --------------------------------------------------------------------------------  
-    PROCEDURE trace(a_trace_message_in VARCHAR2);
+    procedure trace(a_trace_message_in varchar2);
 
     --
     -- TODO: private
     -- trace log settings
     --
     --------------------------------------------------------------------------------  
-    PROCEDURE set_trace(a_value_in IN BOOLEAN);
+    procedure set_trace(a_value_in in boolean);
 
-END;
+end;
 /
