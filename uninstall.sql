@@ -1,21 +1,36 @@
 rem
-rem Uninstalls Pete objects
+rem uninstall package
 rem
 rem Usage
-rem     sql @uninstall.sql
+rem     SQL > @uninstall.sql <privileges> <environment>
 rem
-prompt init sqlsn
-@sqlsnrc
+rem Options
+rem
+rem     environment   - development - more privileges required for development
+rem                   - production  - production ready
+rem
+set verify off
+define l_environment = "&1"
 
-prompt define action and script
-define g_run_action = uninstall
-define g_run_script = uninstall
+undefine 1
 
-prompt uninstall module
-@&&run_dir module
+rem Load package
+@@package.sql
 
-purge recyclebin;
+rem init SQL*Plus settings
+@sqlplus_init.sql
 
-show errors
+prompt Uninstall package Implementation
+@module/implementation/uninstall.sql
 
-exit
+prompt Uninstall package API
+@module/api/uninstall.sql
+
+prompt Unistalling package tests
+@test/uninstall_&&l_environment..sql
+
+rem finalize SQL*Plus
+@@sqlplus_finalize.sql
+
+rem undefine package globals
+@@undefine_globals.sql

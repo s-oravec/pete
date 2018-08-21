@@ -1,1 +1,0 @@
-create sequence PETES_EXPECTED_RESULT;

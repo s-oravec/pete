@@ -1,22 +1,38 @@
 rem
-rem Drops Pete schema/schemas
+rem Drops package schema/schemas
 rem
 rem Usage
-rem     sql @drop.sql <environment>
+rem     SQL > @drop.sql <configuration>
+rem
+rem Options
+rem
+rem     configuration - manual     - asks for configuration parameters
+rem                   - configured - supplied configuration is used
+rem
+rem     environment   - development - more privileges required for development
+rem                   - production  - production ready
 rem
 set verify off
-define g_environment = "&1"
+define l_configuration = "&1"
+define l_environment   = "&2"
 
-prompt init sqlsn
-@sqlsnrc
+undefine 1
+undefine 2
 
-prompt define action and script
-define g_run_action = drop
-define g_run_script = drop_&&g_environment..sql
+rem Load package
+@@package.sql
 
-prompt drop module schema 
-@&&run_dir module
+rem init SQL*Plus settings
+@sqlplus_init.sql
 
-show errors
+prompt Drop schemas
+@@module/dba/drop_&&l_configuration..sql
 
-exit
+rem finalize SQL*Plus
+@@sqlplus_finalize.sql
+
+rem undefine script locals
+undefine l_configuration
+
+rem undefine package globals
+@@undefine_globals.sql

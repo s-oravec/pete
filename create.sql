@@ -1,29 +1,39 @@
 rem
-rem Creates Pete schema/schemas
+rem Creates package schema/schemas
 rem
 rem Usage
-rem     sql @create.sql <environment>
+rem     SQL > @create.sql <configuration>
 rem
 rem Options
 rem
-rem   environment - development - creates PETE_<version>_DEV and PETE_<version>_OTH schemas for development and testing of Pete
-rem                             - see schema/create_development.sql
-rem               - production  - creates PETE_<version> schema
-rem                             - see schema/create_production.sql
+rem     configuration - manual     - asks for configuration parameters
+rem                   - configured - supplied configuration is used
+rem
+rem     environment   - development - more privileges required for development
+rem                   - production  - production ready
 rem
 set verify off
-define g_environment = "&1"
+define l_configuration = "&1"
+define l_environment   = "&2"
 
-prompt init sqlsn
-@sqlsnrc
+undefine 1
+undefine 2
 
-prompt define action and script
-define g_run_action = create
-define g_run_script = create_&&g_environment..sql
+rem Load package
+@@package.sql
 
-prompt create module schema
-@&&run_dir module
+rem init SQL*Plus settings
+@sqlplus_init.sql
 
-show errors
+prompt Create schemas
+@@module/dba/create_&&l_configuration..sql
 
-exit
+rem finalize SQL*Plus
+@@sqlplus_finalize.sql
+
+rem undefine script locals
+undefine l_configuration
+undefine l_environment
+
+rem undefine package globals
+@@undefine_globals.sql

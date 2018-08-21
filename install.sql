@@ -1,27 +1,50 @@
 rem
-rem Installs Pete module into connected schema
+rem install package
 rem
 rem Usage
-rem     sql @install.sql <privileges>
+rem     SQL > @install.sql <privileges> <environment>
 rem
 rem Options
 rem
-rem   privileges - public - grant execute/select privileges on packages/views, so Pete can be used from different schemas
-rem              - peer   - don't grant anything, use Pete as peer dependency
+rem     privileges - public - installs package and grants API to public
+rem                - peer   - installs package and grants API to peers - use whitelist grants
+rem
+rem     environment   - development - more privileges required for development
+rem                   - production  - production ready
 rem
 set verify off
-define g_privileges = "&1"
+define l_privileges  = "&1"
+define l_environment = "&2"
 
-prompt init sqlsn
-@sqlsnrc
+undefine 1
+undefine 2
 
-prompt define action and script
-define g_run_action = install
-define g_run_script = install
+rem Load package
+@package.sql
 
-prompt install module
-@&&run_dir module
+rem init SQL*Plus settings
+@sqlplus_init.sql
 
-show errors
+prompt Installing API specification
+@module/api/install_specification.sql
 
-exit
+prompt Installing package Implementation
+@module/implementation/install.sql
+
+prompt Installing package API
+@module/api/install_implementation.sql
+
+prompt Installing package tests
+@test/install_&&l_environment..sql
+
+prompt Granting privileges on package API
+@module/api/grant_&&l_privileges..sql
+
+rem finalize SQL*Plus
+@@sqlplus_finalize.sql
+
+rem undefine locals
+undefine l_privileges
+
+rem undefine package globals
+@undefine_globals.sql

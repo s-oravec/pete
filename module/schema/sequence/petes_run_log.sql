@@ -1,1 +1,0 @@
-create sequence PETES_RUN_LOG;

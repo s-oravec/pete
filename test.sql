@@ -1,16 +1,14 @@
-rem
-rem Tests Pete, using Pete
-rem
-rem Usage
-rem     sql @test.sql
-rem
-prompt init sqlsn
-@sqlsnrc
+set serveroutput on size unlimited
 
-prompt define test action and script
-define g_run_action = run
-define g_run_script = run
+clear screen
 
-@&&run_dir test
+prompt .. Resetting packages
+exec dbms_session.reset_package;
 
-exit
+prompt .. Re-enabling DBMS_OUTPUT
+exec dbms_output.enable;
+
+prompt .. Executing all test in current schema
+@test/run.sql
+
+prompt done
