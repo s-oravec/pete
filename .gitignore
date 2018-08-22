@@ -5,6 +5,4 @@
 *.~*
 .afiedt.buf.swp
 afiedt.buf
-node_modules
-config/env/development.js
 
