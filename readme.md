@@ -5,29 +5,26 @@
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
 - [Intro](#intro)
-- [Quick User Guide](#quick-user-guide)
-  - [Installation](#installation)
-  - [Tutorial](#tutorial)
-    - [1. Create test package with description](#1-create-test-package-with-description)
-    - [2. Declare hooks - before and after each or all methods](#2-declare-hooks---before-and-after-each-or-all-methods)
-    - [3. Declare testing methods](#3-declare-testing-methods)
-    - [4. Implement hooks and testing methods](#4-implement-hooks-and-testing-methods)
-    - [5. Run test package](#5-run-test-package)
-  - [Configuration](#configuration)
+- [Installation](#installation)
+- [Tutorial](#tutorial)
+  - [1. Create test package with description](#1-create-test-package-with-description)
+  - [2. Declare hooks - before and after each or all methods](#2-declare-hooks---before-and-after-each-or-all-methods)
+  - [3. Declare testing methods](#3-declare-testing-methods)
+  - [4. Implement hooks and testing methods](#4-implement-hooks-and-testing-methods)
+  - [5. Run test package](#5-run-test-package)
+- [Configuration](#configuration)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 # Intro
 
-Pete is simple, yet powerful PL/SQL testing suite. Pete implements **Convention over Configuration** approach to test organization allowing
+Pete is simple, yet powerful PL/SQL testing suite. Pete implements **Convention over Configuration** approach to test organization and implementation allowing
 
 * quick learning curve
 * almost human language for describing tests
-* selfcontained tests
+* self-contained tests
      
-# Quick User Guide
-
-## Installation 
+# Installation 
 
 **1. Grant required privileges schema**
 
@@ -38,7 +35,9 @@ Pete is simple, yet powerful PL/SQL testing suite. Pete implements **Convention 
 > Optionally create dedicated schema for Pete using supplied [create.sql](create.sql) script
 >
 > * first connect to database using privileged user (for granted privileges see `[module/dba/grant_schema_production.sql](module/dba/grant_schema_production.sql)`)
-> * then run `@create manual production` script
+> * then 
+>     * either run `@create manual production` 
+>     * or edit `config.sql` and run `@create configured production` for unattended installation
 
 **2. Connect to target schema and install Pete objects**
 
@@ -54,7 +53,7 @@ SQL> @install public production
 SQL> @install peer production
 ```
 
-## Tutorial
+# Tutorial
 
 You don't need to configure anything, just write your testing packages using simple convention and Pete will run your tests automagically.
 
@@ -67,7 +66,7 @@ Follow up this simple tutorial which will guide you through.
 4. Optionaly grant Pete privilege to execute your test package
 5. Run test package
 
-### 1. Create test package with description
+## 1. Create test package with description
 
 * package name has to have prefix `UT_` (this is configurable using `pete_config.set_test_package_prefix` method)
 * package description has to be defined in `description` variable in package specification
@@ -82,7 +81,7 @@ END;
 /
 ```
 
-### 2. Declare hooks - before and after each or all methods
+## 2. Declare hooks - before and after each or all methods
 
 * `before_all` - executed once before all other methods
 * `before_each` - executed before each method - except hooks
@@ -106,7 +105,7 @@ END;
 /
 ```
 
-### 3. Declare testing methods
+## 3. Declare testing methods
 
 * a testing method has to be a procedure with zero mandatory arguments
 * there is no restriction on name of the method except hook method names - `before_all`, `before_each`, `after_each`, `after_all` which are reserved
@@ -136,7 +135,7 @@ END;
 /
 ```
 
-### 4. Implement hooks and testing methods
+## 4. Implement hooks and testing methods
 
 * in package body implement `before_all` hook method
 
@@ -206,18 +205,16 @@ END;
 /
 ```
 
-### 5. Run test package
+## 5. Run test package
 
 Running tests in Pete is supereasy.
-
-#### SQL*Plus
 
 ```sql
 SQL> set serveroutput on size unlimited
 SQL> set linesize 255
 SQL> set pagesize 0
 SQL> 
-SQL> exec pete.run(a_package_name_in => 'UT_TEST');
+SQL> exec pete.run(package_name => 'UT_TEST');
 
 .Pete run @ 21-APR-15 02.42.52.753627000 PM +02:00 - SUCCESS
 .  Test my amazing constraint - SUCCESS
@@ -230,7 +227,7 @@ PL/SQL procedure successfully completed.
 
 ```
 
-## Configuration
+# Configuration
 
 You can change default Pete behaviour using `pete_config` package
 
