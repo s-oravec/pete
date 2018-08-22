@@ -1,113 +1,75 @@
-CREATE OR REPLACE PACKAGE ut_pete_utils AS
+create or replace package ut_pete_utils as
 
     description pete_types.typ_description := 'Pete Utils';
 
-    PROCEDURE get_enq_schema_from_schema(d varchar2 := 'get enquoted schema name from schema works');
-    PROCEDURE get_enq_schema_from_package(d varchar2 := 'get enquoted schema name from package works');
-    PROCEDURE get_enq_package_name(d varchar2 := 'get enquoted package');
+    procedure get_enq_schema_from_schema(d varchar2 := 'get enquoted schema name from schema works');
+    procedure get_enq_schema_from_package(d varchar2 := 'get enquoted schema name from package works');
+    procedure get_enq_package_name(d varchar2 := 'get enquoted package');
 
-END;
+end;
 /
-CREATE OR REPLACE PACKAGE BODY ut_pete_utils AS
+create or replace package body ut_pete_utils as
 
     --------------------------------------------------------------------------------
-    PROCEDURE get_enq_schema_from_schema(d varchar2) IS
-    BEGIN
+    procedure get_enq_schema_from_schema(d varchar2) is
+    begin
         --log
         pete.set_method_description(d);
         --assert
         --null = user
-        pete_assert.eq(
-            a_expected_in => '"' || USER || '"',
-            a_actual_in => pete_utils.get_enquoted_schema_name(a_schema_name_in => NULL)
-        );
+        pete_assert.eq(a_expected_in => '"' || user || '"', a_actual_in => pete_utils.get_enquoted_schema_name(a_schema_name_in => null));
         --tEst - changed to uppercase and enquoted
-        pete_assert.eq(
-            a_expected_in => '"TEST"',
-            a_actual_in => pete_utils.get_enquoted_schema_name(a_schema_name_in => 'tEst')
-        );
+        pete_assert.eq(a_expected_in => '"TEST"', a_actual_in => pete_utils.get_enquoted_schema_name(a_schema_name_in => 'tEst'));
         --enquoted string - no change
-        pete_assert.eq(
-            a_expected_in => '"tEst"',
-            a_actual_in => pete_utils.get_enquoted_schema_name(a_schema_name_in => '"tEst"')
-        );
-    END;
+        pete_assert.eq(a_expected_in => '"tEst"', a_actual_in => pete_utils.get_enquoted_schema_name(a_schema_name_in => '"tEst"'));
+    end;
 
     --------------------------------------------------------------------------------
-    PROCEDURE get_enq_schema_from_package(d varchar2) IS
-    BEGIN
+    procedure get_enq_schema_from_package(d varchar2) is
+    begin
         --log
         pete.set_method_description(d);
         --assert
         --null = null
-        pete_assert.eq(
-            a_expected_in => NULL,
-            a_actual_in => pete_utils.get_enquoted_schema_name(a_package_name_in => NULL)
-        );
+        pete_assert.eq(a_expected_in => null, a_actual_in => pete_utils.get_enquoted_schema_name(a_package_name_in => null));
         --package_name -> user
-        pete_assert.eq(
-            a_expected_in => '"' || USER || '"',
-            a_actual_in => pete_utils.get_enquoted_schema_name(a_package_name_in => 'tEst')
-        );
+        pete_assert.eq(a_expected_in => '"' || user || '"',
+                       a_actual_in   => pete_utils.get_enquoted_schema_name(a_package_name_in => 'tEst'));
         --"package_name" -> user
-        pete_assert.eq(
-            a_expected_in => '"' || USER || '"',
-            a_actual_in => pete_utils.get_enquoted_schema_name(a_package_name_in => '"tEst"')
-        );
+        pete_assert.eq(a_expected_in => '"' || user || '"',
+                       a_actual_in   => pete_utils.get_enquoted_schema_name(a_package_name_in => '"tEst"'));
         --schema.package_name -> "SCHEMA"
-        pete_assert.eq(
-            a_expected_in => '"SCHEMA"',
-            a_actual_in => pete_utils.get_enquoted_schema_name(a_package_name_in => 'scHema.tEst')
-        );
+        pete_assert.eq(a_expected_in => '"SCHEMA"', a_actual_in => pete_utils.get_enquoted_schema_name(a_package_name_in => 'scHema.tEst'));
         --schema."package_name" -> "SCHEMA"
-        pete_assert.eq(
-            a_expected_in => '"SCHEMA"',
-            a_actual_in => pete_utils.get_enquoted_schema_name(a_package_name_in => 'scHema."tEst"')
-        );
+        pete_assert.eq(a_expected_in => '"SCHEMA"',
+                       a_actual_in   => pete_utils.get_enquoted_schema_name(a_package_name_in => 'scHema."tEst"'));
         --"scHema".package_name -> "scHema"
-        pete_assert.eq(
-            a_expected_in => '"scHema"',
-            a_actual_in => pete_utils.get_enquoted_schema_name(a_package_name_in => '"scHema".tEst')
-        );
+        pete_assert.eq(a_expected_in => '"scHema"',
+                       a_actual_in   => pete_utils.get_enquoted_schema_name(a_package_name_in => '"scHema".tEst'));
         --"scHema"."package_name" -> "scHema"
-        pete_assert.eq(
-            a_expected_in => '"scHema"',
-            a_actual_in => pete_utils.get_enquoted_schema_name(a_package_name_in => '"scHema"."tEst"')
-        );
-    END;
+        pete_assert.eq(a_expected_in => '"scHema"',
+                       a_actual_in   => pete_utils.get_enquoted_schema_name(a_package_name_in => '"scHema"."tEst"'));
+    end;
 
     --------------------------------------------------------------------------------
-    PROCEDURE get_enq_package_name(d varchar2) IS
-    BEGIN
+    procedure get_enq_package_name(d varchar2) is
+    begin
         --log
         pete.set_method_description(d);
         --assert
-        pete_assert.eq(
-            a_expected_in => NULL,
-            a_actual_in => pete_utils.get_enquoted_package_name(a_package_name_in => NULL)
-        );
+        pete_assert.eq(a_expected_in => null, a_actual_in => pete_utils.get_enquoted_package_name(a_package_name_in => null));
         --schema.package_name -> "PACKAGE_NAME"
-        pete_assert.eq(
-            a_expected_in => '"TEST"',
-            a_actual_in => pete_utils.get_enquoted_package_name(a_package_name_in => 'scHema.tEst')
-        );
+        pete_assert.eq(a_expected_in => '"TEST"', a_actual_in => pete_utils.get_enquoted_package_name(a_package_name_in => 'scHema.tEst'));
         --schema."packageName" -> "packageName"
-        pete_assert.eq(
-            a_expected_in => '"tEst"',
-            a_actual_in => pete_utils.get_enquoted_package_name(a_package_name_in => 'scHema."tEst"')
-        );
+        pete_assert.eq(a_expected_in => '"tEst"',
+                       a_actual_in   => pete_utils.get_enquoted_package_name(a_package_name_in => 'scHema."tEst"'));
         --"scHema".package_name -> "PACKAGE_NAME"
-        pete_assert.eq(
-            a_expected_in => '"TEST"',
-            a_actual_in => pete_utils.get_enquoted_package_name(a_package_name_in => '"scHema".tEst')
-        );
+        pete_assert.eq(a_expected_in => '"TEST"',
+                       a_actual_in   => pete_utils.get_enquoted_package_name(a_package_name_in => '"scHema".tEst'));
         --"scHema"."packageName" -> "packageName"
-        pete_assert.eq(
-            a_expected_in => '"tEst"',
-            a_actual_in => pete_utils.get_enquoted_package_name(a_package_name_in => '"scHema"."tEst"')
-        );
-    END;
+        pete_assert.eq(a_expected_in => '"tEst"',
+                       a_actual_in   => pete_utils.get_enquoted_package_name(a_package_name_in => '"scHema"."tEst"'));
+    end;
 
-
-END;
+end;
 /

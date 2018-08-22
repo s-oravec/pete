@@ -4,39 +4,40 @@ create or replace package pete as
 
     /*
     
-    Convention
-    pete.run(a_suite_in => 'suite_name'
-             a_style_in => pete_runner.convention);
+    Convention Over Configuration Test Runner
+
+    exec pete.run();
     
-    \a schema    
-        if \e pete_before_all.run
-        \a package unordered
-            if \e pete_before_each.run
-            if \e package.before_all
-            \a method in order (subprogram_id)
-                if \e package.before_each
-                execute immediate method
-                if \e package.after_each
-            if \e package.after_all
-            if \e pete_after_each.run
-        if \e pete_after_all.run
-    
-    run for other optional arguments will run "subset": a_package_in - one package
-    a_method_in - one method
-    
-    a_style_in is optional, unless it is impossible to decide to which style use, when both are available
+    ```sql
+    for each <schema>
+        run <schema>.pete_before_all.run if exists
+
+        for each <package> unordered; <package>.name like 'UT_%'
+            run <schema>.pete_before_each.run if exists
+            run <schema>.package.before_all if exists
+
+            for each <schema>.<package>.<method> order by subprogram_id
+                run <schema>.<package>.before_each if exists
+                run <schema>.<package>.<method>
+                run <schema>.<package>.after_each if exists
+
+            run <schema>.package.after_all if exists
+            run <schema>.pete_after_each.run if exists
+
+        run <schema>.pete_after_all.run if exists
+    ```
+
     */
 
     --
-    -- Runs test
-    -- Universal run procedure. Can be used to run any unit of work of either testing style. 
+    -- Runs tests
+    -- Universal run procedure. Can be used to run any unit of work.
     -- Other public run procedures call this one.
     --
-    -- %argument suite_name Runs a suite of tests of a given name.
-    --
-    -- %argument package_name Runs all tests following convention in a given package 
-    -- %argument a_method_name_mask_in Runs only tests of a given mask in a given package. Must be used with argument a_package_in
-    -- %argument parent_run_log_id Specify parent run_log_id for recursive execution - used for testing of Pete
+    -- %param suite_name Runs a suite of tests of a given name.
+    -- %param package_name Runs all tests following convention in a given package
+    -- %param method_name Runs only tests of a given mask in a given package. Must be used with argument a_package_in
+    -- %param parent_run_log_id Specify parent run_log_id for recursive execution - used for testing of Pete
     --
     -- %throws ge_ambiguous_input 
     -- %throws ge_conflicting_input 
@@ -63,6 +64,7 @@ create or replace package pete as
     ge_ambiguous_input exception;
     gc_AMBIGUOUS_INPUT constant pls_integer := -20001;
     pragma exception_init(ge_ambiguous_input, -20001);
+
     -- Thrown if more conflicting arguments are set
     ge_conflicting_input exception;
     gc_CONFLICTING_INPUT constant pls_integer := -20002;
@@ -71,8 +73,8 @@ create or replace package pete as
     --
     -- Runs a suite
     --
-    -- %argument suite_name 
-    -- %argument parent_run_log_id Specify parent run_log_id for recursive execution - used for testing of Pete
+    -- %param suite_name
+    -- %param parent_run_log_id Specify parent run_log_id for recursive execution - used for testing of Pete
     --
     -- %throws ge_ambiguous_input If the input can't be clearly interpreted
     --
@@ -85,8 +87,8 @@ create or replace package pete as
     --
     -- Runs a suite
     --
-    -- %argument suite_name
-    -- %argument parent_run_log_id Specify parent run_log_id for recursive execution - used for testing of Pete
+    -- %param suite_name
+    -- %param parent_run_log_id Specify parent run_log_id for recursive execution - used for testing of Pete
     --
     -- %returns execution_result_type execution result
     --
@@ -99,12 +101,14 @@ create or replace package pete as
     ) return execution_result_type;
 
     --
-    -- Runs tests for a given package. Such tests are in a test package which can be derived from the given one.    
+    -- Runs tests for a given package.
+    -- Such tests are in a test package which can be derived from the given one.
+    --
     -- throws tests not found if there are no tests to be run
     --
-    -- %argument a_package_in 
-    -- %argument method_name_like 
-    -- %argument parent_run_log_id Specify parent run_log_id for recursive execution - used for testing of Pete
+    -- %param a_package_in
+    -- %param method_name_like
+    -- %param parent_run_log_id Specify parent run_log_id for recursive execution - used for testing of Pete
     --
     procedure run_test_package
     (
@@ -114,12 +118,14 @@ create or replace package pete as
     );
 
     --
-    -- Runs tests for a given package. Such tests are in a test package which can be derived from the given one.    
+    -- Runs tests for a given package.
+    -- Such tests are in a test package which can be derived from the given one.
+    --
     -- throws tests not found if there are no tests to be run
     --
-    -- %argument a_package_in 
-    -- %argument method_name_like 
-    -- %argument parent_run_log_id Specify parent run_log_id for recursive execution - used for testing of Pete
+    -- %param a_package_in
+    -- %param method_name_like
+    -- %param parent_run_log_id Specify parent run_log_id for recursive execution - used for testing of Pete
     --
     -- %returns execution_result_type execution result
     --
@@ -131,18 +137,16 @@ create or replace package pete as
     ) return execution_result_type;
 
     --
-    -- Runs all availaible tests. That means all configured test suites from table pete_suite and all
-    -- test packages conforming convention
+    -- Runs all availaible tests - all test packages conforming convention
     --
-    -- %argument parent_run_log_id Specify parent run_log_id for recursive execution - used for testing of Pete
+    -- %param parent_run_log_id Specify parent run_log_id for recursive execution - used for testing of Pete
     --
     procedure run_all_tests(parent_run_log_id in integer default null);
 
     --
-    -- Runs all availaible tests. That means all configured test suites from table pete_suite and all
-    -- test packages conforming convention.
+    -- Runs all availaible tests - all test packages conforming convention
     --
-    -- %argument parent_run_log_id Specify parent run_log_id for recursive execution - used for testing of Pete
+    -- %param parent_run_log_id Specify parent run_log_id for recursive execution - used for testing of Pete
     --
     -- %returns execution_result_type execution result
     --
@@ -151,14 +155,14 @@ create or replace package pete as
     --
     --set tested method description in test package implementation
     --
-    -- %argument description description
+    -- %param description description
     --
     procedure set_method_description(description in varchar2);
 
     --
     -- init Pete with suppressed log to DBMS_OUTPUT
     --
-    -- %argument log_to_dbms_output - true - log to DBMS_OUTPUT | false - supress logging to DBMS_OUTPUT
+    -- %param log_to_dbms_output - true - log to DBMS_OUTPUT | false - supress logging to DBMS_OUTPUT
     --
     procedure init(log_to_dbms_output in boolean default true);
 

@@ -1,8 +1,8 @@
 prompt .. Creating package body PETE
-@@package/pete.pkb
+@module/api/package/pete.pkb
 
 prompt .. Creating package body PETE_ASSERT
-@@package/pete_assert.pkb
+@module/api/package/pete_assert.pkb
 
 prompt .. Creating package body PETE_CONFIG
-@@package/pete_config.pkb
+@module/api/package/pete_config.pkb

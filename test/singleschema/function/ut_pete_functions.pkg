@@ -1,27 +1,25 @@
-CREATE OR REPLACE PACKAGE ut_pete_functions AS
+create or replace package ut_pete_functions as
 
-    description VARCHAR2(255) := 'Sum interval SQL function';
+    description varchar2(255) := 'Sum interval SQL function';
 
-    PROCEDURE sum_interval(d IN VARCHAR2 := 'should work as expected');
+    procedure sum_interval(d in varchar2 := 'should work as expected');
 
-END;
+end;
 /
-CREATE OR REPLACE PACKAGE BODY ut_pete_functions AS
+create or replace package body ut_pete_functions as
 
-    PROCEDURE sum_interval(d IN VARCHAR2) IS
-        a INTERVAL DAY TO SECOND := numtodsinterval(1, 'hour');
-        b INTERVAL DAY TO SECOND := numtodsinterval(1, 'hour');
-        c INTERVAL DAY TO SECOND;
-    BEGIN
+    procedure sum_interval(d in varchar2) is
+        a interval day to second := numtodsinterval(1, 'hour');
+        b interval day to second := numtodsinterval(1, 'hour');
+        c interval day to second;
+    begin
         --log
         pete.set_method_description(d);
         --test
-        SELECT petef_sum_interval(x)
-          INTO c
-          FROM (SELECT a AS x FROM dual UNION ALL SELECT b AS x FROM dual);
+        select pete_sum_interval(x) into c from (select a as x from dual union all select b as x from dual);
         --assert
         pete_assert.this(a + b = c);
-    END;
+    end;
 
-END;
+end;
 /

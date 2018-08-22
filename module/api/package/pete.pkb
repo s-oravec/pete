@@ -46,9 +46,14 @@ create or replace package body pete as
         l_suite_name varchar2(255) := nvl(suite_name, user);
         l_result     typ_run_result;
     begin
-        pete_logger.trace('RUN_TEST_SUITE_IMPL: ' || 'suite_name:' || NVL(suite_name, 'NULL') || ', ' || 'parent_run_log_id:' ||
-                          nvl(to_char(parent_run_log_id), 'NULL'));
-        --
+        -- NoFormat Start
+        pete_logger.trace(
+            'RUN_TEST_SUITE_IMPL: '
+            || 'suite_name:' || NVL(suite_name, 'NULL') || ', '
+            || 'parent_run_log_id:' || nvl(to_char(parent_run_log_id), 'NULL')
+        );
+        -- NoFormat End
+
         l_result.run_log_id := begin_test(a_object_name_in  => l_suite_name,
                                           a_object_type_in  => pete_core.g_OBJECT_TYPE_SUITE,
                                           parent_run_log_id => parent_run_log_id);
@@ -62,6 +67,7 @@ create or replace package body pete as
         --
     end run_test_suite_impl;
 
+
     --------------------------------------------------------------------------------
     procedure run_test_suite
     (
@@ -72,6 +78,7 @@ create or replace package body pete as
     begin
         l_impl_call_result := run_test_suite_impl(suite_name => suite_name, parent_run_log_id => parent_run_log_id);
         --
+        -- output log to DBMS_OUTPUT if parent_run_log_id is null = it is top level call
         if parent_run_log_id is null then
             pete_logger.output_log(a_run_log_id_in => l_impl_call_result.run_log_id);
         end if;
@@ -217,13 +224,26 @@ create or replace package body pete as
                           nvl(to_char(parent_run_log_id), 'NULL'));
     
         --
-        --check arguments
-        -- iba method nema zmysel - potrebuje package
-        -- 
-        with args as
-         (select suite_name as x from dual union all select package_name as x from dual union all select method_name as x from dual)
-        select count(x) into l_cnt from args;
+        -- get count of params passed
+        -- NoFormat Start
+        with
+        args as (
+            select suite_name as x
+              from dual
+             union all
+            select package_name as x
+              from dual
+             union all
+            select method_name as x
+              from dual
+        )
+        select count(x)
+          into l_cnt
+          from args
+        ;
+        -- NoFormat End
         pete_logger.trace('l_cnt ' || l_cnt);
+        --
         --
         if l_cnt > 1 and method_name is null then
             raise_application_error(pete.gc_CONFLICTING_INPUT, 'Conflicting input - too many arguments set');

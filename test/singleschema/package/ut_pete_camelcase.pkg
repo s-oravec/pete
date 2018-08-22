@@ -1,86 +1,86 @@
 create or replace package ut_pete_camelcase as
 
-  description constant pete_types.typ_description := 'CamelCase objects';
+    description constant pete_types.typ_description := 'CamelCase objects';
 
-  PROCEDURE before_each;
+    procedure before_each;
 
-  PROCEDURE log_call(a_value_in IN VARCHAR2);
+    procedure log_call(a_value_in in varchar2);
 
-  PROCEDURE ccPkgIsCalled1(d varchar2 := 'CamelCase package is called by pete.run');
-  PROCEDURE ccMethodInNonCCPkgIsCalled11(d varchar2 := 'CamelCase method in Non-CamelCase package is called be pete.run');
-  PROCEDURE ccMethodInNonCCPkgIsCalled12(d varchar2 := 'CamelCase method in Non-CamelCase package is called be pete.run with method name specified');
+    procedure ccPkgIsCalled1(d varchar2 := 'CamelCase package is called by pete.run');
+    procedure ccMethodInNonCCPkgIsCalled11(d varchar2 := 'CamelCase method in Non-CamelCase package is called be pete.run');
+    procedure ccMethodInNonCCPkgIsCalled12(d varchar2 := 'CamelCase method in Non-CamelCase package is called be pete.run with method name specified');
 
-  PROCEDURE ccPkgIsCalled2(d varchar2 := 'CamelCase package is called by pete.run_test_package');
-  PROCEDURE ccMethodInNonCCPkgIsCalled21(d varchar2 := 'CamelCase method in Non-CamelCase package is called be pete.run_test_package');
-  PROCEDURE ccMethodInNonCCPkgIsCalled22(d varchar2 := 'CamelCase method in Non-CamelCase package is called be pete.run_test_package with method name specified');
+    procedure ccPkgIsCalled2(d varchar2 := 'CamelCase package is called by pete.run_test_package');
+    procedure ccMethodInNonCCPkgIsCalled21(d varchar2 := 'CamelCase method in Non-CamelCase package is called be pete.run_test_package');
+    procedure ccMethodInNonCCPkgIsCalled22(d varchar2 := 'CamelCase method in Non-CamelCase package is called be pete.run_test_package with method name specified');
 
-  PROCEDURE after_each;
+    procedure after_each;
 
 end;
 /
 create or replace package body ut_pete_camelcase as
 
-    g_is_recursive_call BOOLEAN := FALSE;
-    g_call_log          VARCHAR2(30);
-    gc_CALLED           VARCHAR2(30) := 'CALLED';
-    gc_NOT_CALLED       VARCHAR2(30) := 'NOT CALLED';
+    g_is_recursive_call boolean := false;
+    g_call_log          varchar2(30);
+    gc_CALLED           varchar2(30) := 'CALLED';
+    gc_NOT_CALLED       varchar2(30) := 'NOT CALLED';
 
     --
-    TYPE typ_call_log_tab IS TABLE OF INTEGER INDEX BY VARCHAR2(30);
+    type typ_call_log_tab is table of integer index by varchar2(30);
     gtab_call_log typ_call_log_tab;
 
     --------------------------------------------------------------------------------
-    PROCEDURE before_each IS
-    BEGIN
+    procedure before_each is
+    begin
         g_call_log := gc_NOT_CALLED;
         gtab_call_log.delete;
-    END;
+    end;
 
     --------------------------------------------------------------------------------
-    PROCEDURE after_each IS
-    BEGIN
-        BEGIN
-            EXECUTE IMMEDIATE 'drop package "ut_OOPeteCCTest"';
-        EXCEPTION
-            WHEN OTHERS THEN
-                NULL;
-        END;
-        BEGIN
-            EXECUTE IMMEDIATE 'drop package "ut_PeteCCTest"';
-        EXCEPTION
-            WHEN OTHERS THEN
-                NULL;
-        END;
-        BEGIN
-            EXECUTE IMMEDIATE 'drop package UT_OOPETENONCCTEST';
-        EXCEPTION
-            WHEN OTHERS THEN
-                NULL;
-        END;
-        BEGIN
-            EXECUTE IMMEDIATE 'drop package UT_PETENONCCTEST';
-        EXCEPTION
-            WHEN OTHERS THEN
-                NULL;
-        END;
-    END;
+    procedure after_each is
+    begin
+        begin
+            execute immediate 'drop package "ut_OOPeteCCTest"';
+        exception
+            when others then
+                null;
+        end;
+        begin
+            execute immediate 'drop package "ut_PeteCCTest"';
+        exception
+            when others then
+                null;
+        end;
+        begin
+            execute immediate 'drop package UT_OOPETENONCCTEST';
+        exception
+            when others then
+                null;
+        end;
+        begin
+            execute immediate 'drop package UT_PETENONCCTEST';
+        exception
+            when others then
+                null;
+        end;
+    end;
 
     --------------------------------------------------------------------------------
-    PROCEDURE log_call(a_value_in IN VARCHAR2) IS
-    BEGIN
+    procedure log_call(a_value_in in varchar2) is
+    begin
         pete_Logger.trace('log_call: a_value_in ' || a_value_in);
         g_call_log := a_value_in;
         gtab_call_log(a_value_in) := 1;
-    END;
+    end;
 
     --------------------------------------------------------------------------------
-    PROCEDURE ccPkgIsCalled1(d varchar2) IS
+    procedure ccPkgIsCalled1(d varchar2) is
         -- NoFormat Start
         l_package_spec VARCHAR2(32767) :=
         'CREATE OR REPLACE PACKAGE "ut_PeteCCTest" AS' || chr(10) ||
         '    PROCEDURE this_should_be_called;' || chr(10) ||
         'END;';
-
+        
         l_package_body VARCHAR2(32767) :=
         'CREATE OR REPLACE PACKAGE BODY "ut_PeteCCTest" AS' || chr(10) ||
         '    PROCEDURE this_should_be_called IS' || chr(10) ||
@@ -91,29 +91,27 @@ create or replace package body ut_pete_camelcase as
         'END;';
         -- NoFormat End
         l_result pete_types.typ_execution_result;
-    BEGIN
+    begin
         --log
         pete.set_method_description(d);
         --prepare
-        EXECUTE IMMEDIATE l_package_spec;
-        EXECUTE IMMEDIATE l_package_body;
+        execute immediate l_package_spec;
+        execute immediate l_package_body;
         --test and assert
-        l_result := pete.run(a_package_name_in      => '"ut_PeteCCTest"',
-                             a_parent_run_log_id_in => pete_core.get_last_run_log_id);
+        l_result := pete.run(package_name => '"ut_PeteCCTest"', parent_run_log_id => pete_core.get_last_run_log_id);
         --assert
-        pete_assert.this(a_value_in   => l_result = pete_core.g_SUCCESS,
-                         a_comment_in => 'Expecting result to be SUCCESS');
+        pete_assert.this(a_value_in => l_result = pete_core.g_SUCCESS, a_comment_in => 'Expecting result to be SUCCESS');
         pete_assert.eq(a_expected_in => gc_CALLED, a_actual_in => g_call_log);
-    END;
+    end;
 
     --------------------------------------------------------------------------------
-    PROCEDURE ccMethodInNonCCPkgIsCalled11(d varchar2) IS
+    procedure ccMethodInNonCCPkgIsCalled11(d varchar2) is
         -- NoFormat Start
         l_package_spec VARCHAR2(32767) :=
         'CREATE OR REPLACE PACKAGE UT_PETENONCCTEST AS' || chr(10) ||
         '    PROCEDURE "thisShouldBeCalled";' || chr(10) ||
         'END;';
-
+        
         l_package_body VARCHAR2(32767) :=
         'CREATE OR REPLACE PACKAGE BODY UT_PETENONCCTEST AS' || chr(10) ||
         '    PROCEDURE "thisShouldBeCalled" IS' || chr(10) ||
@@ -124,29 +122,27 @@ create or replace package body ut_pete_camelcase as
         'END;';
         -- NoFormat End
         l_result pete_types.typ_execution_result;
-    BEGIN
+    begin
         --log
         pete.set_method_description(d);
         --prepare
-        EXECUTE IMMEDIATE l_package_spec;
-        EXECUTE IMMEDIATE l_package_body;
+        execute immediate l_package_spec;
+        execute immediate l_package_body;
         --test and assert
-        l_result := pete.run(a_package_name_in      => 'UT_PETENONCCTEST',
-                             a_parent_run_log_id_in => pete_core.get_last_run_log_id);
+        l_result := pete.run(package_name => 'UT_PETENONCCTEST', parent_run_log_id => pete_core.get_last_run_log_id);
         --assert
-        pete_assert.this(a_value_in   => l_result = pete_core.g_SUCCESS,
-                         a_comment_in => 'Expecting result to be SUCCESS');
+        pete_assert.this(a_value_in => l_result = pete_core.g_SUCCESS, a_comment_in => 'Expecting result to be SUCCESS');
         pete_assert.eq(a_expected_in => gc_CALLED, a_actual_in => g_call_log);
-    END;
+    end;
 
     --------------------------------------------------------------------------------
-    PROCEDURE ccMethodInNonCCPkgIsCalled12(d varchar2) IS
+    procedure ccMethodInNonCCPkgIsCalled12(d varchar2) is
         -- NoFormat Start
         l_package_spec VARCHAR2(32767) :=
         'CREATE OR REPLACE PACKAGE UT_PETENONCCTEST AS' || chr(10) ||
         '    PROCEDURE "thisShouldBeCalled";' || chr(10) ||
         'END;';
-
+        
         l_package_body VARCHAR2(32767) :=
         'CREATE OR REPLACE PACKAGE BODY UT_PETENONCCTEST AS' || chr(10) ||
         '    PROCEDURE "thisShouldBeCalled" IS' || chr(10) ||
@@ -157,31 +153,29 @@ create or replace package body ut_pete_camelcase as
         'END;';
         -- NoFormat End
         l_result pete_types.typ_execution_result;
-    BEGIN
+    begin
         --log
         pete.set_method_description(d);
         --prepare
-        EXECUTE IMMEDIATE l_package_spec;
-        EXECUTE IMMEDIATE l_package_body;
+        execute immediate l_package_spec;
+        execute immediate l_package_body;
         --test and assert
-        l_result := pete.run(a_package_name_in      => 'UT_PETENONCCTEST',
-                             a_method_name_in       => 'thisShouldBeCalled',
-                             a_parent_run_log_id_in => pete_core.get_last_run_log_id);
+        l_result := pete.run(package_name      => 'UT_PETENONCCTEST',
+                             method_name       => 'thisShouldBeCalled',
+                             parent_run_log_id => pete_core.get_last_run_log_id);
         --assert
-        pete_assert.this(a_value_in   => l_result = pete_core.g_SUCCESS,
-                         a_comment_in => 'Expecting result to be SUCCESS');
+        pete_assert.this(a_value_in => l_result = pete_core.g_SUCCESS, a_comment_in => 'Expecting result to be SUCCESS');
         pete_assert.eq(a_expected_in => gc_CALLED, a_actual_in => g_call_log);
-    END;
-
+    end;
 
     --------------------------------------------------------------------------------
-    PROCEDURE ccPkgIsCalled2(d varchar2) IS
+    procedure ccPkgIsCalled2(d varchar2) is
         -- NoFormat Start
         l_package_spec VARCHAR2(32767) :=
         'CREATE OR REPLACE PACKAGE "ut_PeteCCTest" AS' || chr(10) ||
         '    PROCEDURE this_should_be_called;' || chr(10) ||
         'END;';
-
+        
         l_package_body VARCHAR2(32767) :=
         'CREATE OR REPLACE PACKAGE BODY "ut_PeteCCTest" AS' || chr(10) ||
         '    PROCEDURE this_should_be_called IS' || chr(10) ||
@@ -192,29 +186,27 @@ create or replace package body ut_pete_camelcase as
         'END;';
         -- NoFormat End
         l_result pete_types.typ_execution_result;
-    BEGIN
+    begin
         --log
         pete.set_method_description(d);
         --prepare
-        EXECUTE IMMEDIATE l_package_spec;
-        EXECUTE IMMEDIATE l_package_body;
+        execute immediate l_package_spec;
+        execute immediate l_package_body;
         --test and assert
-        l_result := pete.run_test_package(a_package_name_in      => '"ut_PeteCCTest"',
-                                          a_parent_run_log_id_in => pete_core.get_last_run_log_id);
+        l_result := pete.run_test_package(package_name => '"ut_PeteCCTest"', parent_run_log_id => pete_core.get_last_run_log_id);
         --assert
-        pete_assert.this(a_value_in   => l_result = pete_core.g_SUCCESS,
-                         a_comment_in => 'Expecting result to be SUCCESS');
+        pete_assert.this(a_value_in => l_result = pete_core.g_SUCCESS, a_comment_in => 'Expecting result to be SUCCESS');
         pete_assert.eq(a_expected_in => gc_CALLED, a_actual_in => g_call_log);
-    END;
+    end;
 
     --------------------------------------------------------------------------------
-    PROCEDURE ccMethodInNonCCPkgIsCalled21(d varchar2) IS
+    procedure ccMethodInNonCCPkgIsCalled21(d varchar2) is
         -- NoFormat Start
         l_package_spec VARCHAR2(32767) :=
         'CREATE OR REPLACE PACKAGE UT_PETENONCCTEST AS' || chr(10) ||
         '    PROCEDURE "thisShouldBeCalled";' || chr(10) ||
         'END;';
-
+        
         l_package_body VARCHAR2(32767) :=
         'CREATE OR REPLACE PACKAGE BODY UT_PETENONCCTEST AS' || chr(10) ||
         '    PROCEDURE "thisShouldBeCalled" IS' || chr(10) ||
@@ -225,29 +217,27 @@ create or replace package body ut_pete_camelcase as
         'END;';
         -- NoFormat End
         l_result pete_types.typ_execution_result;
-    BEGIN
+    begin
         --log
         pete.set_method_description(d);
         --prepare
-        EXECUTE IMMEDIATE l_package_spec;
-        EXECUTE IMMEDIATE l_package_body;
+        execute immediate l_package_spec;
+        execute immediate l_package_body;
         --test and assert
-        l_result := pete.run_test_package(a_package_name_in      => 'UT_PETENONCCTEST',
-                                          a_parent_run_log_id_in => pete_core.get_last_run_log_id);
+        l_result := pete.run_test_package(package_name => 'UT_PETENONCCTEST', parent_run_log_id => pete_core.get_last_run_log_id);
         --assert
-        pete_assert.this(a_value_in   => l_result = pete_core.g_SUCCESS,
-                         a_comment_in => 'Expecting result to be SUCCESS');
+        pete_assert.this(a_value_in => l_result = pete_core.g_SUCCESS, a_comment_in => 'Expecting result to be SUCCESS');
         pete_assert.eq(a_expected_in => gc_CALLED, a_actual_in => g_call_log);
-    END;
+    end;
 
     --------------------------------------------------------------------------------
-    PROCEDURE ccMethodInNonCCPkgIsCalled22(d varchar2) IS
+    procedure ccMethodInNonCCPkgIsCalled22(d varchar2) is
         -- NoFormat Start
         l_package_spec VARCHAR2(32767) :=
         'CREATE OR REPLACE PACKAGE UT_PETENONCCTEST AS' || chr(10) ||
         '    PROCEDURE "thisShouldBeCalled";' || chr(10) ||
         'END;';
-
+        
         l_package_body VARCHAR2(32767) :=
         'CREATE OR REPLACE PACKAGE BODY UT_PETENONCCTEST AS' || chr(10) ||
         '    PROCEDURE "thisShouldBeCalled" IS' || chr(10) ||
@@ -258,21 +248,20 @@ create or replace package body ut_pete_camelcase as
         'END;';
         -- NoFormat End
         l_result pete_types.typ_execution_result;
-    BEGIN
+    begin
         --log
         pete.set_method_description(d);
         --prepare
-        EXECUTE IMMEDIATE l_package_spec;
-        EXECUTE IMMEDIATE l_package_body;
+        execute immediate l_package_spec;
+        execute immediate l_package_body;
         --test and assert
-        l_result := pete.run_test_package(a_package_name_in      => 'UT_PETENONCCTEST',
-                                          a_method_name_like_in       => 'thisShouldBeCalled',
-                                          a_parent_run_log_id_in => pete_core.get_last_run_log_id);
+        l_result := pete.run_test_package(package_name      => 'UT_PETENONCCTEST',
+                                          method_name_like  => 'thisShouldBeCalled',
+                                          parent_run_log_id => pete_core.get_last_run_log_id);
         --assert
-        pete_assert.this(a_value_in   => l_result = pete_core.g_SUCCESS,
-                         a_comment_in => 'Expecting result to be SUCCESS');
+        pete_assert.this(a_value_in => l_result = pete_core.g_SUCCESS, a_comment_in => 'Expecting result to be SUCCESS');
         pete_assert.eq(a_expected_in => gc_CALLED, a_actual_in => g_call_log);
-    END;
+    end;
 
 end;
 /

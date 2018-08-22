@@ -222,25 +222,18 @@ create or replace package body pete_logger as
     begin
         dbms_output.put_line(null);
         if a_result_in = pete_core.g_SUCCESS then
-            dbms_output.put_line('    SSSS   U     U   CCC     CCC   EEEEEEE   SSSS     SSSS   ');
-            dbms_output.put_line('   S    S  U     U  C   C   C   C  E        S    S   S    S  ');
-            dbms_output.put_line('  S        U     U C     C C     C E       S        S        ');
-            dbms_output.put_line('   S       U     U C       C       E        S        S       ');
-            dbms_output.put_line('    SSSS   U     U C       C       EEEE      SSSS     SSSS   ');
-            dbms_output.put_line('        S  U     U C       C       E             S        S  ');
-            dbms_output.put_line('         S U     U C     C C     C E              S        S ');
-            dbms_output.put_line('   S    S   U   U   C   C   C   C  E        S    S   S    S  ');
-            dbms_output.put_line('    SSSS     UUU     CCC     CCC   EEEEEEE   SSSS     SSSS   ');
+            dbms_output.put_line('.    ____   _   _   ____  ____  _____  ____  ____  ');
+            dbms_output.put_line('.   / ___| | | | | / ___|/ ___|| ____|/ ___|/ ___| ');
+            dbms_output.put_line('.   \___ \ | | | || |   | |    |  _|  \___ \\___ \ ');
+            dbms_output.put_line('.    ___) || |_| || |___| |___ | |___  ___) |___) |');
+            dbms_output.put_line('.   |____/  \___/  \____|\____||_____||____/|____/ ');
+                                                        
         else
-            dbms_output.put_line('  FFFFFFF   AA     III  L      U     U RRRRR   EEEEEEE ');
-            dbms_output.put_line('  F        A  A     I   L      U     U R    R  E       ');
-            dbms_output.put_line('  F       A    A    I   L      U     U R     R E       ');
-            dbms_output.put_line('  F      A      A   I   L      U     U R     R E       ');
-            dbms_output.put_line('  FFFF   A      A   I   L      U     U RRRRRR  EEEE    ');
-            dbms_output.put_line('  F      AAAAAAAA   I   L      U     U R   R   E       ');
-            dbms_output.put_line('  F      A      A   I   L      U     U R    R  E       ');
-            dbms_output.put_line('  F      A      A   I   L       U   U  R     R E       ');
-            dbms_output.put_line('  F      A      A  III  LLLLLLL  UUU   R     R EEEEEEE ');
+            dbms_output.put_line('.    _____   _     ___  _      _   _  ____   _____ ');
+            dbms_output.put_line('.   |  ___| / \   |_ _|| |    | | | ||  _ \ | ____|');
+            dbms_output.put_line('.   | |_   / _ \   | | | |    | | | || |_) ||  _|  ');
+            dbms_output.put_line('.   |  _| / ___ \  | | | |___ | |_| ||  _ < | |___ ');
+            dbms_output.put_line('.   |_|  /_/   \_\|___||_____| \___/ |_| \_\|_____|');
         end if;
     end;
 
@@ -269,7 +262,7 @@ create or replace package body pete_logger as
                 if log_line.object_type = pete_core.g_OBJECT_TYPE_PACKAGE then
                     dbms_output.put_line(null);
                 end if;
-                dbms_output.put_line(log_line.log);
+                dbms_output.put_line('.' || log_line.log);
             end if;
         end loop;
         print_top_level_result(l_top_level_result);

@@ -1,26 +1,26 @@
-CREATE OR REPLACE PACKAGE ut_pete_config AS
+create or replace package ut_pete_config as
 
     description pete_types.typ_description := 'Pete config';
 
-    PROCEDURE show_failures_only_works(d IN VARCHAR2 := 'Show only failures when show_failures_only is set to true');
+    procedure show_failures_only_works(d in varchar2 := 'Show only failures when show_failures_only is set to true');
 
-    PROCEDURE after_each;
+    procedure after_each;
 
-END ut_pete_config;
+end ut_pete_config;
 /
-CREATE OR REPLACE PACKAGE BODY ut_pete_config AS
+create or replace package body ut_pete_config as
 
     --------------------------------------------------------------------------------
-    PROCEDURE after_each IS
-    BEGIN
-        EXECUTE IMMEDIATE 'drop package ut_pete_test_cnv_runner';
-    EXCEPTION
-        WHEN OTHERS THEN
-            NULL;
-    END;
+    procedure after_each is
+    begin
+        execute immediate 'drop package ut_pete_test_cnv_runner';
+    exception
+        when others then
+            null;
+    end;
 
     --------------------------------------------------------------------------------
-    PROCEDURE show_failures_only_works(d IN VARCHAR2) IS
+    procedure show_failures_only_works(d in varchar2) is
         -- NoFormat Start
         l_package_spec        VARCHAR2(32767) :=
         'CREATE OR REPLACE PACKAGE ut_pete_test_cnv_runner AS' || chr(10) ||
@@ -44,49 +44,41 @@ CREATE OR REPLACE PACKAGE BODY ut_pete_config AS
         'END;'; --
         -- NoFormat End
         l_result     pete_types.typ_execution_result;
-        l_run_log_id pete_run_log.id%TYPE;
-        l_cnt        INTEGER;
+        l_run_log_id pete_run_log.id%type;
+        l_cnt        integer;
         --
-    BEGIN
+    begin
         --log
         pete.set_method_description(d);
         --prepare
-        EXECUTE IMMEDIATE l_package_spec;
-        EXECUTE IMMEDIATE l_package_body;
+        execute immediate l_package_spec;
+        execute immediate l_package_body;
         --set
-        pete_config.set_show_failures_only(a_value_in => TRUE);
+        pete_config.set_show_failures_only(value => true);
         --test
-        pete_assert.this(a_value_in   => pete_config.get_show_failures_only,
-                         a_comment_in => 'Show failures only has to be set to TRUE');
+        pete_assert.this(a_value_in => pete_config.get_show_failures_only, a_comment_in => 'Show failures only has to be set to TRUE');
         --
         l_run_log_id := pete_core.get_last_run_log_id;
         l_result     := pete_convention_runner.run_package(a_package_name_in      => 'UT_PETE_TEST_CNV_RUNNER',
                                                            a_parent_run_log_id_in => l_run_log_id);
         --
-        SELECT COUNT(*)
-          INTO l_cnt
-          FROM TABLE(pete_logger.display_log(a_run_log_id_in => l_run_log_id))
-         WHERE log LIKE '%SUCCESS%';
+        select count(*) into l_cnt from table(pete_logger.display_log(a_run_log_id_in => l_run_log_id)) where log like '%SUCCESS%';
         --assert
-        pete_assert.eq(a_expected_in => 0,
-                       a_actual_in   => l_cnt,
-                       a_comment_in  => 'Count of showed SUCCESSes should be 0');
+        pete_assert.eq(a_expected_in => 0, a_actual_in => l_cnt, a_comment_in => 'Count of showed SUCCESSes should be 0');
         --
         --unset
         pete_config.set_show_failures_only;
         --
-        pete_assert.this(a_value_in   => NOT pete_config.get_show_failures_only,
-                         a_comment_in => 'Show failures only has to be set to FALSE');
+        pete_assert.this(a_value_in => not pete_config.get_show_failures_only, a_comment_in => 'Show failures only has to be set to FALSE');
     
-    EXCEPTION
-        WHEN OTHERS THEN
+    exception
+        when others then
             pete_config.set_show_failures_only;
             raise_application_error(-20000,
-                                    'Unexpected error:' ||
-                                    dbms_utility.format_error_stack || chr(10) ||
+                                    'Unexpected error:' || dbms_utility.format_error_stack || chr(10) ||
                                     dbms_utility.format_error_backtrace,
-                                    TRUE);
-    END;
+                                    true);
+    end;
 
-END ut_pete_config;
+end ut_pete_config;
 /

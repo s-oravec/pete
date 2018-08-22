@@ -1,70 +1,67 @@
-CREATE OR REPLACE PACKAGE ut_pete AS
+create or replace package ut_pete as
 
     description pete_types.typ_description := 'Pete package tests';
 
-    PROCEDURE log_call(a_value_in IN VARCHAR2);
+    procedure log_call(a_value_in in varchar2);
 
     -- run_test_package group
-    PROCEDURE run_test_package_empty(d VARCHAR2 := 'call with null package name should throw');
+    procedure run_test_package_empty(d varchar2 := 'call with null package name should throw');
 
     --dummy method to test
-    PROCEDURE dummy_method;
+    procedure dummy_method;
 
-    PROCEDURE run_one_method_only(d VARCHAR2 := 'call of one method should pass OK');
+    procedure run_one_method_only(d varchar2 := 'call of one method should pass OK');
 
-END ut_pete;
+end ut_pete;
 /
-CREATE OR REPLACE PACKAGE BODY ut_pete AS
+create or replace package body ut_pete as
 
-    g_call_log    VARCHAR2(30);
-    gc_CALLED     VARCHAR2(30) := 'CALLED';
-    gc_NOT_CALLED VARCHAR2(30) := 'NOT CALLED';
+    g_call_log    varchar2(30);
+    gc_CALLED     varchar2(30) := 'CALLED';
+    gc_NOT_CALLED varchar2(30) := 'NOT CALLED';
 
     --------------------------------------------------------------------------------
-    PROCEDURE log_call(a_value_in IN VARCHAR2) IS
-    BEGIN
+    procedure log_call(a_value_in in varchar2) is
+    begin
         g_call_log := a_value_in;
-    END;
+    end;
 
     --------------------------------------------------------------------------------
-    PROCEDURE run_test_package_empty(d VARCHAR2) IS
-        l_failed BOOLEAN;
-    BEGIN
+    procedure run_test_package_empty(d varchar2) is
+        l_failed boolean;
+    begin
         --log
         pete.set_method_description(d);
         --assert
-        BEGIN
-            pete.run_test_package(a_package_name_in      => NULL,
-                                  a_parent_run_log_id_in => pete_core.get_last_run_log_id);
-            l_failed := FALSE;
-        EXCEPTION
-            WHEN OTHERS THEN
-                l_failed := TRUE;
-        END;
+        begin
+            pete.run_test_package(package_name => null, parent_run_log_id => pete_core.get_last_run_log_id);
+            l_failed := false;
+        exception
+            when others then
+                l_failed := true;
+        end;
         --
         pete_assert.this(l_failed);
         --
-    END;
+    end;
 
     --------------------------------------------------------------------------------
-    PROCEDURE dummy_method IS
-    BEGIN
+    procedure dummy_method is
+    begin
         log_call('CALLED');
-    END;
+    end;
 
     --------------------------------------------------------------------------------
-    PROCEDURE run_one_method_only(d VARCHAR2) IS
-    BEGIN
+    procedure run_one_method_only(d varchar2) is
+    begin
         --log
         pete.set_method_description(d);
         --test
-        pete.run(a_package_name_in      => 'UT_PETE',
-                 a_method_name_in       => 'DUMMY_METHOD',
-                 a_parent_run_log_id_in => pete_core.get_last_run_log_id);
+        pete.run(package_name => 'UT_PETE', method_name => 'DUMMY_METHOD', parent_run_log_id => pete_core.get_last_run_log_id);
         --assert
         pete_assert.eq(a_expected_in => gc_CALLED, a_actual_in => g_call_log);
         --
-    END;
+    end;
 
-END ut_pete;
+end ut_pete;
 /

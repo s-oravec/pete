@@ -7,8 +7,8 @@ create or replace package pete_assert as
     --
     -- Basic assert procedure. Every other procedure transforms it's arguments and calls this one
     --
-    -- %argument a_value_in value, that is expected to be true
-    -- %argument a_comment_in comment in case of failing assert
+    -- %param a_value_in value, that is expected to be true
+    -- %param a_comment_in comment in case of failing assert
     --
     procedure this
     (

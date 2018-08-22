@@ -26,3 +26,4 @@ BEGIN
     END LOOP;
 END;
 /
+prompt done

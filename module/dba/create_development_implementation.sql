@@ -7,7 +7,7 @@ create user &&l_schema_name
   account unlock
 /
 
-prompt .. Creating package &&g_package_name schema &&l_schema_name._OTH with default tablespace &&l_schema_tbspc and temp tablespace &&l_temp_tbspc
+prompt .. Creating package &&g_package_name schema &&l_schema_name_oth with default tablespace &&l_schema_tbspc and temp tablespace &&l_temp_tbspc
 create user &&l_schema_name_oth
   identified by "&&l_schema_pwd"
   default tablespace &&l_schema_tbspc
@@ -18,4 +18,4 @@ create user &&l_schema_name_oth
 
 prompt Grant schema privileges
 @@grant_schema_&&l_environment..sql &&l_schema_name
-@@grant_schema_&&l_environment..sql &&l_schema_name._OTH
+@@grant_schema_&&l_environment..sql &&l_schema_name_oth

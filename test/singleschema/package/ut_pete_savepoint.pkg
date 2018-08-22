@@ -1,41 +1,41 @@
-CREATE OR REPLACE PACKAGE ut_pete_savepoint AS
+create or replace package ut_pete_savepoint as
 
     description pete_types.typ_description := 'Savepoint in convention test packages should not be modified by Pete';
 
-    PROCEDURE cross_method_savepoint_before(d VARCHAR2 := 'Should create savepoint');
+    procedure cross_method_savepoint_before(d varchar2 := 'Should create savepoint');
 
-    PROCEDURE cross_method_savepoint(d VARCHAR2 := 'Should pass');
+    procedure cross_method_savepoint(d varchar2 := 'Should pass');
 
-    PROCEDURE cross_method_savepoint_after(d VARCHAR2 := 'Should rollback to savepoint');
+    procedure cross_method_savepoint_after(d varchar2 := 'Should rollback to savepoint');
 
-END ut_pete_savepoint;
+end ut_pete_savepoint;
 /
-CREATE OR REPLACE PACKAGE BODY ut_pete_savepoint AS
+create or replace package body ut_pete_savepoint as
 
-    PROCEDURE cross_method_savepoint_before(d VARCHAR2) IS
-    BEGIN
+    procedure cross_method_savepoint_before(d varchar2) is
+    begin
         --log
         pete.set_method_description(d);
         --test
-        SAVEPOINT ut_pete_savepoint_sp1;
-    END;
+        savepoint ut_pete_savepoint_sp1;
+    end;
 
-    PROCEDURE cross_method_savepoint(d VARCHAR2) IS
-    BEGIN
+    procedure cross_method_savepoint(d varchar2) is
+    begin
         --log
         pete.set_method_description(d);
         --assert
         pete_assert.pass;
-    END;
+    end;
 
-    PROCEDURE cross_method_savepoint_after(d VARCHAR2) IS
-    BEGIN
+    procedure cross_method_savepoint_after(d varchar2) is
+    begin
         --log
         pete.set_method_description(d);
         --
-        ROLLBACK TO SAVEPOINT ut_pete_savepoint_sp1;
-        ROLLBACK;
-    END;
+        rollback to savepoint ut_pete_savepoint_sp1;
+        rollback;
+    end;
 
-END ut_pete_savepoint;
+end ut_pete_savepoint;
 /

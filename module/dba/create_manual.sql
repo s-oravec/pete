@@ -13,6 +13,8 @@ begin
 end;
 /
 
+define l_schema_name_oth = &&l_schema_name._OTH
+
 @@create_&&l_environment._implementation.sql
 
 undefine l_schema_name

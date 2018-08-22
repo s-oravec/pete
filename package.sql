@@ -1,5 +1,5 @@
 rem default SQL*Plus settings
-set serveroutput on size unlimited format wrapped
+set serveroutput on size unlimited
 set trimspool on
 set verify   off
 set define   on
@@ -22,11 +22,8 @@ set termout off
 select sys_context('userenv','current_schema') as current_schema from dual;
 set termout on
 
-rem schema name
-define g_schema_name  = &&g_package_name._&&g_sql_version
-define g_schema_pwd   = &&g_schema_name
-define g_schema_tbspc = "USERS"
-define g_temp_tbspc   = "TEMP"
+rem overwrite config to change configured values
+@config.sql
 
 rem prompt config
 prompt
@@ -36,7 +33,6 @@ prompt .. sql version       = "&&g_sql_version"
 prompt .. semver version    = "&&g_semver_version"
 prompt .. current user      = "&&_USER"
 prompt .. current schema    = "&&g_current_schema"
-prompt .. default schema    = "&&g_schema_name"
 prompt .. schema password   = "********"
 prompt .. schema tablespace = "&&g_schema_tbspc"
 prompt .. temp tablespace   = "&&g_temp_tbspc"

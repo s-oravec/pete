@@ -19,8 +19,8 @@ create or replace package pete_config as
     --
     -- Sets what type of asserts show at output
     -- 
-    -- %argument value
-    -- %argument set_as_default if true then the value is stored in config table PETE_CONFIGURATION and becomes sesssion default
+    -- %param value
+    -- %param set_as_default if true then the value is stored in config table PETE_CONFIGURATION and becomes sesssion default
     --
     procedure set_show_asserts
     (
@@ -42,8 +42,8 @@ create or replace package pete_config as
     --
     -- Sets if default logger output shows hook methods
     --
-    -- %argument value
-    -- %argument set_as_default if true then the value is stored in config table PETE_CONFIGURATION and becomes sesssion default
+    -- %param value
+    -- %param set_as_default if true then the value is stored in config table PETE_CONFIGURATION and becomes sesssion default
     --
     procedure set_show_hook_methods
     (
@@ -65,8 +65,8 @@ create or replace package pete_config as
     --
     -- Sets if default logger outpu shows failed packages/methods, scripts/cases/blocks only
     --
-    -- %argument value
-    -- %argument set_as_default if true then the value is stored in config table PETE_CONFIGURATION and becomes sesssion default
+    -- %param value
+    -- %param set_as_default if true then the value is stored in config table PETE_CONFIGURATION and becomes sesssion default
     --
     procedure set_show_failures_only
     (
@@ -90,8 +90,8 @@ create or replace package pete_config as
     --
     -- Sets if test methods are skipped after before hook method fails
     --
-    -- %argument value
-    -- %argument set_as_default if true then the value is stored in config table PETE_CONFIGURATION and becomes sesssion default
+    -- %param value
+    -- %param set_as_default if true then the value is stored in config table PETE_CONFIGURATION and becomes sesssion default
     --
     procedure set_skip_if_before_hook_fails
     (
@@ -113,8 +113,8 @@ create or replace package pete_config as
     --
     -- Sets prefix for test packages
     --
-    -- %argument value
-    -- %argument set_as_default if true then the value is stored in config table PETE_CONFIGURATION and becomes sesssion default
+    -- %param value
+    -- %param set_as_default if true then the value is stored in config table PETE_CONFIGURATION and becomes sesssion default
     --
     procedure set_test_package_prefix
     (
@@ -136,8 +136,8 @@ create or replace package pete_config as
     --
     -- sets date format used by Pete
     --
-    -- %argument value
-    -- %argument set_as_default if true then the value is stored in config table PETE_CONFIGURATION and becomes sesssion default
+    -- %param value
+    -- %param set_as_default if true then the value is stored in config table PETE_CONFIGURATION and becomes sesssion default
     --
     procedure set_date_format
     (

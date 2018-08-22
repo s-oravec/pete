@@ -29,7 +29,7 @@ create or replace package pete_logger as
     -- TODO: public
     -- update method description - defined on method
     --
-    -- %argument a_description_in method description
+    -- %param a_description_in method description
     --
     --------------------------------------------------------------------------------  
     procedure set_method_description(a_description_in in pete_types.typ_description);

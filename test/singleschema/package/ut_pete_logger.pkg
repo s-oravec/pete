@@ -1,28 +1,24 @@
-CREATE OR REPLACE PACKAGE ut_pete_logger AS
+create or replace package ut_pete_logger as
 
     description pete_types.typ_description := 'Pete_logger package tests';
 
-    PROCEDURE log_assert(d VARCHAR2 DEFAULT 'log assert should write FAILURE when test fails');
+    procedure log_assert(d varchar2 default 'log assert should write FAILURE when test fails');
 
-END;
+end;
 /
-CREATE OR REPLACE PACKAGE BODY ut_pete_logger AS
+create or replace package body ut_pete_logger as
 
-    PROCEDURE log_assert(d VARCHAR2 DEFAULT 'log assert should write FAILURE when test fails') IS
-        l_result pete_run_log.result%TYPE;
-        l_id     NUMBER;
-    BEGIN
-        pete_logger.log_assert(FALSE, 'This should write FAILURE');
-        l_id := petes_run_log.currval;
-        SELECT prl.result
-          INTO l_result
-          FROM pete_run_log prl
-         WHERE prl.id = l_id;
-        IF (l_result <> pete_core.g_FAILURE)
-        THEN
+    procedure log_assert(d varchar2) is
+        l_result pete_run_log.result%type;
+        l_id     number;
+    begin
+        pete_logger.log_assert(false, 'This should write FAILURE');
+        l_id := pete_run_log_seq.currval;
+        select prl.result into l_result from pete_run_log prl where prl.id = l_id;
+        if (l_result <> pete_core.g_FAILURE) then
             raise_application_error(-20000, 'Log assert did not store failure');
-        END IF;
-    END;
+        end if;
+    end;
 
-END;
+end;
 /

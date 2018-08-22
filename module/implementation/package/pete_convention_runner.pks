@@ -9,9 +9,9 @@ create or replace package pete_convention_runner as
     -- Tests suite
     -- runs all UT% packages defined in user's schema
     --
-    -- %argument a_suite_name_in test suite name = USER
-    -- %argument a_description_in test suite description
-    -- %argument a_parent_run_log_id_in Specify parent run_log_id for recursive execution - used for testing of Pete
+    -- %param a_suite_name_in test suite name = USER
+    -- %param a_description_in test suite description
+    -- %param a_parent_run_log_id_in Specify parent run_log_id for recursive execution - used for testing of Pete
     --
     -- %return true - success, false - failure
     --
@@ -25,10 +25,10 @@ create or replace package pete_convention_runner as
     --
     -- Tests one package
     --
-    -- %argument a_package_in package name 
-    -- %argument a_method_like_in filter for methods being run - if null, all methods would be run
-    -- %argument a_description_in test suite description
-    -- %argument a_parent_run_log_id_in Specify parent run_log_id for recursive execution - used for testing of Pete
+    -- %param a_package_in package name
+    -- %param a_method_like_in filter for methods being run - if null, all methods would be run
+    -- %param a_description_in test suite description
+    -- %param a_parent_run_log_id_in Specify parent run_log_id for recursive execution - used for testing of Pete
     --
     -- %return true - success, false - failure
     --
@@ -43,11 +43,11 @@ create or replace package pete_convention_runner as
     --
     -- Tests one method
     --
-    -- %argument a_package_in package name 
-    -- %argument a_method_name_in method name
-    -- %argument a_object_type_in method type (METHOD|HOOK)
-    -- %argument a_description_in test suite description
-    -- %argument a_parent_run_log_id_in Specify parent run_log_id for recursive execution - used for testing of Pete
+    -- %param a_package_in package name
+    -- %param a_method_name_in method name
+    -- %param a_object_type_in method type (METHOD|HOOK)
+    -- %param a_description_in test suite description
+    -- %param a_parent_run_log_id_in Specify parent run_log_id for recursive execution - used for testing of Pete
     --
     -- %return true - success, false - failure
     --

@@ -1,60 +1,58 @@
-CREATE OR REPLACE PACKAGE ut_test AS
+create or replace package ut_test as
 
-    description VARCHAR2(255) := 'Test my amazing constraint';
+    description varchar2(255) := 'Test my amazing constraint';
 
-    PROCEDURE before_all;
+    procedure before_all;
 
-    PROCEDURE ins_child_without_parent_fails(d VARCHAR2 := 'Insert child without existing parent fails');
+    procedure ins_child_without_parent_fails(d varchar2 := 'Insert child without existing parent fails');
 
-    PROCEDURE ins_child_with_parent_succeeds(d VARCHAR2 := 'Insert child with existing parent succeeds');
+    procedure ins_child_with_parent_succeeds(d varchar2 := 'Insert child with existing parent succeeds');
 
-    PROCEDURE after_all;
+    procedure after_all;
 
-END;
+end;
 /
-CREATE OR REPLACE PACKAGE BODY ut_test AS
+create or replace package body ut_test as
 
-    PROCEDURE before_all IS
-    BEGIN
-        EXECUTE IMMEDIATE 'create table x_parent (id integer primary key)';
-        EXECUTE IMMEDIATE 'create table x_child (id integer primary key, parent_id integer references x_parent(id))';
-    END;
+    procedure before_all is
+    begin
+        execute immediate 'create table x_parent (id integer primary key)';
+        execute immediate 'create table x_child (id integer primary key, parent_id integer references x_parent(id))';
+    end;
 
-    PROCEDURE ins_child_without_parent_fails(d VARCHAR2) IS
-        l_thrown BOOLEAN := FALSE;
-    BEGIN
+    procedure ins_child_without_parent_fails(d varchar2) is
+        l_thrown boolean := false;
+    begin
         --log
         pete.set_method_description(d);
         --test
-        BEGIN
-            EXECUTE IMMEDIATE 'insert into x_child values (1,1)';
-            l_thrown := FALSE;
-        EXCEPTION
-            WHEN OTHERS THEN
-                l_thrown := TRUE;
-        END;
+        begin
+            execute immediate 'insert into x_child values (1,1)';
+            l_thrown := false;
+        exception
+            when others then
+                l_thrown := true;
+        end;
         --assert
-        IF NOT l_thrown
-        THEN
-            raise_application_error(-20000,
-                                    q'{It should throw and it doesn't, so fix it!}');
-        END IF;
-    END ins_child_without_parent_fails;
+        if not l_thrown then
+            raise_application_error(-20000, q'{It should throw and it doesn't, so fix it!}');
+        end if;
+    end ins_child_without_parent_fails;
 
-    PROCEDURE ins_child_with_parent_succeeds(d VARCHAR2) IS
-    BEGIN
+    procedure ins_child_with_parent_succeeds(d varchar2) is
+    begin
         --log
         pete.set_method_description(d);
         --assert
-        EXECUTE IMMEDIATE 'insert into x_parent values (1)';
-        EXECUTE IMMEDIATE 'insert into x_child values (1,1)';
-    END;
+        execute immediate 'insert into x_parent values (1)';
+        execute immediate 'insert into x_child values (1,1)';
+    end;
 
-    PROCEDURE after_all IS
-    BEGIN
-        EXECUTE IMMEDIATE 'drop table x_child';
-        EXECUTE IMMEDIATE 'drop table x_parent';
-    END;
+    procedure after_all is
+    begin
+        execute immediate 'drop table x_child';
+        execute immediate 'drop table x_parent';
+    end;
 
-END;
+end;
 /

@@ -34,11 +34,11 @@ prompt Installing package Implementation
 prompt Installing package API
 @module/api/install_implementation.sql
 
-prompt Installing package tests
-@test/install_&&l_environment..sql
-
 prompt Granting privileges on package API
 @module/api/grant_&&l_privileges..sql
+
+prompt Installing package tests
+@test/install_&&l_environment..sql
 
 rem finalize SQL*Plus
 @@sqlplus_finalize.sql

@@ -48,10 +48,10 @@ create or replace package pete_core as
     -- creates record for test run
     -- sets last run_log_id
     --
-    -- %argument a_object_name_in object name
-    -- %argument a_object_type_in object type
-    -- %argument a_parent_run_log_id_in parent PETE_RUN_LOG.ID
-    -- %argument a_description_in description
+    -- %param a_object_name_in object name
+    -- %param a_object_type_in object type
+    -- %param a_parent_run_log_id_in parent PETE_RUN_LOG.ID
+    -- %param a_description_in description
     --
     -- %return pete_run_log.id of new record in PETE_RUN_LOG table
     --
@@ -68,11 +68,11 @@ create or replace package pete_core as
     -- updates record for test run with result and detailed info
     -- clears last run_log_id
     --
-    -- %argument a_run_log_id_in id of current run log
-    -- %argument a_is_succes_in is result success?
-    -- %argument a_xml_in_in XML passed into PL/SQL block as input argument
-    -- %argument a_xml_out_in XML returned from PL/SQL block as output argument
-    -- %argument a_error_code_in error code
+    -- %param a_run_log_id_in id of current run log
+    -- %param a_is_succes_in is result success?
+    -- %param a_xml_in_in XML passed into PL/SQL block as input argument
+    -- %param a_xml_out_in XML returned from PL/SQL block as output argument
+    -- %param a_error_code_in error code
     --
     procedure end_test
     (

@@ -6,7 +6,7 @@ rem     SQL > @set_dependency_ref_owner.sql <schema name>
 rem
 rem Options
 rem
-rem     schema name - whre your package is installed with public API
+rem     schema name - where your package is installed with public API
 rem
 set verify off
 define l_schema_name = "&1"
