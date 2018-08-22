@@ -31,7 +31,7 @@ Pete is simple, yet powerful PL/SQL testing suite. Pete implements **Convention 
 
 **1. Grant required privileges schema**
 
-```oracle-sql
+```sql
 @grant <schema name> production
 ```
 
@@ -44,13 +44,13 @@ Pete is simple, yet powerful PL/SQL testing suite. Pete implements **Convention 
 
 - **in public mode** - Pete can be used by other schemas - execute on API is granted to PUBLIC
 
-```oracle-sql
+```sql
 SQL> @install public production
 ```
 
 - **in peer mode** - Pete may only be used by `current_schema`
 
-```oracle-sql
+```sql
 SQL> @install peer production
 ```
 
@@ -73,7 +73,7 @@ Follow up this simple tutorial which will guide you through.
 * package description has to be defined in `description` variable in package specification
 * variable have to be either `pete_types.typ_description` or some `varchar2` with less than `4000 bytes`
 
-```oracle-sql
+```sql
 CREATE OR REPLACE PACKAGE ut_test AS
 
     description VARCHAR2(255) := 'Test my amazing constraint';
@@ -91,7 +91,7 @@ END;
 
 All hook methods are optional. You choose whether to implement them or not.
 
-```oracle-sql
+```sql
 CREATE OR REPLACE PACKAGE ut_test AS
 
     description VARCHAR2(255) := 'Test my amazing constraint';
@@ -116,7 +116,7 @@ END;
     * it is even better to describe it using `default` value of some input argument (as you can use it in implementation, as you will see later)
     * describe test only in package specification = do not repeat the default value in package body
 
-```oracle-sql
+```sql
 CREATE OR REPLACE PACKAGE ut_test AS
 
     description VARCHAR2(255) := 'Test my amazing constraint';
@@ -140,7 +140,7 @@ END;
 
 * in package body implement `before_all` hook method
 
-```oracle-sql
+```sql
 CREATE OR REPLACE PACKAGE BODY ut_test AS
 
     PROCEDURE before_all IS
@@ -155,7 +155,7 @@ CREATE OR REPLACE PACKAGE BODY ut_test AS
     * call `pete.set_method_description(d)` to set method description
     * implement test, that inserts into child table without existence of a referenced parent - it should fail
     
-```oracle-sql
+```sql
     PROCEDURE ins_child_without_parent_fails(d VARCHAR2) IS
         l_thrown BOOLEAN := FALSE;
     BEGIN
@@ -182,7 +182,7 @@ CREATE OR REPLACE PACKAGE BODY ut_test AS
     * again, set method description
     * insert parent and then child record
 
-```oracle-sql
+```sql
     PROCEDURE ins_child_with_parent_succeeds(d VARCHAR2) IS
     BEGIN
         --log
@@ -195,7 +195,7 @@ CREATE OR REPLACE PACKAGE BODY ut_test AS
 
 * implement `after_all` hook method to cleanup after tests
 
-```oracle-sql
+```sql
     PROCEDURE after_all IS
     BEGIN
         EXECUTE IMMEDIATE 'drop table x_child';
@@ -212,7 +212,7 @@ Running tests in Pete is supereasy.
 
 #### SQL*Plus
 
-```oracle-sql
+```sql
 SQL> set serveroutput on size unlimited
 SQL> set linesize 255
 SQL> set pagesize 0
